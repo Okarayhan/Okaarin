@@ -70,7 +70,7 @@ const PHOTOS = [
   },
   {
     src: "assets/photos/kenangan-03.jpg",
-    caption: "Momen manis kita",
+    caption: "Wedding kita, ehhh",
     date: "12 Oktober 2026"
   },
   {
@@ -80,117 +80,117 @@ const PHOTOS = [
   },
   {
     src: "assets/photos/kenangan-05.jpg",
-    caption: "Bersamamu selalu menyenangkan",
+    caption: "Nempel banget kak, temenan loh",
     date: "19 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-06.jpg",
-    caption: "Senja dan cerita kita",
+    caption: "Aku nyamperin kamu",
     date: "20 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-07.jpg",
-    caption: "Tawa kecil yang selalu kurindukan",
+    caption: "Aku nyamperin kamu lagi, kita mesra-mesraan",
     date: "21 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-08.jpg",
-    caption: "Hari yang penuh senyum",
+    caption: "Lucu bangett sih",
     date: "21 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-09.jpg",
-    caption: "Di setiap langkah ada kamu",
+    caption: "First Mwah ya???",
     date: "21 Oktober 2026"
   },
   {
+    src: "assets/photos/kenangan-27.jpg",
+    caption: "Ett, jadiann tuhhh",
+    date: "22 Oktober 2026"
+  },
+  {
     src: "assets/photos/kenangan-10.jpg",
-    caption: "Momen berdua yang berharga",
+    caption: "Nyosor gitu kak",
     date: "23 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-11.jpg",
-    caption: "Malam itu bersamamu",
+    caption: "Lw date sama kamu",
     date: "23 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-12.jpg",
-    caption: "Bahagia itu sederhana",
+    caption: "Numpang foto aja",
     date: "23 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-13.jpg",
-    caption: "Satu lagi kenangan indah",
+    caption: "Belajar algoritma sama kamu",
     date: "26 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-14.jpg",
-    caption: "Sore yang tenang denganmu",
+    caption: "mesra bangett kita kak",
     date: "29 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-15.jpg",
-    caption: "Menikmati waktu berdua",
+    caption: "Lucu banget kalian",
     date: "29 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-16.jpg",
-    caption: "Penghujung Oktober kita",
+    caption: "Jalan-jalan ke Bandong (collection)",
     date: "30 Oktober 2026"
   },
   {
     src: "assets/photos/kenangan-17.jpg",
-    caption: "Awal bulan yang manis",
+    caption: "nempel bangett sih",
     date: "01 November 2026"
   },
   {
     src: "assets/photos/kenangan-18.jpg",
-    caption: "Selalu ada alasan untuk tersenyum",
+    caption: "Podscast bindo bareng mbg guehh",
     date: "01 November 2026"
   },
   {
     src: "assets/photos/kenangan-19.jpg",
-    caption: "Hari indah bersamamu",
+    caption: "Peyukkkkkkkk",
     date: "06 November 2026"
   },
   {
     src: "assets/photos/kenangan-20.jpg",
-    caption: "Cerita di siang hari",
+    caption: "Ngedate teruss ya kak",
     date: "06 November 2026"
   },
   {
     src: "assets/photos/kenangan-21.jpg",
-    caption: "Menjelang senja",
+    caption: "Ketemu camer tuhh",
     date: "08 November 2026"
   },
   {
     src: "assets/photos/kenangan-22.jpg",
-    caption: "Langit sore dan kamu",
+    caption: "LW date lagii dongg",
     date: "08 November 2026"
   },
   {
     src: "assets/photos/kenangan-23.jpg",
-    caption: "Pertengahan November yang hangat",
+    caption: "poto-poto randomm aja, tapi selaluu bareng",
     date: "13 November 2026"
   },
   {
     src: "assets/photos/kenangan-24.jpg",
-    caption: "Momen tak terlupakan",
+    caption: "Makrab date, lucuu ",
     date: "22 November 2026"
   },
   {
     src: "assets/photos/kenangan-25.jpg",
-    caption: "Tatap dan senyummu",
+    caption: "seperti biasa, nempel terus",
     date: "22 November 2026"
   },
   {
     src: "assets/photos/kenangan-26.jpg",
-    caption: "Malam yang penuh arti",
-    date: "22 November 2026"
-  },
-  {
-    src: "assets/photos/kenangan-27.jpg",
-    caption: "Terima kasih untuk segalanya, sayang ♥",
+    caption: "Aduh potbar tuhh",
     date: "22 November 2026"
   }
 ];
