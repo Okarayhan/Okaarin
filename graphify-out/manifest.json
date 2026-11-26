@@ -1,0 +1,26 @@
+{
+  "script.js": {
+    "mtime": 1795669339.997586,
+    "seen": 1795669611.784788,
+    "ast_hash": "c72b20b60f722d5bdb0cafbbcdae4b9f",
+    "semantic_hash": "c72b20b60f722d5bdb0cafbbcdae4b9f"
+  },
+  "assets/bgm.mp3": {
+    "mtime": 1795596617.8840668,
+    "seen": 1795669611.784788,
+    "ast_hash": "e27bb0568a1b0884a56e3fbbe0308c20",
+    "semantic_hash": "e27bb0568a1b0884a56e3fbbe0308c20"
+  },
+  "assets/bgmfav.mp3": {
+    "mtime": 1795604236.8589008,
+    "seen": 1795669611.784788,
+    "ast_hash": "ce63d9aa555df33917aa12079998b1c2",
+    "semantic_hash": "ce63d9aa555df33917aa12079998b1c2"
+  },
+  "assets/music.mp3": {
+    "mtime": 1795595824.276621,
+    "seen": 1795669611.784788,
+    "ast_hash": "c0babd7d5809649f0ae58cf88a108445",
+    "semantic_hash": "c0babd7d5809649f0ae58cf88a108445"
+  }
+}

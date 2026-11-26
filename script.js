@@ -59,51 +59,140 @@ const CONFIG = {
  */
 const PHOTOS = [
   {
-    src: "assets/photos/kenangan-1.svg",
-    caption: "Pertama kali kita duduk berdua dan lupa waktu",
-    date: "22 Oktober"
+    src: "assets/photos/kenangan-01.jpg",
+    caption: "First meet kata tugek",
+    date: "01 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-2.svg",
-    caption: "Kopi sore waktu hujan turun tiba-tiba",
-    date: "14 November"
+    src: "assets/photos/kenangan-02.jpg",
+    caption: "Fotbar apollo",
+    date: "03 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-3.svg",
-    caption: "Senja paling tenang di penghujung minggu",
-    date: "03 Desember"
+    src: "assets/photos/kenangan-03.jpg",
+    caption: "Momen manis kita",
+    date: "12 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-4.svg",
-    caption: "Tawa kecilmu yang selalu jadi favoritku",
-    date: "19 Januari"
+    src: "assets/photos/kenangan-04.jpg",
+    caption: "First date kita (hatees)",
+    date: "19 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-5.svg",
-    caption: "Jalan kaki malam sambil bercerita tentang masa depan",
-    date: "08 Februari"
+    src: "assets/photos/kenangan-05.jpg",
+    caption: "Bersamamu selalu menyenangkan",
+    date: "19 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-6.svg",
-    caption: "Hari biasa yang terasa istimewa karena ada kamu",
-    date: "25 Maret"
+    src: "assets/photos/kenangan-06.jpg",
+    caption: "Senja dan cerita kita",
+    date: "20 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-7.svg",
-    caption: "Bunga kecil yang kita temukan di tepi jalan",
-    date: "12 April"
+    src: "assets/photos/kenangan-07.jpg",
+    caption: "Tawa kecil yang selalu kurindukan",
+    date: "21 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-8.svg",
-    caption: "Satu halaman lagi yang ingin selalu kuulang bersamamu",
-    date: "22 Oktober"
+    src: "assets/photos/kenangan-08.jpg",
+    caption: "Hari yang penuh senyum",
+    date: "21 Oktober 2026"
   },
   {
-    src: "assets/photos/kenangan-8.svg",
-    caption: "Satu halaman lagi yang ingin selalu kuulang bersamamu",
-    date: "22 Oktober"
+    src: "assets/photos/kenangan-09.jpg",
+    caption: "Di setiap langkah ada kamu",
+    date: "21 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-10.jpg",
+    caption: "Momen berdua yang berharga",
+    date: "23 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-11.jpg",
+    caption: "Malam itu bersamamu",
+    date: "23 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-12.jpg",
+    caption: "Bahagia itu sederhana",
+    date: "23 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-13.jpg",
+    caption: "Satu lagi kenangan indah",
+    date: "26 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-14.jpg",
+    caption: "Sore yang tenang denganmu",
+    date: "29 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-15.jpg",
+    caption: "Menikmati waktu berdua",
+    date: "29 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-16.jpg",
+    caption: "Penghujung Oktober kita",
+    date: "30 Oktober 2026"
+  },
+  {
+    src: "assets/photos/kenangan-17.jpg",
+    caption: "Awal bulan yang manis",
+    date: "01 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-18.jpg",
+    caption: "Selalu ada alasan untuk tersenyum",
+    date: "01 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-19.jpg",
+    caption: "Hari indah bersamamu",
+    date: "06 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-20.jpg",
+    caption: "Cerita di siang hari",
+    date: "06 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-21.jpg",
+    caption: "Menjelang senja",
+    date: "08 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-22.jpg",
+    caption: "Langit sore dan kamu",
+    date: "08 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-23.jpg",
+    caption: "Pertengahan November yang hangat",
+    date: "13 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-24.jpg",
+    caption: "Momen tak terlupakan",
+    date: "22 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-25.jpg",
+    caption: "Tatap dan senyummu",
+    date: "22 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-26.jpg",
+    caption: "Malam yang penuh arti",
+    date: "22 November 2026"
+  },
+  {
+    src: "assets/photos/kenangan-27.jpg",
+    caption: "Terima kasih untuk segalanya, sayang ♥",
+    date: "22 November 2026"
   }
-  
 ];
 
 /* =========================================================================
@@ -822,8 +911,29 @@ const PHOTOS = [
     { passive: true }
   );
 
+  // --- Mode Development: lompat langsung ke layar tertentu ---
+  // Pakai: http://127.0.0.1:5500/?step=gallery  (pin | envelope | letter | gallery)
+  function devJumpTo(name) {
+    if (!screens[name]) return;
+
+    Object.entries(screens).forEach(([key, el]) => {
+      const isTarget = key === name;
+      el.classList.toggle("screen--active", isTarget);
+      el.classList.remove("screen--leaving");
+      el.setAttribute("aria-hidden", String(!isTarget));
+    });
+    currentScreen = name;
+
+    if (name === "letter") startLetterReveal();
+    if (name === "gallery") buildGalleryOnce();
+  }
+
   // --- Inisialisasi ---
   applyConfigTexts();
   initFloatingPetals();
   initMusicAutoplay();
+
+  const isDev = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const devStep = new URLSearchParams(location.search).get("step");
+  if (isDev && devStep) devJumpTo(devStep);
 })();
