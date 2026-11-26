@@ -1,264 +1,477 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <!-- GANTI: Warna status bar Safari iOS agar serasi dengan latar belakang -->
-  <meta name="theme-color" content="#FBF7F2">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <!-- GANTI: Warna status bar Safari iOS agar serasi dengan latar belakang -->
+    <meta name="theme-color" content="#FBF7F2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-  <!-- GANTI: Judul tab browser -->
-  <title>Untuk Kamu — Buku Kenangan Kita</title>
+    <!-- GANTI: Judul tab browser -->
+    <title>Untuk Kamu — Buku Kenangan Kita</title>
+    
+    <!-- Favicon hati sederhana -->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
 
-  <!-- Favicon hati sederhana -->
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="apple-touch-icon" href="assets/favicon.svg">
+    <!-- Google Fonts: Cormorant Garamond (judul), Inter (teks UI), Caveat (tulisan tangan surat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Google Fonts: Cormorant Garamond (judul), Inter (teks UI), Caveat (tulisan tangan surat) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Hiasan lembut: kelopak bunga & hati kecil melayang pelan -->
+    <div id="floating-petals" class="floating-petals" aria-hidden="true"></div>
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <!-- Hiasan lembut: kelopak bunga & hati kecil melayang pelan -->
-  <div id="floating-petals" class="floating-petals" aria-hidden="true"></div>
+    <!-- Musik latar opsional (file: assets/music.mp3) -->
+    <audio id="bg-music" autoplay preload="auto" loop>
+      <source src="assets/bgmfav.mp3" type="audio/mpeg" />
+    </audio>
 
-  <!-- Musik latar opsional (file: assets/music.mp3) -->
-  <audio id="bg-music" autoplay preload="auto" loop>
-    <source src="assets/bgmfav.mp3" type="audio/mpeg">
-  </audio>
+    <button
+      type="button"
+      id="music-toggle"
+      class="music-toggle"
+      aria-label="Putar musik latar"
+      aria-pressed="false"
+      title="Musik latar"
+    >
+      <span class="music-icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+      </span>
+      <span class="music-bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
 
-  <button
-    type="button"
-    id="music-toggle"
-    class="music-toggle"
-    aria-label="Putar musik latar"
-    aria-pressed="false"
-    title="Musik latar"
-  >
-    <span class="music-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18V5l12-2v13"></path>
-        <circle cx="6" cy="18" r="3"></circle>
-        <circle cx="18" cy="16" r="3"></circle>
-      </svg>
-    </span>
-    <span class="music-bars" aria-hidden="true">
-      <span></span>
-      <span></span>
-      <span></span>
-    </span>
-  </button>
-
-  <main id="app" class="app">
-    <!-- =====================================================
+    <main id="app" class="app">
+      <!-- =====================================================
          LAYAR 1: HALAMAN PEMBUKA + PIN (6 DIGIT)
          Teks dapat diganti langsung di bagian CONFIG script.js
          ===================================================== -->
-    <section id="screen-pin" class="screen screen--active" aria-labelledby="intro-title">
-      <div class="screen-inner screen-inner--center">
-        <div class="intro-ornament" aria-hidden="true">
-          <span class="ornament-line"></span>
-          <svg class="ornament-heart" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span class="ornament-line"></span>
-        </div>
-
-        <header class="intro-header">
-          <p id="intro-subtitle" class="intro-subtitle">Buku Kenangan Kecil Kita</p>
-          <h1 id="intro-title" class="intro-title">Untuk Kamu, Seseorang yang Paling Kusayang</h1>
-          <p id="intro-text" class="intro-text">
-            Ada banyak momen kecil yang selalu ingin kusimpan rapi. Jadi aku merangkainya di tempat sederhana ini—khusus untukmu, agar kita selalu punya tempat untuk kembali mengenang.
-          </p>
-        </header>
-
-        <div class="pin-section">
-          <p id="pin-prompt" class="pin-prompt">Masukkan 6 digit tanggal spesial kita</p>
-
-          <div id="pin-group" class="pin-group" role="group" aria-labelledby="pin-prompt">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="Digit PIN ke-1">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Digit PIN ke-2">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Digit PIN ke-3">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Digit PIN ke-4">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Digit PIN ke-5">
-            <input class="pin-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Digit PIN ke-6">
+      <section
+        id="screen-pin"
+        class="screen screen--active"
+        aria-labelledby="intro-title"
+      >
+        <div class="screen-inner screen-inner--center">
+          <div class="intro-ornament" aria-hidden="true">
+            <span class="ornament-line"></span>
+            <svg
+              class="ornament-heart"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="currentColor"
+            >
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            <span class="ornament-line"></span>
           </div>
 
-          <p id="pin-feedback" class="pin-feedback" aria-live="polite"></p>
-        </div>
-      </div>
-    </section>
+          <header class="intro-header">
+            <p id="intro-subtitle" class="intro-subtitle">
+              Buku Kenangan Kecil Kita
+            </p>
+            <h1 id="intro-title" class="intro-title">
+              Untuk Kamu, Seseorang yang Paling Kusayang
+            </h1>
+            <p id="intro-text" class="intro-text">
+              Ada banyak momen kecil yang selalu ingin kusimpan rapi. Jadi aku
+              merangkainya di tempat sederhana ini—khusus untukmu, agar kita
+              selalu punya tempat untuk kembali mengenang.
+            </p>
+          </header>
 
-    <!-- =====================================================
+          <div class="pin-section">
+            <p id="pin-prompt" class="pin-prompt">
+              Masukkan 6 digit tanggal spesial kita
+            </p>
+
+            <div
+              id="pin-group"
+              class="pin-group"
+              role="group"
+              aria-labelledby="pin-prompt"
+            >
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="one-time-code"
+                aria-label="Digit PIN ke-1"
+              />
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="off"
+                aria-label="Digit PIN ke-2"
+              />
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="off"
+                aria-label="Digit PIN ke-3"
+              />
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="off"
+                aria-label="Digit PIN ke-4"
+              />
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="off"
+                aria-label="Digit PIN ke-5"
+              />
+              <input
+                class="pin-digit"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="1"
+                autocomplete="off"
+                aria-label="Digit PIN ke-6"
+              />
+            </div>
+
+            <p id="pin-feedback" class="pin-feedback" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
          LAYAR 2: SURAT TERTUTUP (AMPLOP 3D)
          ===================================================== -->
-    <section id="screen-envelope" class="screen" aria-label="Surat tertutup" aria-hidden="true">
-      <div class="screen-inner screen-inner--center">
-        <p class="envelope-pretitle">Sebuah surat kecil menunggumu</p>
+      <section
+        id="screen-envelope"
+        class="screen"
+        aria-label="Surat tertutup"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--center">
+          <p class="envelope-pretitle">Sebuah surat kecil menunggumu</p>
 
-        <div class="envelope-stage">
-          <button
-            type="button"
-            id="envelope-trigger"
-            class="envelope-trigger"
-            aria-label="Ketuk untuk membuka amplop"
-          >
-            <div class="envelope-3d" id="envelope-3d">
-              <div class="envelope-shadow" aria-hidden="true"></div>
+          <div class="envelope-stage">
+            <button
+              type="button"
+              id="envelope-trigger"
+              class="envelope-trigger"
+              aria-label="Ketuk untuk membuka amplop"
+            >
+              <div class="envelope-3d" id="envelope-3d">
+                <div class="envelope-shadow" aria-hidden="true"></div>
 
-              <!-- Bagian belakang amplop -->
-              <div class="envelope-back" aria-hidden="true"></div>
+                <!-- Bagian belakang amplop -->
+                <div class="envelope-back" aria-hidden="true"></div>
 
-              <!-- Kertas surat di dalam amplop -->
-              <div class="envelope-letter-sheet" aria-hidden="true">
-                <div class="sheet-inner">
-                  <span class="sheet-heart">♥</span>
-                  <span class="sheet-line sheet-line--short"></span>
-                  <span class="sheet-line"></span>
-                  <span class="sheet-line"></span>
-                  <span class="sheet-line sheet-line--med"></span>
+                <!-- Kertas surat di dalam amplop -->
+                <div class="envelope-letter-sheet" aria-hidden="true">
+                  <div class="sheet-inner">
+                    <span class="sheet-heart">♥</span>
+                    <span class="sheet-line sheet-line--short"></span>
+                    <span class="sheet-line"></span>
+                    <span class="sheet-line"></span>
+                    <span class="sheet-line sheet-line--med"></span>
+                  </div>
+                </div>
+
+                <!-- Saku depan amplop (SVG agar tepi tajam di layar Retina iPhone) -->
+                <svg
+                  class="envelope-pocket"
+                  viewBox="0 0 300 200"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <!-- Sisi kiri & kanan -->
+                  <polygon points="0,0 155,108 0,200" fill="#F5EAE0" />
+                  <polygon points="300,0 145,108 300,200" fill="#EFE1D4" />
+                  <!-- Sisi bawah -->
+                  <polygon points="0,200 150,94 300,200" fill="#FBF3EC" />
+                  <!-- Garis lipatan halus -->
+                  <polyline
+                    points="0,0 150,105 300,0"
+                    fill="none"
+                    stroke="rgba(169, 95, 106, 0.14)"
+                    stroke-width="1"
+                  />
+                  <polyline
+                    points="0,200 150,94 300,200"
+                    fill="none"
+                    stroke="rgba(169, 95, 106, 0.16)"
+                    stroke-width="1"
+                  />
+                </svg>
+
+                <!-- Penutup amplop atas (flap 3D) -->
+                <div
+                  class="envelope-flap"
+                  id="envelope-flap"
+                  aria-hidden="true"
+                >
+                  <svg
+                    class="envelope-flap-svg"
+                    viewBox="0 0 300 118"
+                    preserveAspectRatio="none"
+                  >
+                    <polygon points="0,0 300,0 150,115" fill="#F2E4D8" />
+                    <polyline
+                      points="0,0 150,115 300,0"
+                      fill="none"
+                      stroke="rgba(169, 95, 106, 0.18)"
+                      stroke-width="1"
+                    />
+                  </svg>
+                </div>
+
+                <!-- Segel hati di tengah amplop -->
+                <div class="envelope-seal" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                    />
+                  </svg>
                 </div>
               </div>
+            </button>
+          </div>
 
-              <!-- Saku depan amplop (SVG agar tepi tajam di layar Retina iPhone) -->
-              <svg class="envelope-pocket" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
-                <!-- Sisi kiri & kanan -->
-                <polygon points="0,0 155,108 0,200" fill="#F5EAE0"/>
-                <polygon points="300,0 145,108 300,200" fill="#EFE1D4"/>
-                <!-- Sisi bawah -->
-                <polygon points="0,200 150,94 300,200" fill="#FBF3EC"/>
-                <!-- Garis lipatan halus -->
-                <polyline points="0,0 150,105 300,0" fill="none" stroke="rgba(169, 95, 106, 0.14)" stroke-width="1"/>
-                <polyline points="0,200 150,94 300,200" fill="none" stroke="rgba(169, 95, 106, 0.16)" stroke-width="1"/>
-              </svg>
-
-              <!-- Penutup amplop atas (flap 3D) -->
-              <div class="envelope-flap" id="envelope-flap" aria-hidden="true">
-                <svg class="envelope-flap-svg" viewBox="0 0 300 118" preserveAspectRatio="none">
-                  <polygon points="0,0 300,0 150,115" fill="#F2E4D8"/>
-                  <polyline points="0,0 150,115 300,0" fill="none" stroke="rgba(169, 95, 106, 0.18)" stroke-width="1"/>
-                </svg>
-              </div>
-
-              <!-- Segel hati di tengah amplop -->
-              <div class="envelope-seal" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
-            </div>
-          </button>
+          <p id="envelope-hint" class="envelope-hint">Ketuk untuk membuka</p>
         </div>
+      </section>
 
-        <p id="envelope-hint" class="envelope-hint">Ketuk untuk membuka</p>
-      </div>
-    </section>
-
-    <!-- =====================================================
+      <!-- =====================================================
          LAYAR 3: ISI SURAT
          Isi surat dapat diedit di variabel CONFIG pada script.js
          ===================================================== -->
-    <section id="screen-letter" class="screen screen--scrollable" aria-labelledby="letter-greeting" aria-hidden="true">
-      <div class="screen-inner screen-inner--letter">
-        <article class="letter-paper" id="letter-paper">
-          <div class="letter-paper-border" aria-hidden="true"></div>
+      <section
+        id="screen-letter"
+        class="screen screen--scrollable"
+        aria-labelledby="letter-greeting"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--letter">
+          <article class="letter-paper" id="letter-paper">
+            <div class="letter-paper-border" aria-hidden="true"></div>
 
-          <header class="letter-header">
-            <p id="letter-date" class="letter-date">22 Oktober 2026</p>
-            <h2 id="letter-greeting" class="letter-greeting">Untukmu, Sayangku,</h2>
-          </header>
+            <header class="letter-header">
+              <p id="letter-date" class="letter-date">22 Oktober 2026</p>
+              <h2 id="letter-greeting" class="letter-greeting">
+                Untukmu, Sayangku,
+              </h2>
+            </header>
 
-          <div id="letter-body" class="letter-body">
-            <!-- Paragraf surat akan dimuat dari script.js -->
+            <div id="letter-body" class="letter-body">
+              <!-- Paragraf surat akan dimuat dari script.js -->
+            </div>
+
+            <footer class="letter-footer">
+              <p id="letter-signature" class="letter-signature">
+                Selalu milikmu,
+              </p>
+              <p id="letter-sender" class="letter-sender">
+                Seseorang yang selalu menyayangimu
+              </p>
+            </footer>
+          </article>
+
+          <div class="letter-actions">
+            <button
+              type="button"
+              id="to-gallery-btn"
+              class="primary-btn"
+              disabled
+            >
+              <span id="to-gallery-btn-text">Lihat Kenangan Kita 💌</span>
+            </button>
           </div>
-
-          <footer class="letter-footer">
-            <p id="letter-signature" class="letter-signature">Selalu milikmu,</p>
-            <p id="letter-sender" class="letter-sender">Seseorang yang selalu menyayangimu</p>
-          </footer>
-        </article>
-
-        <div class="letter-actions">
-          <button type="button" id="to-gallery-btn" class="primary-btn" disabled>
-            <span id="to-gallery-btn-text">Lihat Kenangan Kita 💌</span>
-          </button>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- =====================================================
+      <!-- =====================================================
          LAYAR 4: GALERI DIGITAL KENANGAN
          Daftar foto dapat diedit di variabel PHOTOS pada script.js
          ===================================================== -->
-    <section id="screen-gallery" class="screen screen--scrollable" aria-labelledby="gallery-title" aria-hidden="true">
-      <div class="screen-inner screen-inner--gallery">
-        <header class="gallery-header">
-          <button type="button" id="back-to-letter-btn" class="ghost-btn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M15 18l-6-6 6-6"></path>
-            </svg>
-            <span>Kembali ke surat</span>
-          </button>
+      <section
+        id="screen-gallery"
+        class="screen screen--scrollable"
+        aria-labelledby="gallery-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--gallery">
+          <header class="gallery-header">
+            <button type="button" id="back-to-letter-btn" class="ghost-btn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+              <span>Kembali ke surat</span>
+            </button>
 
-          <div class="gallery-title-wrap">
-            <h2 id="gallery-title" class="gallery-title">Halaman Kenangan Kita</h2>
-            <p id="gallery-subtitle" class="gallery-subtitle">Potongan waktu yang selalu ingin kuulang bersamamu</p>
+            <div class="gallery-title-wrap">
+              <h2 id="gallery-title" class="gallery-title">
+                Halaman Kenangan Kita
+              </h2>
+              <p id="gallery-subtitle" class="gallery-subtitle">
+                Potongan waktu yang selalu ingin kuulang bersamamu
+              </p>
+            </div>
+          </header>
+
+          <div id="gallery-grid" class="gallery-grid" role="list">
+            <!-- Kartu polaroid dimuat dari script.js -->
           </div>
-        </header>
 
-        <div id="gallery-grid" class="gallery-grid" role="list">
-          <!-- Kartu polaroid dimuat dari script.js -->
+          <footer class="gallery-footer">
+            <p class="gallery-footer-note">
+              Terima kasih sudah menjadi bagian terindah dalam hariku ♥
+            </p>
+          </footer>
         </div>
+      </section>
+    </main>
 
-        <footer class="gallery-footer">
-          <p class="gallery-footer-note">Terima kasih sudah menjadi bagian terindah dalam hariku ♥</p>
-        </footer>
-      </div>
-    </section>
-  </main>
-
-  <!-- =====================================================
+    <!-- =====================================================
        LIGHTBOX FOTO (SWIPE KIRI-KANAN + TUTUP)
        ===================================================== -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" hidden>
-    <div id="lightbox-backdrop" class="lightbox-backdrop"></div>
+    <div
+      id="lightbox"
+      class="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lightbox-caption"
+      hidden
+    >
+      <div id="lightbox-backdrop" class="lightbox-backdrop"></div>
 
-    <button type="button" id="lightbox-close" class="lightbox-close" aria-label="Tutup foto">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path d="M18 6L6 18M6 6l12 12"></path>
-      </svg>
-    </button>
-
-    <div class="lightbox-stage" id="lightbox-stage">
-      <button type="button" id="lightbox-prev" class="lightbox-nav lightbox-nav--prev" aria-label="Foto sebelumnya">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 18l-6-6 6-6"></path>
+      <button
+        type="button"
+        id="lightbox-close"
+        class="lightbox-close"
+        aria-label="Tutup foto"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12"></path>
         </svg>
       </button>
 
-      <figure class="lightbox-card" id="lightbox-card">
-        <div class="lightbox-img-wrap">
-          <img id="lightbox-img" class="lightbox-img" src="" alt="">
-        </div>
-        <figcaption class="lightbox-meta">
-          <p id="lightbox-date" class="lightbox-date"></p>
-          <p id="lightbox-caption" class="lightbox-caption"></p>
-          <p id="lightbox-counter" class="lightbox-counter"></p>
-        </figcaption>
-      </figure>
+      <div class="lightbox-stage" id="lightbox-stage">
+        <button
+          type="button"
+          id="lightbox-prev"
+          class="lightbox-nav lightbox-nav--prev"
+          aria-label="Foto sebelumnya"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
 
-      <button type="button" id="lightbox-next" class="lightbox-nav lightbox-nav--next" aria-label="Foto berikutnya">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18l6-6-6-6"></path>
-        </svg>
-      </button>
+        <figure class="lightbox-card" id="lightbox-card">
+          <div class="lightbox-img-wrap">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="" />
+          </div>
+          <figcaption class="lightbox-meta">
+            <p id="lightbox-date" class="lightbox-date"></p>
+            <p id="lightbox-caption" class="lightbox-caption"></p>
+            <p id="lightbox-counter" class="lightbox-counter"></p>
+          </figcaption>
+        </figure>
+
+        <button
+          type="button"
+          id="lightbox-next"
+          class="lightbox-nav lightbox-nav--next"
+          aria-label="Foto berikutnya"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 18l6-6-6-6"></path>
+          </svg>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

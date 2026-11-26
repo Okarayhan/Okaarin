@@ -139,10 +139,13 @@ const PHOTOS = [
   }
 
   function detachAutoplayUnlock() {
+    document.removeEventListener("click",       handleFirstInteraction, true);
+    document.removeEventListener("touchend",    handleFirstInteraction, true);
     document.removeEventListener("pointerdown", handleFirstInteraction, true);
-    document.removeEventListener("touchstart", handleFirstInteraction, true);
-    document.removeEventListener("keydown", handleFirstInteraction, true);
+    document.removeEventListener("touchstart",  handleFirstInteraction, true);
+    document.removeEventListener("keydown",     handleFirstInteraction, true);
   }
+
   async function tryStartMusic({ force = false } = {}) {
     if (!bgMusic || isMusicPlaying) return;
     if (userPausedMusic && !force) return;
@@ -154,20 +157,25 @@ const PHOTOS = [
       }
       updateMusicUI(true);
       detachAutoplayUnlock();
-    } catch {
-      // Diabaikan jika browser memblokir autoplay atau file audio belum diisi
+    } catch (err) {
       updateMusicUI(false);
+      // Jika bukan AbortError (browser interrupt sendiri), coba lagi saat interaksi berikutnya
+      if (!err || err.name !== "AbortError") {
+        document.addEventListener("click", handleFirstInteraction, { capture: true, passive: true });
+      }
     }
   }
 
-function handleFirstInteraction(event) {
+  function handleFirstInteraction(event) {
     if (event.target && event.target.closest && event.target.closest("#music-toggle")) {
-      return;
+      return; // Biarkan toggleMusic() yang menangani klik tombol musik
     }
     tryStartMusic();
   }
+
   function initMusicAutoplay() {
     if (!bgMusic) return;
+
     bgMusic.addEventListener("play", () => {
       updateMusicUI(true);
       detachAutoplayUnlock();
@@ -175,16 +183,22 @@ function handleFirstInteraction(event) {
     bgMusic.addEventListener("pause", () => {
       updateMusicUI(false);
     });
+
+    // Jika <audio autoplay> langsung berhasil diputar browser (desktop/Chrome)
     if (!bgMusic.paused) {
       updateMusicUI(true);
       return;
     }
-    // Coba autoplay langsung saat halaman dimuat (berhasil jika browser mengizinkan)
+
+    // Coba autoplay langsung saat halaman dimuat
     tryStartMusic();
-    // Jika diblokir kebijakan browser/iOS, otomatis putar pada interaksi/sentuhan pertama (mis. mengetuk kotak PIN)
+
+    // Fallback: putar otomatis pada interaksi pertama pengguna (Safari iOS / Chrome mobile)
+    document.addEventListener("click",       handleFirstInteraction, { capture: true, passive: true });
+    document.addEventListener("touchend",    handleFirstInteraction, { capture: true, passive: true });
     document.addEventListener("pointerdown", handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("touchstart", handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("keydown", handleFirstInteraction, { capture: true });
+    document.addEventListener("touchstart",  handleFirstInteraction, { capture: true, passive: true });
+    document.addEventListener("keydown",     handleFirstInteraction, { capture: true });
   }
 
   function toggleMusic() {
