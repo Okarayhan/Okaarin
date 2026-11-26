@@ -43,7 +43,13 @@ const CONFIG = {
     ],
     signature: "Love u,",
     sender: "Dariku, Wah Okaa",
-    buttonText: "Lihat Kenangan Kita 💌"
+    buttonText: "Lanjut 💌"
+  },
+
+  panel: {
+    title: "Apa yang ingin kamu lihat?",
+    subtitle: "Pilih satu ruang kecil yang sudah kusiapkan untuk kita berdua",
+    comingSoonMessage: "Yang ini masih disiapkan ya 🤍"
   },
 
   gallery: {
@@ -51,6 +57,42 @@ const CONFIG = {
     subtitle: "Potongan waktu yang selalu ingin kuulang bersamamu"
   }
 };
+
+/**
+ * 3. DAFTAR MENU PANEL UTAMA
+ *    Format: { id, title, desc, icon, active }
+ *    Set active: true jika fitur/layar sudah siap dibuka.
+ */
+const PANEL_MENU = [
+  {
+    id: "gallery",
+    title: "Galeri Kenangan",
+    desc: "Potongan waktu yang selalu ingin kuulang bersamamu",
+    icon: "🖼️",
+    active: true
+  },
+  {
+    id: "games",
+    title: "Mini Games",
+    desc: "Teka-teki kecil tentang cerita kita berdua",
+    icon: "🎮",
+    active: false
+  },
+  {
+    id: "playlist",
+    title: "Cerita Lagu",
+    desc: "Lagu-lagu yang selalu mengingatkanku padamu",
+    icon: "🎵",
+    active: false
+  },
+  {
+    id: "bucket",
+    title: "Daftar Harapan",
+    desc: "Hal-hal kecil yang ingin kita wujudkan bersama",
+    icon: "✨",
+    active: false
+  }
+];
 
 /**
  * 3. DAFTAR FOTO KENANGAN
@@ -201,17 +243,21 @@ const PHOTOS = [
 (() => {
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const screens = {
-    pin: document.getElementById("screen-pin"),
-    envelope: document.getElementById("screen-envelope"),
-    letter: document.getElementById("screen-letter"),
-    gallery: document.getElementById("screen-gallery")
+  const SCREENS = {
+    pin: { el: document.getElementById("screen-pin") },
+    envelope: { el: document.getElementById("screen-envelope") },
+    letter: { el: document.getElementById("screen-letter"), onEnter: () => startLetterReveal() },
+    panel: { el: document.getElementById("screen-panel"), onEnter: () => buildPanelOnce() },
+    gallery: { el: document.getElementById("screen-gallery"), onEnter: () => buildGalleryOnce() }
   };
 
   let currentScreen = "pin";
-  let isTransitioningScreen = false;
+  let transitionMidTimer = null;
+  let transitionEndTimer = null;
   let letterAnimated = false;
+  let panelBuilt = false;
   let galleryBuilt = false;
+  let panelUnlocked = false;
   let lightboxIndex = 0;
   let userPausedMusic = false;
 
@@ -320,7 +366,10 @@ const PHOTOS = [
     document.getElementById("letter-greeting").textContent = CONFIG.letter.greeting;
     document.getElementById("letter-signature").textContent = CONFIG.letter.signature;
     document.getElementById("letter-sender").textContent = CONFIG.letter.sender;
-    document.getElementById("to-gallery-btn-text").textContent = CONFIG.letter.buttonText;
+    document.getElementById("to-panel-btn-text").textContent = CONFIG.letter.buttonText;
+
+    document.getElementById("panel-title").textContent = CONFIG.panel.title;
+    document.getElementById("panel-subtitle").textContent = CONFIG.panel.subtitle;
 
     document.getElementById("gallery-title").textContent = CONFIG.gallery.title;
     document.getElementById("gallery-subtitle").textContent = CONFIG.gallery.subtitle;
@@ -350,37 +399,86 @@ const PHOTOS = [
     }
   }
 
-  // --- Perpindahan Layar Halus ---
-  function switchScreen(targetName) {
-    if (isTransitioningScreen || currentScreen === targetName) return;
-    const prev = screens[currentScreen];
-    const next = screens[targetName];
-    if (!prev || !next) return;
+  // --- Perpindahan Layar Halus + History State ---
+  function syncHistoryOnEnter(id, fromPopstate) {
+    if (fromPopstate) return;
+    if (id === "panel" && !panelUnlocked) {
+      panelUnlocked = true;
+      history.replaceState({ screen: "panel" }, "", "#panel");
+      history.pushState({ screen: "panel", guard: true }, "", "#panel");
+    } else if (panelUnlocked && id !== "pin" && id !== "envelope" && id !== "letter") {
+      if (id === "panel") {
+        history.pushState({ screen: "panel" }, "", "#panel");
+      } else {
+        history.pushState({ screen: id }, "", `#${id}`);
+      }
+    }
+  }
 
-    isTransitioningScreen = true;
+  function showScreen(id, { fromPopstate = false } = {}) {
+    if (currentScreen === id) return;
+    const prevCfg = SCREENS[currentScreen];
+    const nextCfg = SCREENS[id];
+    if (!prevCfg || !nextCfg || !prevCfg.el || !nextCfg.el) return;
+
+    window.clearTimeout(transitionMidTimer);
+    window.clearTimeout(transitionEndTimer);
+
+    Object.keys(SCREENS).forEach((key) => {
+      if (key !== currentScreen && key !== id && SCREENS[key].el) {
+        SCREENS[key].el.classList.remove("screen--active", "screen--leaving");
+        SCREENS[key].el.setAttribute("aria-hidden", "true");
+      }
+    });
+
+    const prev = prevCfg.el;
+    const next = nextCfg.el;
+
+    syncHistoryOnEnter(id, fromPopstate);
+
     prev.classList.add("screen--leaving");
     prev.classList.remove("screen--active");
     prev.setAttribute("aria-hidden", "true");
 
     const delay = prefersReducedMotion ? 50 : 240;
-    window.setTimeout(() => {
+    transitionMidTimer = window.setTimeout(() => {
       next.scrollTop = 0;
+      next.classList.remove("screen--leaving");
       next.classList.add("screen--active");
       next.setAttribute("aria-hidden", "false");
-      currentScreen = targetName;
+      currentScreen = id;
 
-      if (targetName === "letter") {
-        startLetterReveal();
-      } else if (targetName === "gallery") {
-        buildGalleryOnce();
+      if (typeof nextCfg.onEnter === "function") {
+        nextCfg.onEnter();
       }
 
-      window.setTimeout(() => {
+      transitionEndTimer = window.setTimeout(() => {
         prev.classList.remove("screen--leaving");
-        isTransitioningScreen = false;
       }, prefersReducedMotion ? 60 : 520);
     }, delay);
   }
+
+  window.addEventListener("popstate", (event) => {
+    if (!panelUnlocked) return;
+    if (!lightbox.hidden) {
+      closeLightbox();
+    }
+    const target = event.state && event.state.screen;
+    if (target && SCREENS[target] && target !== "pin" && target !== "envelope" && target !== "letter") {
+      if (currentScreen !== target) {
+        showScreen(target, { fromPopstate: true });
+      }
+      if (target === "panel" && (!event.state || !event.state.guard)) {
+        history.pushState({ screen: "panel", guard: true }, "", "#panel");
+      }
+    } else {
+      // Jangan biarkan tombol back kembali ke PIN/surat atau keluar dari website
+      history.pushState({ screen: "panel", guard: true }, "", "#panel");
+      if (currentScreen !== "panel") {
+        showScreen("panel", { fromPopstate: true });
+      }
+    }
+  });
 
   // --- SHA-256 Verifikasi PIN ---
   async function sha256Hex(text) {
@@ -503,7 +601,7 @@ const PHOTOS = [
       });
 
       window.setTimeout(() => {
-        switchScreen("envelope");
+        showScreen("envelope");
       }, prefersReducedMotion ? 120 : 520);
     } else {
       pinInputs.forEach((input) => input.classList.add("is-error"));
@@ -625,7 +723,7 @@ const PHOTOS = [
     if (prefersReducedMotion) {
       envelopeTrigger.classList.add("step-flap");
       envelopeFlap.classList.add("is-behind");
-      window.setTimeout(() => switchScreen("letter"), 120);
+      window.setTimeout(() => showScreen("letter"), 120);
       return;
     }
 
@@ -651,14 +749,14 @@ const PHOTOS = [
     }, 2550);
 
     window.setTimeout(() => {
-      switchScreen("letter");
+      showScreen("letter");
     }, 3450);
   });
 
   // --- Logika Layar 3: Isi Surat Paragraf demi Paragraf ---
   const letterBody = document.getElementById("letter-body");
   const letterFooter = document.querySelector(".letter-footer");
-  const toGalleryBtn = document.getElementById("to-gallery-btn");
+  const toPanelBtn = document.getElementById("to-panel-btn");
 
   function startLetterReveal() {
     if (letterAnimated) return;
@@ -676,8 +774,8 @@ const PHOTOS = [
     if (prefersReducedMotion) {
       paragraphEls.forEach((p) => p.classList.add("is-shown"));
       letterFooter.classList.add("is-shown");
-      toGalleryBtn.disabled = false;
-      toGalleryBtn.classList.add("is-visible");
+      toPanelBtn.disabled = false;
+      toPanelBtn.classList.add("is-visible");
       return;
     }
 
@@ -697,21 +795,88 @@ const PHOTOS = [
 
     // Tombol baru muncul setelah seluruh isi surat selesai tampil
     window.setTimeout(() => {
-      toGalleryBtn.disabled = false;
-      toGalleryBtn.classList.add("is-visible");
+      toPanelBtn.disabled = false;
+      toPanelBtn.classList.add("is-visible");
     }, footerDelay + 520);
   }
 
-  toGalleryBtn.addEventListener("click", () => {
-    switchScreen("gallery");
+  toPanelBtn.addEventListener("click", () => {
+    showScreen("panel");
   });
 
-  // --- Logika Layar 4: Galeri Polaroid & Scroll Reveal ---
-  const galleryGrid = document.getElementById("gallery-grid");
-  const backToLetterBtn = document.getElementById("back-to-letter-btn");
+  // --- Logika Layar 4: Panel Menu Utama ---
+  const panelGrid = document.getElementById("panel-grid");
+  const panelToast = document.getElementById("panel-toast");
+  let panelToastTimer = null;
 
-  backToLetterBtn.addEventListener("click", () => {
-    switchScreen("letter");
+  function showPanelToast(message) {
+    panelToast.textContent = message;
+    panelToast.classList.add("is-visible");
+    window.clearTimeout(panelToastTimer);
+    panelToastTimer = window.setTimeout(() => {
+      panelToast.classList.remove("is-visible");
+    }, 2400);
+  }
+
+  function buildPanelOnce() {
+    if (panelBuilt) return;
+    panelBuilt = true;
+
+    const fragment = document.createDocumentFragment();
+    const cards = PANEL_MENU.map((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = item.active ? "panel-card" : "panel-card panel-card--soon";
+      btn.setAttribute("role", "listitem");
+
+      const badge = item.active ? "" : `<span class="panel-card-badge">Segera hadir</span>`;
+      btn.innerHTML = `
+        <span class="panel-card-icon" aria-hidden="true">${item.icon}</span>
+        <span class="panel-card-body">
+          <span class="panel-card-top">
+            <span class="panel-card-title">${item.title}</span>
+            ${badge}
+          </span>
+          <span class="panel-card-desc">${item.desc}</span>
+        </span>
+      `;
+
+      btn.addEventListener("click", () => {
+        if (item.active && SCREENS[item.id]) {
+          showScreen(item.id);
+        } else {
+          showPanelToast(CONFIG.panel.comingSoonMessage);
+        }
+      });
+
+      fragment.appendChild(btn);
+      return btn;
+    });
+
+    panelGrid.appendChild(fragment);
+
+    if (prefersReducedMotion) {
+      cards.forEach((card) => card.classList.add("is-shown"));
+      return;
+    }
+
+    cards.forEach((card, idx) => {
+      window.setTimeout(() => {
+        card.classList.add("is-shown");
+      }, 120 + idx * 90);
+    });
+  }
+
+  // --- Logika Layar 5: Galeri Polaroid & Scroll Reveal ---
+  const galleryGrid = document.getElementById("gallery-grid");
+  const backToPanelBtn = document.getElementById("back-to-panel-btn");
+
+  backToPanelBtn.addEventListener("click", () => {
+    if (history.state && history.state.screen === "gallery") {
+      history.back();
+    } else {
+      showScreen("panel", { fromPopstate: true });
+    }
   });
 
   function buildGalleryOnce() {
@@ -774,7 +939,7 @@ const PHOTOS = [
         });
       },
       {
-        root: screens.gallery,
+        root: SCREENS.gallery.el,
         threshold: 0.12,
         rootMargin: "0px 0px -24px 0px"
       }

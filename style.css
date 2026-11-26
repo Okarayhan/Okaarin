@@ -777,22 +777,208 @@ input {
 }
 
 /* =========================================================
-   LAYAR 4: GALERI KENANGAN (2 KOLOM IPHONE, 3-4 DESKTOP)
+   LAYAR 4: PANEL MENU UTAMA
+   ========================================================= */
+.screen-inner--panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: calc(70px + var(--safe-top));
+  padding-bottom: calc(44px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panel-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.panel-title {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.9rem, 6.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-ink);
+}
+
+.panel-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.panel-card {
+  position: relative;
+  width: 100%;
+  min-height: 92px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  background: var(--paper-warm);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 0.55s var(--ease-smooth),
+    transform 0.28s var(--ease-smooth),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.panel-card.is-shown {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.panel-card:active {
+  transform: scale(0.975);
+  box-shadow: 0 6px 16px rgba(82, 54, 54, 0.1);
+  background: #FFF8F5;
+}
+
+.panel-card--soon {
+  opacity: 0;
+  background: rgba(255, 253, 249, 0.68);
+  border-color: rgba(169, 95, 106, 0.16);
+}
+
+.panel-card--soon.is-shown {
+  opacity: 0.72;
+}
+
+.panel-card--soon:active {
+  transform: scale(0.985);
+}
+
+.panel-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--rose-soft);
+  color: var(--rose-deep);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.panel-card--soon .panel-card-icon {
+  background: rgba(243, 223, 226, 0.55);
+}
+
+.panel-card-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.panel-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.panel-card-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.32rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-ink);
+}
+
+.panel-card-badge {
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--rose-soft);
+  color: var(--rose-deep);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.panel-card-desc {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* Toast lembut untuk fitur placeholder */
+.panel-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + var(--safe-bottom));
+  z-index: 70;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 169, 110, 0.35);
+  background: rgba(58, 46, 46, 0.9);
+  color: #FFFDF9;
+  font-size: 0.86rem;
+  text-align: center;
+  box-shadow: 0 10px 28px rgba(58, 46, 46, 0.22);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, 10px, 0);
+  transition: opacity 0.28s ease, transform 0.28s var(--ease-smooth);
+}
+
+.panel-toast.is-visible {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0);
+}
+
+/* =========================================================
+   LAYAR 5: GALERI KENANGAN (2 KOLOM IPHONE, 3-4 DESKTOP)
    ========================================================= */
 .screen-inner--gallery {
   max-width: 1080px;
   margin: 0 auto;
-  padding-top: calc(20px + var(--safe-top));
+  padding-top: 0;
   padding-bottom: calc(48px + var(--safe-bottom));
+}
+
+.gallery-sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding-top: calc(14px + var(--safe-top));
+  padding-right: calc(58px + var(--safe-right));
+  padding-bottom: 12px;
+  background: linear-gradient(180deg, rgba(251, 247, 242, 0.94) 72%, rgba(251, 247, 242, 0) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .gallery-header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 24px;
-  padding-right: 54px; /* ruang agar tidak bertabrakan dengan tombol musik */
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 22px;
 }
 
 .ghost-btn {
@@ -1090,6 +1276,11 @@ input {
     padding: 44px 42px 46px;
   }
 
+  .panel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
   .gallery-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
@@ -1162,6 +1353,8 @@ input {
   .letter-paragraph,
   .letter-footer,
   .primary-btn,
+  .panel-card,
+  .panel-toast,
   .polaroid-item,
   .polaroid-btn,
   .lightbox,

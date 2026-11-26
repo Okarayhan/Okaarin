@@ -324,18 +324,42 @@
           <div class="letter-actions">
             <button
               type="button"
-              id="to-gallery-btn"
+              id="to-panel-btn"
               class="primary-btn"
               disabled
             >
-              <span id="to-gallery-btn-text">Lihat Kenangan Kita 💌</span>
+              <span id="to-panel-btn-text">Lanjut 💌</span>
             </button>
           </div>
         </div>
       </section>
 
       <!-- =====================================================
-         LAYAR 4: GALERI DIGITAL KENANGAN
+         LAYAR 4: PANEL MENU UTAMA
+         Daftar menu dapat diedit di variabel PANEL_MENU pada script.js
+         ===================================================== -->
+      <section
+        id="screen-panel"
+        class="screen screen--scrollable"
+        aria-labelledby="panel-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--panel">
+          <header class="panel-header">
+            <h2 id="panel-title" class="panel-title">Apa yang ingin kamu lihat?</h2>
+            <p id="panel-subtitle" class="panel-subtitle">
+              Pilih satu ruang kecil yang sudah kusiapkan untuk kita berdua
+            </p>
+          </header>
+
+          <div id="panel-grid" class="panel-grid" role="list">
+            <!-- Kartu menu dimuat dari script.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         LAYAR 5: GALERI DIGITAL KENANGAN
          Daftar foto dapat diedit di variabel PHOTOS pada script.js
          ===================================================== -->
       <section
@@ -345,8 +369,8 @@
         aria-hidden="true"
       >
         <div class="screen-inner screen-inner--gallery">
-          <header class="gallery-header">
-            <button type="button" id="back-to-letter-btn" class="ghost-btn">
+          <div class="gallery-sticky-bar">
+            <button type="button" id="back-to-panel-btn" class="ghost-btn">
               <svg
                 viewBox="0 0 24 24"
                 width="16"
@@ -360,9 +384,11 @@
               >
                 <path d="M15 18l-6-6 6-6"></path>
               </svg>
-              <span>Kembali ke surat</span>
+              <span>Kembali ke Panel</span>
             </button>
+          </div>
 
+          <header class="gallery-header">
             <div class="gallery-title-wrap">
               <h2 id="gallery-title" class="gallery-title">
                 Halaman Kenangan Kita
@@ -471,6 +497,9 @@
         </button>
       </div>
     </div>
+
+    <!-- Toast lembut untuk menu yang belum aktif -->
+    <div id="panel-toast" class="panel-toast" role="status" aria-live="polite"></div>
 
     <script src="script.js"></script>
   </body>
