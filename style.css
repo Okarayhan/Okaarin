@@ -1185,7 +1185,7 @@ input {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 12px 18px;
+  gap: 14px 28px;
   touch-action: pan-y;
 }
 
@@ -1251,16 +1251,17 @@ input {
 .lightbox-nav {
   order: 2;
   display: inline-flex;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 56px;
+  min-height: 56px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 253, 249, 0.24);
-  background: rgba(58, 46, 46, 0.55);
+  border: 1px solid rgba(255, 253, 249, 0.28);
+  background: rgba(58, 46, 46, 0.62);
   color: #FFFDF9;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  touch-action: manipulation;
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
@@ -1302,6 +1303,11 @@ input {
 
   .lightbox-nav--next {
     order: 1;
+  }
+
+  .lightbox-nav {
+    min-width: 46px;
+    min-height: 46px;
   }
 }
 
