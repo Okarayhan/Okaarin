@@ -410,6 +410,406 @@
           </footer>
         </div>
       </section>
+
+      <!-- =====================================================
+         LAYAR 6: PILIHAN MINI GAMES (CAROUSEL GAYA PS3)
+         Daftar game dapat diedit di variabel GAMES pada script.js
+         ===================================================== -->
+      <section
+        id="screen-games"
+        class="screen screen--scrollable"
+        aria-labelledby="games-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--games">
+          <div class="gallery-sticky-bar">
+            <button type="button" id="games-back-btn" class="ghost-btn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+              <span>Kembali ke Panel</span>
+            </button>
+          </div>
+
+          <header class="games-header">
+            <h2 id="games-title" class="games-title">Games</h2>
+            <p class="games-subtitle">
+              Geser untuk memilih permainan tentang cerita kita
+            </p>
+          </header>
+
+          <div class="games-carousel-stage">
+            <button
+              type="button"
+              id="games-prev"
+              class="games-nav games-nav--prev"
+              aria-label="Game sebelumnya"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+
+            <div
+              id="games-carousel"
+              class="games-carousel"
+              role="region"
+              aria-label="Daftar permainan"
+              tabindex="0"
+            >
+              <!-- Kartu game dimuat dari script.js -->
+            </div>
+
+            <button
+              type="button"
+              id="games-next"
+              class="games-nav games-nav--next"
+              aria-label="Game berikutnya"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="games-info" aria-live="polite">
+            <h3 id="games-active-title" class="games-active-title"></h3>
+            <p id="games-active-desc" class="games-active-desc"></p>
+            <p id="games-active-cta" class="games-active-cta"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         LAYAR 7: TEKA-TEKI SILANG (TTS)
+         Soal & jawaban dapat diedit di variabel TTS_DATA pada script.js
+         ===================================================== -->
+      <section
+        id="screen-tts"
+        class="screen screen--scrollable"
+        aria-labelledby="tts-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--tts">
+          <div class="gallery-sticky-bar">
+            <button type="button" id="tts-back-btn" class="ghost-btn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+              <span>Kembali ke Games</span>
+            </button>
+          </div>
+
+          <header class="tts-header">
+            <h2 id="tts-title" class="tts-title">Teka-Teki Silang</h2>
+            <p class="tts-subtitle">
+              Isi setiap kotak huruf sesuai kenangan kita berdua
+            </p>
+          </header>
+
+          <div class="tts-toolbar">
+            <p id="tts-progress" class="tts-progress" aria-live="polite">
+              0 / 7 benar
+            </p>
+            <button type="button" id="tts-reset-btn" class="tts-reset-btn">
+              Ulang
+            </button>
+          </div>
+
+          <div id="tts-reset-confirm" class="tts-reset-confirm" hidden>
+            <p class="tts-reset-confirm-text">
+              Kosongkan semua kotak jawaban?
+            </p>
+            <div class="tts-reset-confirm-actions">
+              <button
+                type="button"
+                id="tts-reset-yes"
+                class="tts-confirm-btn tts-confirm-btn--yes"
+              >
+                Ya, ulang
+              </button>
+              <button
+                type="button"
+                id="tts-reset-no"
+                class="tts-confirm-btn tts-confirm-btn--no"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+
+          <div id="tts-active-bar" class="tts-active-bar" aria-live="polite">
+            <p id="tts-active-clue" class="tts-active-clue">
+              Ketuk kotak atau pilih petunjuk di bawah
+            </p>
+            <button
+              type="button"
+              id="tts-dir-toggle"
+              class="tts-dir-toggle"
+              hidden
+            >
+              Mendatar ⇄
+            </button>
+          </div>
+
+          <div class="tts-grid-wrap">
+            <div
+              id="tts-grid"
+              class="tts-grid"
+              role="grid"
+              aria-label="Papan Teka-Teki Silang"
+            >
+              <!-- Grid TTS dimuat dari script.js -->
+            </div>
+          </div>
+
+          <div class="tts-clues">
+            <div class="tts-clue-group">
+              <h3 class="tts-clue-heading">Mendatar</h3>
+              <ul id="tts-clues-across" class="tts-clue-list"></ul>
+            </div>
+            <div class="tts-clue-group">
+              <h3 class="tts-clue-heading">Menurun</h3>
+              <ul id="tts-clues-down" class="tts-clue-list"></ul>
+            </div>
+          </div>
+
+          <div class="tts-actions">
+            <p id="tts-feedback" class="tts-feedback" aria-live="polite"></p>
+            <button type="button" id="tts-check-btn" class="primary-btn is-visible">
+              Periksa
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         LAYAR 8: KUIS KITA (SEBERAPA KENAL KAMU DENGANKU?)
+         Soal & hadiah dapat diedit di KUIS_DATA & KUIS_REWARD pada script.js
+         ===================================================== -->
+      <section
+        id="screen-kuis"
+        class="screen screen--scrollable"
+        aria-labelledby="kuis-intro-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--kuis">
+          <div class="gallery-sticky-bar kuis-sticky-bar">
+            <button type="button" id="kuis-back-btn" class="ghost-btn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+              <span>Kembali</span>
+            </button>
+          </div>
+
+          <!-- Fase A: Layar Pembuka -->
+          <div id="kuis-intro" class="kuis-view kuis-intro">
+            <div class="kuis-intro-badge" aria-hidden="true">💌</div>
+            <h2 id="kuis-intro-title" class="kuis-intro-title">Kuis</h2>
+            <p class="kuis-intro-subtitle">
+              10 pertanyaan, seberapa hebad kah kamu  
+            </p>
+            <button
+              type="button"
+              id="kuis-start-btn"
+              class="primary-btn is-visible"
+            >
+              Mulai
+            </button>
+          </div>
+
+          <!-- Fase B: Layar Soal -->
+          <div id="kuis-play" class="kuis-view kuis-play" hidden>
+            <div class="kuis-top-meta">
+              <div class="kuis-top-row">
+                <span id="kuis-progress-text" class="kuis-progress-text"
+                  >Soal 1 / 10</span
+                >
+                <span
+                  id="kuis-combo"
+                  class="kuis-combo"
+                  aria-live="polite"
+                  hidden
+                ></span>
+                <button
+                  type="button"
+                  id="kuis-quit-btn"
+                  class="kuis-quit-btn"
+                >
+                  Hentikan kuis
+                </button>
+              </div>
+              <div class="kuis-progress-track" aria-hidden="true">
+                <div id="kuis-progress-fill" class="kuis-progress-fill"></div>
+              </div>
+            </div>
+
+            <div id="kuis-quit-confirm" class="tts-reset-confirm" hidden>
+              <p class="tts-reset-confirm-text">
+                Yakin ingin menghentikan kuis?
+              </p>
+              <div class="tts-reset-confirm-actions">
+                <button
+                  type="button"
+                  id="kuis-quit-yes"
+                  class="tts-confirm-btn tts-confirm-btn--yes"
+                >
+                  Ya, hentikan
+                </button>
+                <button
+                  type="button"
+                  id="kuis-quit-no"
+                  class="tts-confirm-btn tts-confirm-btn--no"
+                >
+                  Lanjut main
+                </button>
+              </div>
+            </div>
+
+            <div id="kuis-card" class="kuis-card">
+              <h3 id="kuis-question" class="kuis-question"></h3>
+              <div id="kuis-options" class="kuis-options" role="group"></div>
+              <p
+                id="kuis-feedback"
+                class="kuis-feedback"
+                aria-live="polite"
+              ></p>
+              <div class="kuis-next-wrap">
+                <button
+                  type="button"
+                  id="kuis-next-btn"
+                  class="primary-btn"
+                  hidden
+                >
+                  Lanjut
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fase C: Layar Hasil -->
+          <div id="kuis-result" class="kuis-view kuis-result" hidden>
+            <div
+              id="kuis-result-hearts"
+              class="kuis-result-hearts"
+              aria-hidden="true"
+            ></div>
+
+            <div class="kuis-result-card">
+              <p class="kuis-result-label">Skor Kamu</p>
+              <p id="kuis-score-display" class="kuis-score-display">
+                <span id="kuis-score-num">0</span> / 10
+              </p>
+              <p id="kuis-best-score" class="kuis-best-score"></p>
+
+              <h3 id="kuis-reward-title" class="kuis-reward-title"></h3>
+              <p id="kuis-reward-msg" class="kuis-reward-msg"></p>
+
+              <button
+                type="button"
+                id="kuis-coupon"
+                class="kuis-coupon"
+                aria-pressed="false"
+                aria-label="Ketuk untuk membuka kupon hadiah"
+              >
+                <span class="kuis-coupon-inner">
+                  <span class="kuis-coupon-face kuis-coupon-front">
+                    <span class="kuis-coupon-heart" aria-hidden="true">🤍</span>
+                    <span class="kuis-coupon-front-title"
+                      >Kupon Spesial Untukmu</span
+                    >
+                    <span class="kuis-coupon-front-hint"
+                      >Ketuk untuk membuka hadiah</span
+                    >
+                  </span>
+                  <span class="kuis-coupon-face kuis-coupon-back">
+                    <span class="kuis-coupon-back-tag">Hadiah Kamu ♥</span>
+                    <span
+                      id="kuis-coupon-gift"
+                      class="kuis-coupon-gift"
+                    ></span>
+                  </span>
+                </span>
+              </button>
+
+              <div class="kuis-result-actions">
+                <button
+                  type="button"
+                  id="kuis-replay-btn"
+                  class="primary-btn is-visible"
+                >
+                  Main lagi
+                </button>
+                <button
+                  type="button"
+                  id="kuis-games-btn"
+                  class="ghost-btn kuis-result-secondary"
+                >
+                  Main game lain
+                </button>
+                <button
+                  type="button"
+                  id="kuis-panel-btn"
+                  class="ghost-btn kuis-result-secondary"
+                >
+                  Kembali ke Panel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- =====================================================
@@ -495,6 +895,43 @@
             <path d="M9 18l6-6-6-6"></path>
           </svg>
         </button>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       OVERLAY KEMENANGAN TTS
+       ===================================================== -->
+    <div
+      id="tts-victory"
+      class="tts-victory"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tts-victory-title"
+      hidden
+    >
+      <div class="tts-victory-backdrop"></div>
+      <div
+        id="tts-victory-hearts"
+        class="tts-victory-hearts"
+        aria-hidden="true"
+      ></div>
+
+      <div class="tts-victory-card">
+        <div class="tts-victory-badge" aria-hidden="true">🤍</div>
+        <h3 id="tts-victory-title" class="tts-victory-title"></h3>
+        <p id="tts-victory-message" class="tts-victory-message"></p>
+        <div class="tts-victory-actions">
+          <button
+            type="button"
+            id="tts-victory-games-btn"
+            class="primary-btn is-visible"
+          ></button>
+          <button
+            type="button"
+            id="tts-victory-panel-btn"
+            class="ghost-btn tts-victory-secondary"
+          ></button>
+        </div>
       </div>
     </div>
 

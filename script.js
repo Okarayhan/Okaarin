@@ -8,26 +8,27 @@
  *    Nilai di bawah ini adalah SHA-256 untuk PIN "221026".
  *    Lihat panduan di jawaban atau README untuk cara membuat hash PIN baru.
  */
-const PIN_HASH_SHA256 = "122d723ab84185f56c4980f73111cfb7c9f4dd9563c7b1bd003663a8800d10e2";
+const PIN_HASH_SHA256 =
+  "122d723ab84185f56c4980f73111cfb7c9f4dd9563c7b1bd003663a8800d10e2";
 
 /**
  * 2. TEKS HALAMAN PEMBUKA, AMPLOP, SURAT, DAN GALERI
  *    Ubah judul, sub judul, pesan error lembut, serta isi surat di sini.
  */
 const CONFIG = {
-  tabTitle: "Untuk Kamu — Buku Kenangan Kita",
+  tabTitle: "Untukmu Tugekku 🤍",
 
   intro: {
     subtitle: "Kenangan Kecil Kita",
     title: "Untuk Kamu, Seseorang yang Paling Kusayang",
-    text: "Ada banyak hal kecil yang rasanya tidak cukup kalau hanya kusampaikan lewat pesan singkat. Jadi aku menyimpannya di ini—khusus untukmu sayang.",
+    text: "Ada banyak hal kecil yang rasanya ga cukup kalau hanya kusampaikan lewat pesan singkat. Jadi web ini aku buat khusus untukmu sayang.",
     pinPrompt: "Masukkan 6 digit tanggal spesial kita",
-    pinWrongMessage: "Hmm, coba ingat lagi tanggal spesial kita ya 🤍"
+    pinWrongMessage: "Hmm, coba inget tanggal spesial kita sayang 🤍",
   },
 
   envelope: {
     pretitle: "Sebuah surat kecil dariku",
-    hint: "Ketuk untuk membuka"
+    hint: "Ketuk untuk membuka",
   },
 
   letter: {
@@ -39,23 +40,23 @@ const CONFIG = {
       "Ingat ga, momen waktu kamu to the point nanya apa aku suka kamu? pasti kamu berharap aku suka yaaa..... jujur ajaa sayang, hehehe. Jujur di hari itu aku gugup banget kamu nanya begitu dan takut kamu risih, tapi ternyata dari sana hubungan kita jadi makin deket ya sayang.",
       "Disini aku mau say thank you and sorry buat semua hal yang pernah aku lakukan ke kamu. Thank you udah selalu memperlakukan aku sebaik itu, kamu selalu ngertiin aku dan semua hal baik yang kamu lakukan. Di sisi lain, maaf kalau semisal ada perbuatanu yang menyinggung kamu sayang, aku tida bermaksud begitu kok. ",
       "Surat ini mungkin ga jelas, tapi aku cuma mau bilang. Kalo aku itu sayang banget sama kamu Tugek Ari, makasi udah selalu ada buat aku. Terimalah gift kecil dari aku ini, semoga kamu suka yaa.",
-      "Dan akhir kata, Astungkara kita selalu kuat menghadapi segala badai yang menerpa kita. I Love u so muchh Tugekkuu, terimakasih banyak atas semuanya, sampai berjumpa di pernikahan kita sayang. EHEHEHE."
+      "Dan akhir kata, Astungkara kita selalu kuat menghadapi segala badai yang menerpa kita. I Love u so muchh Tugekkuu, terimakasih banyak atas semuanya, sampai berjumpa di pernikahan kita sayang. EHEHEHE.",
     ],
     signature: "Love u,",
     sender: "Dariku, Wah Okaa",
-    buttonText: "Lanjut 💌"
+    buttonText: "Lanjut 💌",
   },
 
   panel: {
-    title: "Apa yang ingin kamu lihat?",
-    subtitle: "Pilih satu ruang kecil yang sudah kusiapkan untuk kita berdua",
-    comingSoonMessage: "Yang ini masih disiapkan ya 🤍"
+    title: "Apa yang pengen kamu liat?",
+    subtitle: "Pilih satu satu hal yang kamu mau",
+    comingSoonMessage: "Yang ini masih disiapkan ya 🤍",
   },
 
   gallery: {
-    title: "Halaman Kenangan Kita",
-    subtitle: "Potongan waktu yang selalu ingin kuulang bersamamu"
-  }
+    title: "Gallery kita bersama",
+    subtitle: "Momen-momen indah dalam kanvas hidupku",
+  },
 };
 
 /**
@@ -67,31 +68,31 @@ const PANEL_MENU = [
   {
     id: "gallery",
     title: "Galeri Kenangan",
-    desc: "Potongan waktu yang selalu ingin kuulang bersamamu",
+    desc: "Momen indah kita bersama",
     icon: "🖼️",
-    active: true
+    active: true,
   },
   {
     id: "games",
-    title: "Mini Games",
-    desc: "Teka-teki kecil tentang cerita kita berdua",
+    title: "Games",
+    desc: "Mini games yang bisa kamu mainkan",
     icon: "🎮",
-    active: false
+    active: true,
   },
   {
     id: "playlist",
     title: "Cerita Lagu",
     desc: "Lagu-lagu yang selalu mengingatkanku padamu",
     icon: "🎵",
-    active: false
+    active: false,
   },
   {
     id: "bucket",
     title: "Daftar Harapan",
     desc: "Hal-hal kecil yang ingin kita wujudkan bersama",
     icon: "✨",
-    active: false
-  }
+    active: false,
+  },
 ];
 
 /**
@@ -103,152 +104,355 @@ const PHOTOS = [
   {
     src: "assets/photos/kenangan-01.jpg",
     caption: "First meet kata tugek",
-    date: "01 Oktober 2026"
+    date: "01 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-02.jpg",
     caption: "Fotbar apollo",
-    date: "03 Oktober 2026"
+    date: "03 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-03.jpg",
     caption: "Wedding kita, ehhh",
-    date: "12 Oktober 2026"
+    date: "12 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-04.jpg",
     caption: "First date kita (hatees)",
-    date: "19 Oktober 2026"
+    date: "19 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-05.jpg",
     caption: "Nempel banget kak, temenan loh",
-    date: "19 Oktober 2026"
+    date: "19 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-06.jpg",
     caption: "Aku nyamperin kamu",
-    date: "20 Oktober 2026"
+    date: "20 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-07.jpg",
     caption: "Aku nyamperin kamu lagi, kita mesra-mesraan",
-    date: "21 Oktober 2026"
+    date: "21 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-08.jpg",
     caption: "Lucu bangett sih",
-    date: "21 Oktober 2026"
+    date: "21 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-09.jpg",
     caption: "First Mwah ya???",
-    date: "21 Oktober 2026"
+    date: "21 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-27.jpg",
     caption: "Ett, jadiann tuhhh",
-    date: "22 Oktober 2026"
+    date: "22 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-10.jpg",
     caption: "Nyosor gitu kak",
-    date: "23 Oktober 2026"
+    date: "23 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-11.jpg",
     caption: "Lw date sama kamu",
-    date: "23 Oktober 2026"
+    date: "23 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-12.jpg",
     caption: "Numpang foto aja",
-    date: "23 Oktober 2026"
+    date: "23 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-13.jpg",
     caption: "Belajar algoritma sama kamu",
-    date: "26 Oktober 2026"
+    date: "26 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-14.jpg",
     caption: "mesra bangett kita kak",
-    date: "29 Oktober 2026"
+    date: "29 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-15.jpg",
     caption: "Lucu banget kalian",
-    date: "29 Oktober 2026"
+    date: "29 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-16.jpg",
     caption: "Jalan-jalan ke Bandong (collection)",
-    date: "30 Oktober 2026"
+    date: "30 Oktober 2026",
   },
   {
     src: "assets/photos/kenangan-17.jpg",
     caption: "nempel bangett sih",
-    date: "01 November 2026"
+    date: "01 November 2026",
   },
   {
     src: "assets/photos/kenangan-18.jpg",
     caption: "Podscast bindo bareng mbg guehh",
-    date: "01 November 2026"
+    date: "01 November 2026",
   },
   {
     src: "assets/photos/kenangan-19.jpg",
     caption: "Peyukkkkkkkk",
-    date: "06 November 2026"
+    date: "06 November 2026",
   },
   {
     src: "assets/photos/kenangan-20.jpg",
     caption: "Ngedate teruss ya kak",
-    date: "06 November 2026"
+    date: "06 November 2026",
   },
   {
     src: "assets/photos/kenangan-21.jpg",
     caption: "Ketemu camer tuhh",
-    date: "08 November 2026"
+    date: "08 November 2026",
   },
   {
     src: "assets/photos/kenangan-22.jpg",
     caption: "LW date lagii dongg",
-    date: "08 November 2026"
+    date: "08 November 2026",
   },
   {
     src: "assets/photos/kenangan-23.jpg",
     caption: "poto-poto randomm aja, tapi selaluu bareng",
-    date: "13 November 2026"
+    date: "13 November 2026",
   },
   {
     src: "assets/photos/kenangan-24.jpg",
     caption: "Makrab date, lucuu ",
-    date: "22 November 2026"
+    date: "22 November 2026",
   },
   {
     src: "assets/photos/kenangan-25.jpg",
     caption: "seperti biasa, nempel terus",
-    date: "22 November 2026"
+    date: "22 November 2026",
   },
   {
     src: "assets/photos/kenangan-26.jpg",
     caption: "Aduh potbar tuhh",
-    date: "22 November 2026"
-  }
+    date: "22 November 2026",
+  },
+];
+
+/**
+ * 4. DAFTAR MINI GAMES (CAROUSEL GAYA PS3)
+ *    Format: { id, judul, deskripsi, ikon, aktif }
+ */
+const GAMES = [
+  {
+    id: "tts",
+    judul: "Teka-Teki Silang",
+    deskripsi: "Seberapa hafal kamu tentang kita?",
+    ikon: "✏️",
+    aktif: true,
+  },
+  {
+    id: "kuis",
+    judul: "Kuis Kita",
+    deskripsi: "Seberapa kenal kamu denganku?",
+    ikon: "💌",
+    aktif: true,
+  },
+  {
+    id: "game3",
+    judul: "Tebak Lagu",
+    deskripsi: "Segera hadir",
+    ikon: "🔒",
+    aktif: false,
+  },
+  {
+    id: "game4",
+    judul: "Puzzle Foto",
+    deskripsi: "Segera hadir",
+    ikon: "🔒",
+    aktif: false,
+  },
+];
+
+/**
+ * 5. DATA TEKA-TEKI SILANG (TTS)
+ *    Spasi dan huruf besar/kecil diabaikan saat mencocokkan.
+ */
+const TTS_DATA = [
+  { no: 1, petunjuk: "Hal yang aku suka", jawaban: "KISS" },
+  { no: 2, petunjuk: "Hal yang tidak boleh kamu sebut", jawaban: "PUTUS" },
+  {
+    no: 3,
+    petunjuk: "Bulan saat kita mulai interaksi (tanggal 22)",
+    jawaban: "SEPTEMBER",
+  },
+  { no: 4, petunjuk: "Jajan kesukaanku", jawaban: "PISANG GORENG" },
+  { no: 5, petunjuk: "Nama anak laki-laki kita", jawaban: "ARKA" },
+  { no: 6, petunjuk: "Nama anak perempuan kita", jawaban: "RIKA" },
+  {
+    no: 7,
+    petunjuk: "Bulan anniversary kita (tanggal 22)",
+    jawaban: "OKTOBER",
+  },
+];
+
+/**
+ * 6. TEKS LAYAR KEMENANGAN TTS
+ */
+const TTS_PUJIAN = {
+  judul: "Hebat banget sayaang 🤍",
+  pesan:
+    "Tauu banget kamuu, sampe nama calon anak kita kamu apal yaaa. macii ya udah jadi orang yang paling mengerti aku. Astungkara kita selalu bersama sayang.",
+  tombol1: "Main game lain",
+  tombol2: "Kembali ke Panel",
+};
+
+/**
+ * 7. DATA SOAL KUIS KITA
+ *    Pilihan jawaban diacak otomatis setiap soal tampil.
+ */
+const KUIS_DATA = [
+  {
+    q: "Aku lahir di mana?",
+    opsi: ["Denpasar", "Gianyar", "Negara"],
+    benar: 2,
+    pesanBenar: "Benar! Kamu memang tahu asal-usulku 🤍",
+    pesanSalah: "Hampir! Aku lahir di Negara.",
+  },
+  {
+    q: "Makanan kesukaanku?",
+    opsi: ["Mie goreng", "Nasi goreng", "Ayam geprek"],
+    benar: 1,
+    pesanBenar: "Tepat! Nasi goreng nomor satu 🍳",
+    pesanSalah: "Belum tepat, jawabannya nasi goreng.",
+  },
+  {
+    q: "Di mana first date kita?",
+    opsi: ["Tukad Kopi", "Pantai Sanur", "Sousbar"],
+    benar: 0,
+    pesanBenar: "Benar! Hari yang tidak akan kulupa ☕",
+    pesanSalah: "Bukan itu, first date kita di Tukad Kopi.",
+  },
+  {
+    q: "Kapan kita jadian?",
+    opsi: ["12 Oktober 2026", "22 Oktober 2026", "2 November 2026"],
+    benar: 1,
+    pesanBenar: "Betul! 22 Oktober 2026 🤍",
+    pesanSalah: "Kita jadian tanggal 22 Oktober 2026.",
+  },
+  {
+    q: "Negara yang ingin kita tuju?",
+    opsi: ["Jepang", "Swiss", "Korea Selatan"],
+    benar: 1,
+    pesanBenar: "Benar! Suatu hari kita ke sana 🏔️",
+    pesanSalah: "Yang kita impikan adalah Swiss.",
+  },
+  {
+    q: "Tempat melali kesukaan kita?",
+    opsi: ["Mall", "Pantai", "Alam-alam"],
+    benar: 2,
+    pesanBenar: "Betul! Kita memang anak alam 🌿",
+    pesanSalah: "Tempat favorit kita alam-alam.",
+  },
+  {
+    q: "Love language utama kita?",
+    opsi: ["Words of affirmation", "Quality time", "Physical touch"],
+    benar: 1,
+    pesanBenar: "Tepat! Waktu bersamamu paling berharga ⏳",
+    pesanSalah: "Love language kita quality time.",
+  },
+  {
+    q: "Kapan ulang tahunku?",
+    opsi: ["10 November", "10 Desember", "20 Desember"],
+    benar: 1,
+    pesanBenar: "Benar! Jangan sampai lupa ya 🎂",
+    pesanSalah: "Ulang tahunku 10 Desember.",
+  },
+  {
+    q: "Di mana kamu ketemu camermu?",
+    opsi: ["Kampus", "Living World", "Rumahku"],
+    benar: 1,
+    pesanBenar: "Betul! Awal dari banyak foto indah 📷",
+    pesanSalah: "Aku ketemu camerku di Living World.",
+  },
+  {
+    q: "Siapa manusia favoritku?",
+    opsi: ["Ngurah", "Oka", "I Gusti Agung Ariningsih"],
+    benar: 2,
+    pesanBenar: "Benar sekali, itu kamu 🤍",
+    pesanSalah: "Manusia favoritku adalah I Gusti Agung Ariningsih.",
+  },
+];
+
+/**
+ * 8. REWARD BERTINGKAT KUIS KITA
+ *    Dipilih entri pertama yang min-nya <= skor.
+ */
+const KUIS_REWARD = [
+  {
+    min: 10,
+    judul: "Sempurna! 🏆",
+    pesan:
+      "Kamu hafal semua tentang aku. Terima kasih sudah selalu memperhatikan hal-hal kecil tentang kita berdua 🤍",
+    hadiah: "1 permintaan bebas (selama masih masuk akal)",
+  },
+  {
+    min: 8,
+    judul: "Hebat! 💖",
+    pesan:
+      "Hampir sempurna! Kamu memang orang yang paling mengerti aku dan cerita kita.",
+    hadiah: "pelukis sepuasnya",
+  },
+  {
+    min: 5,
+    judul: "Lumayan! 🌷",
+    pesan:
+      "Masih ada beberapa yang terlupa, tapi aku senang banget kamu sudah mencoba.",
+    hadiah: "1x jajan bebas pilih (jangan mahal mahal plss)",
+  },
+  {
+    min: 0,
+    judul: "Tidak apa-apa 🤍",
+    pesan:
+      "Masih banyak waktu buat kita saling mengenal lebih jauh dan membuat kenangan baru.",
+    hadiah: "cium",
+  },
 ];
 
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
    ========================================================================= */
 (() => {
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
 
   const SCREENS = {
     pin: { el: document.getElementById("screen-pin") },
     envelope: { el: document.getElementById("screen-envelope") },
-    letter: { el: document.getElementById("screen-letter"), onEnter: () => startLetterReveal() },
-    panel: { el: document.getElementById("screen-panel"), onEnter: () => buildPanelOnce() },
-    gallery: { el: document.getElementById("screen-gallery"), onEnter: () => buildGalleryOnce() }
+    letter: {
+      el: document.getElementById("screen-letter"),
+      onEnter: () => startLetterReveal(),
+    },
+    panel: {
+      el: document.getElementById("screen-panel"),
+      onEnter: () => buildPanelOnce(),
+    },
+    gallery: {
+      el: document.getElementById("screen-gallery"),
+      onEnter: () => buildGalleryOnce(),
+    },
+    games: {
+      el: document.getElementById("screen-games"),
+      onEnter: () => buildGamesOnce(),
+    },
+    tts: {
+      el: document.getElementById("screen-tts"),
+      onEnter: () => buildTtsOnce(),
+    },
+    kuis: {
+      el: document.getElementById("screen-kuis"),
+      onEnter: () => enterKuisScreen(),
+    },
   };
 
   let currentScreen = "pin";
@@ -257,6 +461,8 @@ const PHOTOS = [
   let letterAnimated = false;
   let panelBuilt = false;
   let galleryBuilt = false;
+  let gamesBuilt = false;
+  let ttsBuilt = false;
   let panelUnlocked = false;
   let lightboxIndex = 0;
   let userPausedMusic = false;
@@ -270,15 +476,18 @@ const PHOTOS = [
     isMusicPlaying = playing;
     musicToggle.classList.toggle("is-playing", playing);
     musicToggle.setAttribute("aria-pressed", String(playing));
-    musicToggle.setAttribute("aria-label", playing ? "Jeda musik latar" : "Putar musik latar");
+    musicToggle.setAttribute(
+      "aria-label",
+      playing ? "Jeda musik latar" : "Putar musik latar",
+    );
   }
 
   function detachAutoplayUnlock() {
-    document.removeEventListener("click",       handleFirstInteraction, true);
-    document.removeEventListener("touchend",    handleFirstInteraction, true);
+    document.removeEventListener("click", handleFirstInteraction, true);
+    document.removeEventListener("touchend", handleFirstInteraction, true);
     document.removeEventListener("pointerdown", handleFirstInteraction, true);
-    document.removeEventListener("touchstart",  handleFirstInteraction, true);
-    document.removeEventListener("keydown",     handleFirstInteraction, true);
+    document.removeEventListener("touchstart", handleFirstInteraction, true);
+    document.removeEventListener("keydown", handleFirstInteraction, true);
   }
 
   async function tryStartMusic({ force = false } = {}) {
@@ -296,13 +505,20 @@ const PHOTOS = [
       updateMusicUI(false);
       // Jika bukan AbortError (browser interrupt sendiri), coba lagi saat interaksi berikutnya
       if (!err || err.name !== "AbortError") {
-        document.addEventListener("click", handleFirstInteraction, { capture: true, passive: true });
+        document.addEventListener("click", handleFirstInteraction, {
+          capture: true,
+          passive: true,
+        });
       }
     }
   }
 
   function handleFirstInteraction(event) {
-    if (event.target && event.target.closest && event.target.closest("#music-toggle")) {
+    if (
+      event.target &&
+      event.target.closest &&
+      event.target.closest("#music-toggle")
+    ) {
       return; // Biarkan toggleMusic() yang menangani klik tombol musik
     }
     tryStartMusic();
@@ -329,11 +545,25 @@ const PHOTOS = [
     tryStartMusic();
 
     // Fallback: putar otomatis pada interaksi pertama pengguna (Safari iOS / Chrome mobile)
-    document.addEventListener("click",       handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("touchend",    handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("pointerdown", handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("touchstart",  handleFirstInteraction, { capture: true, passive: true });
-    document.addEventListener("keydown",     handleFirstInteraction, { capture: true });
+    document.addEventListener("click", handleFirstInteraction, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("touchend", handleFirstInteraction, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("pointerdown", handleFirstInteraction, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("touchstart", handleFirstInteraction, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("keydown", handleFirstInteraction, {
+      capture: true,
+    });
   }
 
   function toggleMusic() {
@@ -354,25 +584,32 @@ const PHOTOS = [
   // --- Injeksi Teks Konfigurasi ---
   function applyConfigTexts() {
     document.title = CONFIG.tabTitle;
-    document.getElementById("intro-subtitle").textContent = CONFIG.intro.subtitle;
+    document.getElementById("intro-subtitle").textContent =
+      CONFIG.intro.subtitle;
     document.getElementById("intro-title").textContent = CONFIG.intro.title;
     document.getElementById("intro-text").textContent = CONFIG.intro.text;
     document.getElementById("pin-prompt").textContent = CONFIG.intro.pinPrompt;
 
-    document.querySelector(".envelope-pretitle").textContent = CONFIG.envelope.pretitle;
+    document.querySelector(".envelope-pretitle").textContent =
+      CONFIG.envelope.pretitle;
     document.getElementById("envelope-hint").textContent = CONFIG.envelope.hint;
 
     document.getElementById("letter-date").textContent = CONFIG.letter.date;
-    document.getElementById("letter-greeting").textContent = CONFIG.letter.greeting;
-    document.getElementById("letter-signature").textContent = CONFIG.letter.signature;
+    document.getElementById("letter-greeting").textContent =
+      CONFIG.letter.greeting;
+    document.getElementById("letter-signature").textContent =
+      CONFIG.letter.signature;
     document.getElementById("letter-sender").textContent = CONFIG.letter.sender;
-    document.getElementById("to-panel-btn-text").textContent = CONFIG.letter.buttonText;
+    document.getElementById("to-panel-btn-text").textContent =
+      CONFIG.letter.buttonText;
 
     document.getElementById("panel-title").textContent = CONFIG.panel.title;
-    document.getElementById("panel-subtitle").textContent = CONFIG.panel.subtitle;
+    document.getElementById("panel-subtitle").textContent =
+      CONFIG.panel.subtitle;
 
     document.getElementById("gallery-title").textContent = CONFIG.gallery.title;
-    document.getElementById("gallery-subtitle").textContent = CONFIG.gallery.subtitle;
+    document.getElementById("gallery-subtitle").textContent =
+      CONFIG.gallery.subtitle;
   }
 
   // --- Hiasan Kelopak / Hati Melayang ---
@@ -392,8 +629,14 @@ const PHOTOS = [
       el.style.left = `${8 + ((i * 11) % 86)}%`;
       el.style.setProperty("--petal-dur", `${16 + (i % 5) * 3}s`);
       el.style.setProperty("--petal-delay", `${-(i * 2.3)}s`);
-      el.style.setProperty("--petal-drift", `${(i % 2 === 0 ? 1 : -1) * (20 + (i % 4) * 12)}px`);
-      el.style.setProperty("--petal-rot", `${(i % 2 === 0 ? 1 : -1) * (120 + i * 22)}deg`);
+      el.style.setProperty(
+        "--petal-drift",
+        `${(i % 2 === 0 ? 1 : -1) * (20 + (i % 4) * 12)}px`,
+      );
+      el.style.setProperty(
+        "--petal-rot",
+        `${(i % 2 === 0 ? 1 : -1) * (120 + i * 22)}deg`,
+      );
       el.style.setProperty("--petal-opacity", `${0.14 + (i % 3) * 0.06}`);
       container.appendChild(el);
     }
@@ -406,7 +649,12 @@ const PHOTOS = [
       panelUnlocked = true;
       history.replaceState({ screen: "panel" }, "", "#panel");
       history.pushState({ screen: "panel", guard: true }, "", "#panel");
-    } else if (panelUnlocked && id !== "pin" && id !== "envelope" && id !== "letter") {
+    } else if (
+      panelUnlocked &&
+      id !== "pin" &&
+      id !== "envelope" &&
+      id !== "letter"
+    ) {
       if (id === "panel") {
         history.pushState({ screen: "panel" }, "", "#panel");
       } else {
@@ -452,9 +700,12 @@ const PHOTOS = [
         nextCfg.onEnter();
       }
 
-      transitionEndTimer = window.setTimeout(() => {
-        prev.classList.remove("screen--leaving");
-      }, prefersReducedMotion ? 60 : 520);
+      transitionEndTimer = window.setTimeout(
+        () => {
+          prev.classList.remove("screen--leaving");
+        },
+        prefersReducedMotion ? 60 : 520,
+      );
     }, delay);
   }
 
@@ -463,8 +714,17 @@ const PHOTOS = [
     if (!lightbox.hidden) {
       closeLightbox();
     }
+    if (ttsVictory && !ttsVictory.hidden) {
+      closeTtsVictory();
+    }
     const target = event.state && event.state.screen;
-    if (target && SCREENS[target] && target !== "pin" && target !== "envelope" && target !== "letter") {
+    if (
+      target &&
+      SCREENS[target] &&
+      target !== "pin" &&
+      target !== "envelope" &&
+      target !== "letter"
+    ) {
       if (currentScreen !== target) {
         showScreen(target, { fromPopstate: true });
       }
@@ -524,7 +784,7 @@ const PHOTOS = [
     words[words.length] = (asciiBitLength / maxWord) | 0;
     words[words.length] = asciiBitLength;
 
-    for (let j = 0; j < words.length;) {
+    for (let j = 0; j < words.length; ) {
       const w = words.slice(j, (j += 16));
       const oldHash = hash.slice(0);
       for (let i = 0; i < 64; i++) {
@@ -600,9 +860,12 @@ const PHOTOS = [
         input.blur();
       });
 
-      window.setTimeout(() => {
-        showScreen("envelope");
-      }, prefersReducedMotion ? 120 : 520);
+      window.setTimeout(
+        () => {
+          showScreen("envelope");
+        },
+        prefersReducedMotion ? 120 : 520,
+      );
     } else {
       pinInputs.forEach((input) => input.classList.add("is-error"));
       pinGroup.classList.remove("is-shake");
@@ -610,11 +873,14 @@ const PHOTOS = [
       pinGroup.classList.add("is-shake");
       setPinFeedback(CONFIG.intro.pinWrongMessage);
 
-      window.setTimeout(() => {
-        pinGroup.classList.remove("is-shake");
-        clearPinInputs({ focusFirst: true });
-        isVerifyingPin = false;
-      }, prefersReducedMotion ? 160 : 520);
+      window.setTimeout(
+        () => {
+          pinGroup.classList.remove("is-shake");
+          clearPinInputs({ focusFirst: true });
+          isVerifyingPin = false;
+        },
+        prefersReducedMotion ? 160 : 520,
+      );
     }
   }
 
@@ -694,7 +960,9 @@ const PHOTOS = [
     input.addEventListener("paste", (event) => {
       event.preventDefault();
       if (isVerifyingPin) return;
-      const pasted = (event.clipboardData || window.clipboardData).getData("text");
+      const pasted = (event.clipboardData || window.clipboardData).getData(
+        "text",
+      );
       fillDigitsFrom(index, pasted);
     });
 
@@ -783,9 +1051,12 @@ const PHOTOS = [
     const stepDelay = 680;
 
     paragraphEls.forEach((p, idx) => {
-      window.setTimeout(() => {
-        p.classList.add("is-shown");
-      }, baseDelay + idx * stepDelay);
+      window.setTimeout(
+        () => {
+          p.classList.add("is-shown");
+        },
+        baseDelay + idx * stepDelay,
+      );
     });
 
     const footerDelay = baseDelay + paragraphEls.length * stepDelay + 180;
@@ -826,10 +1097,14 @@ const PHOTOS = [
     const cards = PANEL_MENU.map((item) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = item.active ? "panel-card" : "panel-card panel-card--soon";
+      btn.className = item.active
+        ? "panel-card"
+        : "panel-card panel-card--soon";
       btn.setAttribute("role", "listitem");
 
-      const badge = item.active ? "" : `<span class="panel-card-badge">Segera hadir</span>`;
+      const badge = item.active
+        ? ""
+        : `<span class="panel-card-badge">Segera hadir</span>`;
       btn.innerHTML = `
         <span class="panel-card-icon" aria-hidden="true">${item.icon}</span>
         <span class="panel-card-body">
@@ -861,9 +1136,12 @@ const PHOTOS = [
     }
 
     cards.forEach((card, idx) => {
-      window.setTimeout(() => {
-        card.classList.add("is-shown");
-      }, 120 + idx * 90);
+      window.setTimeout(
+        () => {
+          card.classList.add("is-shown");
+        },
+        120 + idx * 90,
+      );
     });
   }
 
@@ -941,8 +1219,8 @@ const PHOTOS = [
       {
         root: SCREENS.gallery.el,
         threshold: 0.12,
-        rootMargin: "0px 0px -24px 0px"
-      }
+        rootMargin: "0px 0px -24px 0px",
+      },
     );
 
     items.forEach((el, idx) => {
@@ -986,9 +1264,12 @@ const PHOTOS = [
 
   function closeLightbox() {
     lightbox.classList.remove("is-open");
-    window.setTimeout(() => {
-      lightbox.hidden = true;
-    }, prefersReducedMotion ? 40 : 280);
+    window.setTimeout(
+      () => {
+        lightbox.hidden = true;
+      },
+      prefersReducedMotion ? 40 : 280,
+    );
   }
 
   function stepLightbox(delta) {
@@ -1043,7 +1324,7 @@ const PHOTOS = [
       isSwiping = true;
       lightboxCard.style.transition = "none";
     },
-    { passive: true }
+    { passive: true },
   );
 
   lightboxStage.addEventListener(
@@ -1057,7 +1338,7 @@ const PHOTOS = [
         lightboxCard.style.transform = `translate3d(${dx * 0.45}px, 0, 0)`;
       }
     },
-    { passive: true }
+    { passive: true },
   );
 
   lightboxStage.addEventListener(
@@ -1073,8 +1354,1022 @@ const PHOTOS = [
       }
       touchDeltaX = 0;
     },
-    { passive: true }
+    { passive: true },
   );
+
+  // --- Logika Layar 6: Carousel Games Gaya PS3 ---
+  const gamesBackBtn = document.getElementById("games-back-btn");
+  const gamesCarousel = document.getElementById("games-carousel");
+  const gamesPrevBtn = document.getElementById("games-prev");
+  const gamesNextBtn = document.getElementById("games-next");
+  const gamesActiveTitle = document.getElementById("games-active-title");
+  const gamesActiveDesc = document.getElementById("games-active-desc");
+  const gamesActiveCta = document.getElementById("games-active-cta");
+
+  let gameCards = [];
+  let activeGameIndex = 0;
+  let gamesScrollRaf = null;
+
+  gamesBackBtn.addEventListener("click", () => {
+    if (history.state && history.state.screen === "games") {
+      history.back();
+    } else {
+      showScreen("panel");
+    }
+  });
+
+  function updateGamesUI(index) {
+    activeGameIndex = index;
+    const activeGame = GAMES[index];
+    gameCards.forEach((card, idx) => {
+      card.classList.toggle("is-center", idx === index);
+      card.setAttribute("aria-current", idx === index ? "true" : "false");
+    });
+
+    if (activeGame) {
+      gamesActiveTitle.textContent = activeGame.judul;
+      gamesActiveDesc.textContent = activeGame.deskripsi;
+      gamesActiveCta.textContent = activeGame.aktif
+        ? "Ketuk kartu di tengah untuk bermain"
+        : "Segera hadir 🤍";
+    }
+
+    gamesPrevBtn.disabled = index <= 0;
+    gamesNextBtn.disabled = index >= GAMES.length - 1;
+  }
+
+  function scrollGameToIndex(index, instant = false) {
+    const clamped = Math.max(0, Math.min(GAMES.length - 1, index));
+    const card = gameCards[clamped];
+    if (!card) return;
+    const targetLeft =
+      card.offsetLeft - (gamesCarousel.clientWidth - card.offsetWidth) / 2;
+    gamesCarousel.scrollTo({
+      left: targetLeft,
+      behavior: instant || prefersReducedMotion ? "auto" : "smooth",
+    });
+    updateGamesUI(clamped);
+  }
+
+  function syncActiveGameFromScroll() {
+    if (!gameCards.length) return;
+    const viewportCenter =
+      gamesCarousel.scrollLeft + gamesCarousel.clientWidth / 2;
+    let closestIdx = 0;
+    let minDistance = Infinity;
+
+    gameCards.forEach((card, idx) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(cardCenter - viewportCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIdx = idx;
+      }
+    });
+
+    if (closestIdx !== activeGameIndex) {
+      updateGamesUI(closestIdx);
+    }
+  }
+
+  function buildGamesOnce() {
+    if (gamesBuilt) {
+      requestAnimationFrame(() => scrollGameToIndex(activeGameIndex, true));
+      return;
+    }
+    gamesBuilt = true;
+
+    const fragment = document.createDocumentFragment();
+    gameCards = GAMES.map((game, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = game.aktif
+        ? "game-card game-card--active"
+        : "game-card game-card--locked";
+      btn.setAttribute("aria-label", `${game.judul} — ${game.deskripsi}`);
+
+      const statusLabel = game.aktif ? "Siap dimainkan" : "Segera hadir";
+      btn.innerHTML = `
+        <span class="game-card-icon" aria-hidden="true">${game.ikon}</span>
+        <span class="game-card-title">${game.judul}</span>
+        <span class="game-card-status">${statusLabel}</span>
+      `;
+
+      btn.addEventListener("click", () => {
+        if (idx !== activeGameIndex) {
+          scrollGameToIndex(idx);
+          return;
+        }
+        if (game.aktif && SCREENS[game.id]) {
+          showScreen(game.id);
+        } else {
+          showPanelToast("Segera hadir 🤍");
+        }
+      });
+
+      fragment.appendChild(btn);
+      return btn;
+    });
+
+    gamesCarousel.appendChild(fragment);
+
+    gamesCarousel.addEventListener(
+      "scroll",
+      () => {
+        if (gamesScrollRaf) return;
+        gamesScrollRaf = requestAnimationFrame(() => {
+          gamesScrollRaf = null;
+          syncActiveGameFromScroll();
+        });
+      },
+      { passive: true },
+    );
+
+    gamesPrevBtn.addEventListener("click", () => {
+      scrollGameToIndex(activeGameIndex - 1);
+    });
+
+    gamesNextBtn.addEventListener("click", () => {
+      scrollGameToIndex(activeGameIndex + 1);
+    });
+
+    requestAnimationFrame(() => {
+      scrollGameToIndex(0, true);
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (currentScreen !== "games") return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      scrollGameToIndex(activeGameIndex - 1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      scrollGameToIndex(activeGameIndex + 1);
+    }
+  });
+
+  // --- Logika Layar 7: Teka-Teki Silang (Grid Mendatar & Menurun) & Kemenangan ---
+  const TTS_GRID_ROWS = 11;
+  const TTS_GRID_COLS = 12;
+  const TTS_GRID_LAYOUT = {
+    1: { nomor: 1, arah: "mendatar", row: 0, col: 6 },
+    2: { nomor: 3, arah: "menurun", row: 4, col: 0 },
+    3: { nomor: 2, arah: "menurun", row: 0, col: 9 },
+    4: { nomor: 3, arah: "mendatar", row: 4, col: 0 },
+    5: { nomor: 4, arah: "menurun", row: 4, col: 3 },
+    6: { nomor: 6, arah: "mendatar", row: 10, col: 7 },
+    7: { nomor: 5, arah: "menurun", row: 4, col: 7 },
+  };
+
+  const ttsBackBtn = document.getElementById("tts-back-btn");
+  const ttsGrid = document.getElementById("tts-grid");
+  const ttsActiveClue = document.getElementById("tts-active-clue");
+  const ttsDirToggle = document.getElementById("tts-dir-toggle");
+  const ttsCluesAcross = document.getElementById("tts-clues-across");
+  const ttsCluesDown = document.getElementById("tts-clues-down");
+  const ttsProgress = document.getElementById("tts-progress");
+  const ttsFeedback = document.getElementById("tts-feedback");
+  const ttsCheckBtn = document.getElementById("tts-check-btn");
+  const ttsResetBtn = document.getElementById("tts-reset-btn");
+  const ttsResetConfirm = document.getElementById("tts-reset-confirm");
+  const ttsResetYes = document.getElementById("tts-reset-yes");
+  const ttsResetNo = document.getElementById("tts-reset-no");
+
+  const ttsVictory = document.getElementById("tts-victory");
+  const ttsVictoryHearts = document.getElementById("tts-victory-hearts");
+  const ttsVictoryTitle = document.getElementById("tts-victory-title");
+  const ttsVictoryMessage = document.getElementById("tts-victory-message");
+  const ttsVictoryGamesBtn = document.getElementById("tts-victory-games-btn");
+  const ttsVictoryPanelBtn = document.getElementById("tts-victory-panel-btn");
+
+  let ttsWords = [];
+  let ttsCellMap = new Map();
+  let activeWord = null;
+  let focusedCellKey = null;
+
+  ttsBackBtn.addEventListener("click", () => {
+    if (history.state && history.state.screen === "tts") {
+      history.back();
+    } else {
+      showScreen("games");
+    }
+  });
+
+  function cellKey(r, c) {
+    return `${r},${c}`;
+  }
+
+  function updateTtsProgress(count) {
+    ttsProgress.textContent = `${count} / ${ttsWords.length} benar`;
+  }
+
+  function refreshTtsHighlights() {
+    ttsCellMap.forEach((cell) => {
+      const inWord = activeWord && activeWord.cells.includes(cell);
+      cell.cellEl.classList.toggle("is-word-active", Boolean(inWord));
+      cell.cellEl.classList.toggle("is-focused", cell.key === focusedCellKey);
+    });
+
+    ttsWords.forEach((word) => {
+      if (word.clueBtn) {
+        word.clueBtn.classList.toggle("is-active", word === activeWord);
+      }
+    });
+
+    if (activeWord) {
+      const dirLabel = activeWord.arah === "mendatar" ? "Mendatar" : "Menurun";
+      ttsActiveClue.textContent = `${activeWord.nomor} ${dirLabel}: ${activeWord.petunjuk}`;
+    } else {
+      ttsActiveClue.textContent = "Ketuk kotak atau pilih petunjuk di bawah";
+    }
+
+    const focusedCell = focusedCellKey ? ttsCellMap.get(focusedCellKey) : null;
+    if (focusedCell && focusedCell.words.length > 1 && activeWord) {
+      ttsDirToggle.hidden = false;
+      ttsDirToggle.textContent =
+        activeWord.arah === "mendatar" ? "Mendatar ⇄" : "Menurun ⇄";
+    } else {
+      ttsDirToggle.hidden = true;
+    }
+  }
+
+  function selectCell(cell, { toggleIfSame = false } = {}) {
+    if (!cell) return;
+    if (toggleIfSame && focusedCellKey === cell.key && cell.words.length > 1) {
+      const nextWord =
+        cell.words.find((w) => w !== activeWord) || cell.words[0];
+      activeWord = nextWord;
+    } else if (!activeWord || !cell.words.includes(activeWord)) {
+      activeWord = cell.words[0];
+    }
+    focusedCellKey = cell.key;
+    refreshTtsHighlights();
+  }
+
+  function focusWord(word) {
+    activeWord = word;
+    const targetCell =
+      word.cells.find((c) => !c.locked && !c.inputEl.value) ||
+      word.cells.find((c) => !c.locked) ||
+      word.cells[0];
+    if (targetCell) {
+      focusedCellKey = targetCell.key;
+      refreshTtsHighlights();
+      targetCell.inputEl.focus();
+    }
+  }
+
+  function moveFocusInWord(currentCell, step) {
+    if (!activeWord) return;
+    const idx = activeWord.cells.indexOf(currentCell);
+    if (idx === -1) return;
+    let nextIdx = idx + step;
+    while (
+      nextIdx >= 0 &&
+      nextIdx < activeWord.cells.length &&
+      activeWord.cells[nextIdx].locked
+    ) {
+      nextIdx += step;
+    }
+    if (nextIdx >= 0 && nextIdx < activeWord.cells.length) {
+      const target = activeWord.cells[nextIdx];
+      focusedCellKey = target.key;
+      refreshTtsHighlights();
+      target.inputEl.focus();
+    }
+  }
+
+  function spawnVictoryHearts() {
+    ttsVictoryHearts.innerHTML = "";
+    if (prefersReducedMotion) return;
+
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement("span");
+      heart.className = "victory-heart";
+      heart.textContent = i % 2 === 0 ? "🤍" : "♥";
+      heart.style.left = `${6 + ((i * 7) % 88)}%`;
+      heart.style.setProperty("--vh-dur", `${2.8 + (i % 4) * 0.45}s`);
+      heart.style.setProperty("--vh-delay", `${(i % 5) * 0.22}s`);
+      heart.style.setProperty(
+        "--vh-drift",
+        `${(i % 2 === 0 ? 1 : -1) * (14 + (i % 3) * 10)}px`,
+      );
+      heart.style.setProperty(
+        "--vh-rot",
+        `${(i % 2 === 0 ? 1 : -1) * (20 + i * 6)}deg`,
+      );
+      ttsVictoryHearts.appendChild(heart);
+    }
+  }
+
+  function openTtsVictory() {
+    ttsVictoryTitle.textContent = TTS_PUJIAN.judul;
+    ttsVictoryMessage.textContent = TTS_PUJIAN.pesan;
+    ttsVictoryGamesBtn.textContent = TTS_PUJIAN.tombol1;
+    ttsVictoryPanelBtn.textContent = TTS_PUJIAN.tombol2;
+
+    spawnVictoryHearts();
+    ttsVictory.hidden = false;
+    requestAnimationFrame(() => {
+      ttsVictory.classList.add("is-open");
+    });
+    ttsVictoryGamesBtn.focus();
+  }
+
+  function closeTtsVictory() {
+    ttsVictory.classList.remove("is-open");
+    window.setTimeout(
+      () => {
+        ttsVictory.hidden = true;
+        ttsVictoryHearts.innerHTML = "";
+      },
+      prefersReducedMotion ? 40 : 320,
+    );
+  }
+
+  function checkTtsAnswers() {
+    let correctCount = 0;
+    let hasWrong = false;
+
+    ttsCellMap.forEach((cell) => {
+      cell.cellEl.classList.remove("is-word-wrong");
+    });
+
+    ttsWords.forEach((word) => {
+      const guess = word.cells
+        .map((c) => c.inputEl.value.trim().toUpperCase())
+        .join("");
+
+      if (guess === word.answer) {
+        correctCount++;
+        word.correct = true;
+        word.cells.forEach((c) => {
+          c.locked = true;
+          c.inputEl.readOnly = true;
+          c.cellEl.classList.add("is-word-correct");
+          c.cellEl.classList.remove("is-word-wrong");
+        });
+        if (word.clueBtn) {
+          word.clueBtn.classList.add("is-correct");
+          const checkSpan = word.clueBtn.querySelector(".tts-clue-check");
+          if (checkSpan) checkSpan.textContent = "✓";
+        }
+      } else {
+        hasWrong = true;
+        word.correct = false;
+        word.cells.forEach((c) => {
+          if (!c.locked) {
+            c.cellEl.classList.add("is-word-wrong");
+          }
+        });
+      }
+    });
+
+    if (hasWrong) {
+      ttsGrid.classList.remove("is-shake");
+      void ttsGrid.offsetWidth;
+      ttsGrid.classList.add("is-shake");
+    }
+
+    updateTtsProgress(correctCount);
+
+    if (correctCount === ttsWords.length) {
+      ttsFeedback.textContent = "";
+      openTtsVictory();
+    } else if (correctCount > 0) {
+      const remaining = ttsWords.length - correctCount;
+      ttsFeedback.textContent = `Tinggal ${remaining} lagi, sedikit lagi ya 🤍`;
+    } else {
+      ttsFeedback.textContent = "Ada yang masih kurang tepat, coba lagi ya";
+    }
+  }
+
+  function resetTtsBoard() {
+    ttsWords.forEach((word) => {
+      word.correct = false;
+      if (word.clueBtn) {
+        word.clueBtn.classList.remove("is-correct", "is-active");
+        const checkSpan = word.clueBtn.querySelector(".tts-clue-check");
+        if (checkSpan) checkSpan.textContent = "";
+      }
+    });
+
+    ttsCellMap.forEach((cell) => {
+      cell.locked = false;
+      cell.inputEl.value = "";
+      cell.inputEl.readOnly = false;
+      cell.cellEl.classList.remove(
+        "is-word-correct",
+        "is-word-wrong",
+        "is-word-active",
+        "is-focused",
+      );
+    });
+
+    updateTtsProgress(0);
+    ttsFeedback.textContent = "";
+    ttsResetConfirm.hidden = true;
+    if (ttsWords[0]) {
+      focusWord(ttsWords[0]);
+    }
+  }
+
+  function buildTtsOnce() {
+    if (ttsBuilt) return;
+    ttsBuilt = true;
+
+    ttsCellMap = new Map();
+    ttsWords = TTS_DATA.map((item) => {
+      const layout = TTS_GRID_LAYOUT[item.no];
+      const answer = item.jawaban.replace(/\s+/g, "").toUpperCase();
+      return {
+        no: item.no,
+        nomor: layout.nomor,
+        arah: layout.arah,
+        row: layout.row,
+        col: layout.col,
+        petunjuk: item.petunjuk,
+        answer,
+        cells: [],
+        correct: false,
+        clueBtn: null,
+      };
+    });
+
+    // Petakan seluruh kotak aktif pada grid 11x12
+    ttsWords.forEach((word) => {
+      for (let i = 0; i < word.answer.length; i++) {
+        const r = word.arah === "mendatar" ? word.row : word.row + i;
+        const c = word.arah === "mendatar" ? word.col + i : word.col;
+        const key = cellKey(r, c);
+        let cell = ttsCellMap.get(key);
+        if (!cell) {
+          cell = {
+            key,
+            r,
+            c,
+            words: [],
+            number: null,
+            locked: false,
+            cellEl: null,
+            inputEl: null,
+          };
+          ttsCellMap.set(key, cell);
+        }
+        cell.words.push(word);
+        if (i === 0) {
+          cell.number = word.nomor;
+        }
+        word.cells.push(cell);
+      }
+    });
+
+    // Bangun grid 11x12
+    const gridFrag = document.createDocumentFragment();
+    for (let r = 0; r < TTS_GRID_ROWS; r++) {
+      for (let c = 0; c < TTS_GRID_COLS; c++) {
+        const key = cellKey(r, c);
+        const cell = ttsCellMap.get(key);
+
+        if (!cell) {
+          const emptyEl = document.createElement("div");
+          emptyEl.className = "tts-cell tts-cell--empty";
+          emptyEl.setAttribute("aria-hidden", "true");
+          gridFrag.appendChild(emptyEl);
+          continue;
+        }
+
+        const cellEl = document.createElement("div");
+        cellEl.className = "tts-cell tts-cell--letter";
+
+        if (cell.number !== null) {
+          const numEl = document.createElement("span");
+          numEl.className = "tts-cell-num";
+          numEl.setAttribute("aria-hidden", "true");
+          numEl.textContent = cell.number;
+          cellEl.appendChild(numEl);
+        }
+
+        const inputEl = document.createElement("input");
+        inputEl.type = "text";
+        inputEl.className = "tts-cell-input";
+        inputEl.maxLength = 1;
+        inputEl.setAttribute("autocapitalize", "characters");
+        inputEl.setAttribute("autocomplete", "off");
+        inputEl.setAttribute("autocorrect", "off");
+        inputEl.setAttribute("spellcheck", "false");
+        inputEl.setAttribute("inputmode", "text");
+
+        const firstWord = cell.words[0];
+        const dirText = firstWord.arah === "mendatar" ? "Mendatar" : "Menurun";
+        inputEl.setAttribute(
+          "aria-label",
+          `Kotak ${firstWord.nomor} ${dirText}`,
+        );
+
+        let wasFocusedBeforePointer = false;
+        inputEl.addEventListener("pointerdown", () => {
+          wasFocusedBeforePointer = focusedCellKey === cell.key;
+        });
+
+        inputEl.addEventListener("click", () => {
+          if (wasFocusedBeforePointer) {
+            selectCell(cell, { toggleIfSame: true });
+          }
+        });
+
+        inputEl.addEventListener("focus", () => {
+          selectCell(cell);
+          inputEl.select();
+        });
+
+        inputEl.addEventListener("input", (event) => {
+          if (cell.locked) return;
+          const cleaned = event.target.value
+            .replace(/[^A-Za-z]/g, "")
+            .toUpperCase();
+
+          if (activeWord) {
+            activeWord.cells.forEach((wc) =>
+              wc.cellEl.classList.remove("is-word-wrong"),
+            );
+          }
+
+          if (!cleaned) {
+            event.target.value = "";
+            return;
+          }
+
+          if (cleaned.length > 1 && activeWord) {
+            let idx = activeWord.cells.indexOf(cell);
+            for (const ch of cleaned) {
+              if (idx >= activeWord.cells.length) break;
+              const target = activeWord.cells[idx];
+              if (!target.locked) {
+                target.inputEl.value = ch;
+              }
+              idx++;
+            }
+            const nextIdx = Math.min(idx, activeWord.cells.length - 1);
+            activeWord.cells[nextIdx].inputEl.focus();
+            return;
+          }
+
+          event.target.value = cleaned;
+          moveFocusInWord(cell, 1);
+        });
+
+        inputEl.addEventListener("keydown", (event) => {
+          if (event.key === "Backspace") {
+            if (activeWord) {
+              activeWord.cells.forEach((wc) =>
+                wc.cellEl.classList.remove("is-word-wrong"),
+              );
+            }
+            if (!cell.locked && inputEl.value) {
+              inputEl.value = "";
+            } else {
+              const idx = activeWord ? activeWord.cells.indexOf(cell) : -1;
+              if (idx > 0) {
+                const prev = activeWord.cells[idx - 1];
+                if (!prev.locked) {
+                  prev.inputEl.value = "";
+                }
+                focusedCellKey = prev.key;
+                refreshTtsHighlights();
+                prev.inputEl.focus();
+              }
+            }
+            event.preventDefault();
+          } else if (event.key === "ArrowLeft") {
+            const left = ttsCellMap.get(cellKey(r, c - 1));
+            if (left) {
+              event.preventDefault();
+              left.inputEl.focus();
+            }
+          } else if (event.key === "ArrowRight") {
+            const right = ttsCellMap.get(cellKey(r, c + 1));
+            if (right) {
+              event.preventDefault();
+              right.inputEl.focus();
+            }
+          } else if (event.key === "ArrowUp") {
+            const up = ttsCellMap.get(cellKey(r - 1, c));
+            if (up) {
+              event.preventDefault();
+              up.inputEl.focus();
+            }
+          } else if (event.key === "ArrowDown") {
+            const down = ttsCellMap.get(cellKey(r + 1, c));
+            if (down) {
+              event.preventDefault();
+              down.inputEl.focus();
+            }
+          }
+        });
+
+        cell.cellEl = cellEl;
+        cell.inputEl = inputEl;
+        cellEl.appendChild(inputEl);
+        gridFrag.appendChild(cellEl);
+      }
+    }
+    ttsGrid.appendChild(gridFrag);
+
+    // Bangun daftar petunjuk Mendatar & Menurun terurut nomor kotak
+    const acrossWords = ttsWords
+      .filter((w) => w.arah === "mendatar")
+      .sort((a, b) => a.nomor - b.nomor);
+    const downWords = ttsWords
+      .filter((w) => w.arah === "menurun")
+      .sort((a, b) => a.nomor - b.nomor);
+
+    function appendClues(listEl, words) {
+      const frag = document.createDocumentFragment();
+      words.forEach((word) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tts-clue-btn";
+        btn.innerHTML = `
+          <span><span class="tts-clue-num">${word.nomor}.</span>${word.petunjuk}</span>
+          <span class="tts-clue-check" aria-hidden="true"></span>
+        `;
+        btn.addEventListener("click", () => focusWord(word));
+        word.clueBtn = btn;
+        li.appendChild(btn);
+        frag.appendChild(li);
+      });
+      listEl.appendChild(frag);
+    }
+
+    appendClues(ttsCluesAcross, acrossWords);
+    appendClues(ttsCluesDown, downWords);
+
+    ttsDirToggle.addEventListener("click", () => {
+      if (!focusedCellKey) return;
+      const cell = ttsCellMap.get(focusedCellKey);
+      if (cell) {
+        selectCell(cell, { toggleIfSame: true });
+        cell.inputEl.focus();
+      }
+    });
+
+    updateTtsProgress(0);
+    if (acrossWords[0]) {
+      activeWord = acrossWords[0];
+      refreshTtsHighlights();
+    }
+
+    ttsCheckBtn.addEventListener("click", checkTtsAnswers);
+
+    ttsResetBtn.addEventListener("click", () => {
+      ttsResetConfirm.hidden = !ttsResetConfirm.hidden;
+    });
+
+    ttsResetNo.addEventListener("click", () => {
+      ttsResetConfirm.hidden = true;
+    });
+
+    ttsResetYes.addEventListener("click", resetTtsBoard);
+
+    ttsVictoryGamesBtn.addEventListener("click", () => {
+      closeTtsVictory();
+      if (history.state && history.state.screen === "tts") {
+        history.back();
+      } else {
+        showScreen("games");
+      }
+    });
+
+    ttsVictoryPanelBtn.addEventListener("click", () => {
+      closeTtsVictory();
+      showScreen("panel");
+    });
+  }
+
+  // --- Logika Layar 8: Kuis Kita (Seberapa Kenal Kamu Denganku?) ---
+  const kuisBackBtn = document.getElementById("kuis-back-btn");
+  const kuisIntro = document.getElementById("kuis-intro");
+  const kuisStartBtn = document.getElementById("kuis-start-btn");
+  const kuisPlay = document.getElementById("kuis-play");
+  const kuisProgressText = document.getElementById("kuis-progress-text");
+  const kuisCombo = document.getElementById("kuis-combo");
+  const kuisQuitBtn = document.getElementById("kuis-quit-btn");
+  const kuisQuitConfirm = document.getElementById("kuis-quit-confirm");
+  const kuisQuitYes = document.getElementById("kuis-quit-yes");
+  const kuisQuitNo = document.getElementById("kuis-quit-no");
+  const kuisProgressFill = document.getElementById("kuis-progress-fill");
+  const kuisCard = document.getElementById("kuis-card");
+  const kuisQuestion = document.getElementById("kuis-question");
+  const kuisOptions = document.getElementById("kuis-options");
+  const kuisFeedback = document.getElementById("kuis-feedback");
+  const kuisNextBtn = document.getElementById("kuis-next-btn");
+
+  const kuisResult = document.getElementById("kuis-result");
+  const kuisResultHearts = document.getElementById("kuis-result-hearts");
+  const kuisScoreNum = document.getElementById("kuis-score-num");
+  const kuisBestScore = document.getElementById("kuis-best-score");
+  const kuisRewardTitle = document.getElementById("kuis-reward-title");
+  const kuisRewardMsg = document.getElementById("kuis-reward-msg");
+  const kuisCoupon = document.getElementById("kuis-coupon");
+  const kuisCouponGift = document.getElementById("kuis-coupon-gift");
+  const kuisReplayBtn = document.getElementById("kuis-replay-btn");
+  const kuisGamesBtn = document.getElementById("kuis-games-btn");
+  const kuisPanelBtn = document.getElementById("kuis-panel-btn");
+
+  let kuisInitDone = false;
+  let kuisIndex = 0;
+  let kuisScore = 0;
+  let kuisStreak = 0;
+  let kuisAnswered = false;
+  let kuisScoreTimer = null;
+
+  function shuffleArray(arr) {
+    const copy = arr.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = tmp;
+    }
+    return copy;
+  }
+
+  function getKuisBestScore() {
+    try {
+      const raw = window.localStorage.getItem("kuisBest");
+      const num = raw ? parseInt(raw, 10) : 0;
+      return Number.isFinite(num) ? num : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  function saveKuisBestScore(score) {
+    const prev = getKuisBestScore();
+    const best = Math.max(prev, score);
+    try {
+      window.localStorage.setItem("kuisBest", String(best));
+    } catch {
+      // Abaikan jika penyimpanan lokal dibatasi
+    }
+    return best;
+  }
+
+  function showKuisView(view) {
+    kuisIntro.hidden = view !== "intro";
+    kuisPlay.hidden = view !== "play";
+    kuisResult.hidden = view !== "result";
+    if (view !== "result") {
+      kuisResultHearts.innerHTML = "";
+    }
+  }
+
+  function updateKuisComboUI() {
+    if (kuisStreak >= 3) {
+      kuisCombo.textContent = `Kombo ${kuisStreak} 🔥`;
+      kuisCombo.hidden = false;
+    } else {
+      kuisCombo.hidden = true;
+    }
+  }
+
+  function renderKuisQuestion() {
+    const item = KUIS_DATA[kuisIndex];
+    if (!item) return;
+
+    kuisAnswered = false;
+    kuisQuitConfirm.hidden = true;
+    kuisProgressText.textContent = `Soal ${kuisIndex + 1} / ${KUIS_DATA.length}`;
+    kuisProgressFill.style.width = `${((kuisIndex + 1) / KUIS_DATA.length) * 100}%`;
+    updateKuisComboUI();
+
+    kuisQuestion.textContent = item.q;
+    kuisFeedback.textContent = "";
+    kuisFeedback.classList.remove("is-visible");
+    kuisNextBtn.hidden = true;
+    kuisNextBtn.classList.remove("is-visible");
+    kuisNextBtn.textContent =
+      kuisIndex === KUIS_DATA.length - 1 ? "Lihat Hasil" : "Lanjut";
+
+    const correctText = item.opsi[item.benar];
+    const shuffledOptions = shuffleArray(item.opsi);
+
+    kuisOptions.innerHTML = "";
+    shuffledOptions.forEach((optText) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "kuis-option";
+
+      const labelSpan = document.createElement("span");
+      labelSpan.textContent = optText;
+
+      const markSpan = document.createElement("span");
+      markSpan.className = "kuis-option-mark";
+      markSpan.setAttribute("aria-hidden", "true");
+
+      btn.appendChild(labelSpan);
+      btn.appendChild(markSpan);
+      btn.addEventListener("click", () =>
+        handleKuisOptionClick(btn, optText, correctText, item),
+      );
+      kuisOptions.appendChild(btn);
+    });
+  }
+
+  function handleKuisOptionClick(clickedBtn, chosenText, correctText, item) {
+    if (kuisAnswered) return;
+    kuisAnswered = true;
+
+    const allBtns = Array.from(kuisOptions.querySelectorAll(".kuis-option"));
+    allBtns.forEach((btn) => {
+      btn.disabled = true;
+      const text = btn.firstElementChild.textContent;
+      const mark = btn.querySelector(".kuis-option-mark");
+      if (text === correctText) {
+        btn.classList.add("is-correct");
+        if (mark) mark.textContent = "✓";
+      }
+    });
+
+    const isCorrect = chosenText === correctText;
+    if (isCorrect) {
+      kuisScore++;
+      kuisStreak++;
+      kuisFeedback.textContent = item.pesanBenar;
+    } else {
+      kuisStreak = 0;
+      clickedBtn.classList.add("is-wrong");
+      const wrongMark = clickedBtn.querySelector(".kuis-option-mark");
+      if (wrongMark) wrongMark.textContent = "✕";
+      kuisFeedback.textContent = item.pesanSalah;
+    }
+
+    updateKuisComboUI();
+    requestAnimationFrame(() => {
+      kuisFeedback.classList.add("is-visible");
+    });
+
+    kuisNextBtn.hidden = false;
+    requestAnimationFrame(() => {
+      kuisNextBtn.classList.add("is-visible");
+    });
+  }
+
+  function advanceKuisQuestion() {
+    if (!kuisAnswered) return;
+    if (kuisIndex >= KUIS_DATA.length - 1) {
+      showKuisResult();
+      return;
+    }
+
+    kuisIndex++;
+    if (prefersReducedMotion) {
+      renderKuisQuestion();
+      return;
+    }
+
+    kuisCard.classList.add("is-sliding-out");
+    window.setTimeout(() => {
+      kuisCard.classList.remove("is-sliding-out");
+      kuisCard.classList.add("is-sliding-in");
+      renderKuisQuestion();
+      requestAnimationFrame(() => {
+        kuisCard.classList.remove("is-sliding-in");
+      });
+    }, 220);
+  }
+
+  function spawnKuisHearts() {
+    kuisResultHearts.innerHTML = "";
+    if (prefersReducedMotion) return;
+
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement("span");
+      heart.className = "victory-heart";
+      heart.textContent = i % 2 === 0 ? "🤍" : "♥";
+      heart.style.left = `${6 + ((i * 7) % 88)}%`;
+      heart.style.setProperty("--vh-dur", `${2.8 + (i % 4) * 0.45}s`);
+      heart.style.setProperty("--vh-delay", `${(i % 5) * 0.22}s`);
+      heart.style.setProperty(
+        "--vh-drift",
+        `${(i % 2 === 0 ? 1 : -1) * (14 + (i % 3) * 10)}px`,
+      );
+      heart.style.setProperty(
+        "--vh-rot",
+        `${(i % 2 === 0 ? 1 : -1) * (20 + i * 6)}deg`,
+      );
+      kuisResultHearts.appendChild(heart);
+    }
+  }
+
+  function animateKuisScore(targetScore) {
+    window.clearInterval(kuisScoreTimer);
+    if (prefersReducedMotion || targetScore === 0) {
+      kuisScoreNum.textContent = String(targetScore);
+      return;
+    }
+    let current = 0;
+    kuisScoreNum.textContent = "0";
+    kuisScoreTimer = window.setInterval(() => {
+      current++;
+      kuisScoreNum.textContent = String(current);
+      if (current >= targetScore) {
+        window.clearInterval(kuisScoreTimer);
+      }
+    }, 70);
+  }
+
+  function showKuisResult() {
+    showKuisView("result");
+    const best = saveKuisBestScore(kuisScore);
+    kuisBestScore.textContent = `Skor terbaik: ${best} / ${KUIS_DATA.length}`;
+
+    const reward =
+      KUIS_REWARD.find((r) => r.min <= kuisScore) ||
+      KUIS_REWARD[KUIS_REWARD.length - 1];
+    kuisRewardTitle.textContent = reward.judul;
+    kuisRewardMsg.textContent = reward.pesan;
+    kuisCouponGift.textContent = reward.hadiah;
+
+    kuisCoupon.classList.remove("is-flipped");
+    kuisCoupon.setAttribute("aria-pressed", "false");
+
+    animateKuisScore(kuisScore);
+
+    if (kuisScore >= 8) {
+      spawnKuisHearts();
+    } else {
+      kuisResultHearts.innerHTML = "";
+    }
+  }
+
+  function startKuis() {
+    kuisIndex = 0;
+    kuisScore = 0;
+    kuisStreak = 0;
+    showKuisView("play");
+    renderKuisQuestion();
+  }
+
+  function enterKuisScreen() {
+    if (!kuisInitDone) {
+      kuisInitDone = true;
+
+      kuisBackBtn.addEventListener("click", () => {
+        if (history.state && history.state.screen === "kuis") {
+          history.back();
+        } else {
+          showScreen("games");
+        }
+      });
+
+      kuisStartBtn.addEventListener("click", startKuis);
+      kuisNextBtn.addEventListener("click", advanceKuisQuestion);
+
+      kuisQuitBtn.addEventListener("click", () => {
+        kuisQuitConfirm.hidden = !kuisQuitConfirm.hidden;
+      });
+
+      kuisQuitNo.addEventListener("click", () => {
+        kuisQuitConfirm.hidden = true;
+      });
+
+      kuisQuitYes.addEventListener("click", () => {
+        kuisQuitConfirm.hidden = true;
+        if (history.state && history.state.screen === "kuis") {
+          history.back();
+        } else {
+          showScreen("games");
+        }
+      });
+
+      kuisCoupon.addEventListener("click", () => {
+        const flipped = kuisCoupon.classList.toggle("is-flipped");
+        kuisCoupon.setAttribute("aria-pressed", String(flipped));
+      });
+
+      kuisReplayBtn.addEventListener("click", startKuis);
+
+      kuisGamesBtn.addEventListener("click", () => {
+        if (history.state && history.state.screen === "kuis") {
+          history.back();
+        } else {
+          showScreen("games");
+        }
+      });
+
+      kuisPanelBtn.addEventListener("click", () => {
+        showScreen("panel");
+      });
+    }
+
+    showKuisView("intro");
+  }
 
   // --- Mode Development: lompat langsung ke layar tertentu ---
   // Pakai: http://127.0.0.1:5500/?step=gallery  (pin | envelope | letter | gallery)
