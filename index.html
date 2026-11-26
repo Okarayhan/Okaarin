@@ -810,6 +810,81 @@
           </div>
         </div>
       </section>
+
+      <!-- =====================================================
+         LAYAR 9: MESIN BOLA PESAN (GAYA GUMBALL MACHINE)
+         Pesan & warna dapat diedit di BOLA_PESAN, BOLA_WARNA, BOLA_BONUS pada script.js
+         ===================================================== -->
+      <section
+        id="screen-bola"
+        class="screen screen--scrollable"
+        aria-labelledby="bola-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--bola">
+          <div class="gallery-sticky-bar bola-sticky-bar">
+            <button type="button" id="bola-back-btn" class="ghost-btn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+              <span>Kembali ke Panel Games</span>
+            </button>
+          </div>
+
+          <header class="bola-header">
+            <h2 id="bola-title" class="bola-title">Mesin Bola Pesan</h2>
+            <p class="bola-subtitle">Putar tuasnya, ada pesan untukmu 🤍</p>
+          </header>
+
+          <div class="bola-stage">
+            <div id="bola-machine" class="bola-machine">
+              <div class="bola-cap" aria-hidden="true"></div>
+              <div class="bola-globe" aria-hidden="true">
+                <div id="bola-pile" class="bola-pile"></div>
+                <div class="bola-globe-highlight"></div>
+              </div>
+              <div class="bola-collar" aria-hidden="true"></div>
+              <div class="bola-body">
+                <button
+                  type="button"
+                  id="bola-spin-btn"
+                  class="bola-spin-btn"
+                  aria-label="Putar mesin bola pesan"
+                >
+                  <span class="bola-crank" aria-hidden="true"></span>
+                  <span class="bola-spin-label">Putar</span>
+                </button>
+                <div class="bola-chute" aria-hidden="true">
+                  <div id="bola-drop-ball" class="bola-drop-ball"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bola-footer-bar">
+            <p id="bola-progress" class="bola-progress" aria-live="polite">
+              Pesan terkumpul: 0 / 10
+            </p>
+            <button
+              type="button"
+              id="bola-collection-btn"
+              class="bola-collection-btn"
+            >
+              Koleksi 💌
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- =====================================================
@@ -931,6 +1006,141 @@
             id="tts-victory-panel-btn"
             class="ghost-btn tts-victory-secondary"
           ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       OVERLAY BOLA PESAN TERBUKA
+       ===================================================== -->
+    <div
+      id="bola-overlay"
+      class="bola-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bola-msg-text"
+      hidden
+    >
+      <div id="bola-overlay-backdrop" class="bola-overlay-backdrop"></div>
+      <div class="bola-reveal-stage">
+        <div id="bola-focus-ball" class="bola-focus-ball">
+          <div class="bola-glow" aria-hidden="true"></div>
+          <div class="bola-half bola-half--top" aria-hidden="true"></div>
+          <div class="bola-half bola-half--bottom" aria-hidden="true"></div>
+
+          <div id="bola-msg-card" class="bola-msg-card">
+            <p id="bola-msg-text" class="bola-msg-text"></p>
+          </div>
+        </div>
+
+        <div id="bola-overlay-actions" class="bola-overlay-actions">
+          <button
+            type="button"
+            id="bola-again-btn"
+            class="primary-btn is-visible"
+          >
+            Putar lagi
+          </button>
+          <button
+            type="button"
+            id="bola-close-btn"
+            class="ghost-btn bola-overlay-close"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       BOTTOM SHEET KOLEKSI PESAN BOLA
+       ===================================================== -->
+    <div
+      id="bola-sheet"
+      class="bola-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bola-sheet-title"
+      hidden
+    >
+      <div id="bola-sheet-backdrop" class="bola-sheet-backdrop"></div>
+      <div class="bola-sheet-panel">
+        <div class="bola-sheet-handle" aria-hidden="true"></div>
+        <div class="bola-sheet-head">
+          <h3 id="bola-sheet-title" class="bola-sheet-title">
+            Koleksi Pesanmu
+          </h3>
+          <button
+            type="button"
+            id="bola-sheet-close"
+            class="bola-sheet-close"
+            aria-label="Tutup koleksi"
+          >
+            ✕
+          </button>
+        </div>
+
+        <ul id="bola-sheet-list" class="bola-sheet-list"></ul>
+
+        <div class="bola-sheet-foot">
+          <button type="button" id="bola-reset-btn" class="tts-reset-btn">
+            Ulangi koleksi
+          </button>
+          <div id="bola-reset-confirm" class="tts-reset-confirm" hidden>
+            <p class="tts-reset-confirm-text">
+              Kosongkan semua pesan yang sudah terkumpul?
+            </p>
+            <div class="tts-reset-confirm-actions">
+              <button
+                type="button"
+                id="bola-reset-yes"
+                class="tts-confirm-btn tts-confirm-btn--yes"
+              >
+                Ya, ulangi
+              </button>
+              <button
+                type="button"
+                id="bola-reset-no"
+                class="tts-confirm-btn tts-confirm-btn--no"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       OVERLAY BONUS SEMUA PESAN TERKUMPUL
+       ===================================================== -->
+    <div
+      id="bola-bonus"
+      class="tts-victory"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bola-bonus-title"
+      hidden
+    >
+      <div id="bola-bonus-backdrop" class="tts-victory-backdrop"></div>
+      <div
+        id="bola-bonus-hearts"
+        class="tts-victory-hearts"
+        aria-hidden="true"
+      ></div>
+
+      <div class="tts-victory-card">
+        <div class="tts-victory-badge" aria-hidden="true">🔮</div>
+        <h3 id="bola-bonus-title" class="tts-victory-title"></h3>
+        <p id="bola-bonus-message" class="tts-victory-message"></p>
+        <div class="tts-victory-actions">
+          <button
+            type="button"
+            id="bola-bonus-close"
+            class="primary-btn is-visible"
+          >
+            Tutup
+          </button>
         </div>
       </div>
     </div>

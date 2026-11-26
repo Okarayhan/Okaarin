@@ -2393,6 +2393,616 @@ input {
 }
 
 /* =========================================================
+   LAYAR 9: MESIN BOLA PESAN (GAYA GUMBALL MACHINE)
+   ========================================================= */
+.screen-inner--bola {
+  max-width: 520px;
+  margin: 0 auto;
+  padding-top: 0;
+  padding-bottom: calc(28px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100dvh;
+}
+
+.bola-header {
+  text-align: center;
+  margin-top: 4px;
+}
+
+.bola-title {
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.7rem, 5.5vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-ink);
+}
+
+.bola-subtitle {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.bola-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 10px 0;
+}
+
+.bola-machine {
+  --globe-size: clamp(178px, 44vw, 224px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--globe-size);
+}
+
+.bola-cap {
+  width: 34%;
+  height: 12px;
+  border-radius: 10px 10px 2px 2px;
+  background: linear-gradient(180deg, #E2C692 0%, var(--gold) 100%);
+  box-shadow: 0 2px 6px rgba(82, 54, 54, 0.14);
+  z-index: 2;
+}
+
+.bola-globe {
+  position: relative;
+  width: var(--globe-size);
+  height: var(--globe-size);
+  margin-top: -3px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 253, 249, 0.55) 45%,
+    rgba(243, 223, 226, 0.35) 100%
+  );
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 -14px 26px rgba(169, 95, 106, 0.12),
+    inset 0 8px 18px rgba(255, 255, 255, 0.8),
+    0 12px 28px rgba(82, 54, 54, 0.09);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.bola-globe-highlight {
+  position: absolute;
+  top: 12%;
+  left: 15%;
+  width: 28%;
+  height: 16%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  transform: rotate(-28deg);
+  pointer-events: none;
+}
+
+.bola-pile {
+  position: absolute;
+  inset: 0;
+}
+
+.bola-mini {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 255, 255, 0.75) 0%,
+    var(--ball-color, #E8AEB7) 58%
+  );
+  box-shadow:
+    inset -3px -4px 6px rgba(82, 54, 54, 0.14),
+    0 3px 6px rgba(82, 54, 54, 0.1);
+  will-change: transform;
+  animation: bola-float 3.4s ease-in-out var(--ball-delay, 0s) infinite alternate;
+}
+
+.bola-machine.is-shaking .bola-mini {
+  animation: bola-jiggle 0.24s ease-in-out var(--ball-delay, 0s) infinite alternate;
+}
+
+@keyframes bola-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(2px, -4px, 0);
+  }
+}
+
+@keyframes bola-jiggle {
+  0% {
+    transform: translate3d(-4px, 2px, 0) rotate(-6deg);
+  }
+  100% {
+    transform: translate3d(4px, -6px, 0) rotate(6deg);
+  }
+}
+
+.bola-collar {
+  width: 58%;
+  height: 12px;
+  margin-top: -10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #E2C692 0%, var(--gold) 100%);
+  box-shadow: 0 3px 8px rgba(82, 54, 54, 0.14);
+  z-index: 2;
+}
+
+.bola-body {
+  position: relative;
+  width: 72%;
+  padding: 14px 12px 14px;
+  margin-top: -2px;
+  border-radius: 18px 18px 26px 26px;
+  background: linear-gradient(180deg, #F5D9DE 0%, #E7B9C1 100%);
+  border: 1.5px solid rgba(169, 95, 106, 0.24);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.bola-spin-btn {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 253, 249, 0.85);
+  background: linear-gradient(145deg, var(--rose) 0%, var(--rose-deep) 100%);
+  color: #FFFDF9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(169, 95, 106, 0.28);
+  transition: transform 0.2s var(--ease-smooth), opacity 0.2s ease;
+}
+
+.bola-spin-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.bola-spin-btn:disabled {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.bola-crank {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 253, 249, 0.5);
+  pointer-events: none;
+  transition: transform 0.9s var(--ease-smooth);
+}
+
+.bola-crank::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #FFFDF9;
+}
+
+.bola-machine.is-spinning .bola-crank {
+  transform: rotate(360deg);
+}
+
+.bola-spin-label {
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.bola-chute {
+  position: relative;
+  width: 54px;
+  height: 38px;
+  border-radius: 12px 12px 16px 16px;
+  background: rgba(58, 46, 46, 0.2);
+  border: 1px solid rgba(169, 95, 106, 0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.bola-drop-ball {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 255, 255, 0.78) 0%,
+    var(--drop-color, #E8AEB7) 58%
+  );
+  box-shadow: 0 4px 10px rgba(82, 54, 54, 0.22);
+  opacity: 0;
+  transform: translate3d(0, -18px, 0);
+  pointer-events: none;
+}
+
+.bola-drop-ball.is-dropping {
+  animation: bola-drop-bounce 0.78s var(--ease-smooth) forwards;
+}
+
+@keyframes bola-drop-bounce {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -24px, 0) scale(0.7);
+  }
+  35% {
+    opacity: 1;
+    transform: translate3d(0, 6px, 0) scale(1);
+  }
+  65% {
+    opacity: 1;
+    transform: translate3d(0, -3px, 0) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 4px, 0) scale(1);
+  }
+}
+
+.bola-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.bola-progress {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.bola-collection-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 95, 106, 0.26);
+  background: var(--paper-warm);
+  color: var(--rose-deep);
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(82, 54, 54, 0.06);
+  transition: transform 0.2s var(--ease-smooth), background-color 0.2s ease;
+}
+
+.bola-collection-btn:active {
+  transform: scale(0.95);
+  background: var(--rose-soft);
+}
+
+/* Overlay bola terbuka */
+.bola-overlay[hidden] {
+  display: none;
+}
+
+.bola-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 82;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(24px + var(--safe-top))
+    calc(20px + var(--safe-right))
+    calc(24px + var(--safe-bottom))
+    calc(20px + var(--safe-left));
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-smooth);
+}
+
+.bola-overlay.is-visible {
+  opacity: 1;
+}
+
+.bola-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(42, 31, 31, 0.68);
+}
+
+.bola-reveal-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.bola-focus-ball {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.36);
+  opacity: 0;
+  transition:
+    transform 0.65s var(--ease-smooth),
+    opacity 0.4s ease;
+}
+
+.bola-overlay.is-visible .bola-focus-ball {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.bola-half {
+  position: absolute;
+  left: 50%;
+  width: 108px;
+  height: 54px;
+  margin-left: -54px;
+  background: radial-gradient(
+    circle at 35% 25%,
+    rgba(255, 255, 255, 0.78) 0%,
+    var(--focus-color, #E8AEB7) 64%
+  );
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition:
+    transform 0.6s var(--ease-smooth),
+    opacity 0.45s ease;
+  z-index: 3;
+}
+
+.bola-half--top {
+  top: 50%;
+  margin-top: -54px;
+  border-radius: 54px 54px 4px 4px;
+}
+
+.bola-half--bottom {
+  top: 50%;
+  border-radius: 4px 4px 54px 54px;
+}
+
+.bola-focus-ball.is-open .bola-half--top {
+  transform: translate3d(0, -84px, 0) rotate(-14deg);
+  opacity: 0.92;
+}
+
+.bola-focus-ball.is-open .bola-half--bottom {
+  transform: translate3d(0, 84px, 0) rotate(8deg);
+  opacity: 0.92;
+}
+
+.bola-glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 249, 245, 0.85) 0%,
+    rgba(255, 249, 245, 0) 70%
+  );
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.45s ease, transform 0.55s var(--ease-smooth);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bola-focus-ball.is-open .bola-glow {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.bola-msg-card {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  padding: 22px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(201, 169, 110, 0.42);
+  background: var(--paper-warm);
+  box-shadow: 0 18px 44px rgba(42, 31, 31, 0.28);
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.84);
+  transition:
+    opacity 0.45s var(--ease-smooth) 0.15s,
+    transform 0.45s var(--ease-smooth) 0.15s;
+}
+
+.bola-focus-ball.is-open .bola-msg-card {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.bola-msg-text {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: clamp(1.45rem, 5.2vw, 1.7rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-ink);
+}
+
+.bola-overlay-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s var(--ease-smooth);
+}
+
+.bola-overlay-actions.is-shown {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  pointer-events: auto;
+}
+
+.bola-overlay-actions .primary-btn,
+.bola-overlay-close {
+  width: 100%;
+  justify-content: center;
+}
+
+.bola-overlay-close {
+  background: rgba(255, 253, 249, 0.9);
+}
+
+/* Bottom Sheet Koleksi Pesan */
+.bola-sheet[hidden] {
+  display: none;
+}
+
+.bola-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 84;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.bola-sheet.is-open {
+  opacity: 1;
+}
+
+.bola-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(42, 31, 31, 0.52);
+}
+
+.bola-sheet-panel {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 560px;
+  max-height: 78dvh;
+  padding: 10px 18px calc(22px + var(--safe-bottom));
+  border-radius: 22px 22px 0 0;
+  background: var(--paper-warm);
+  box-shadow: 0 -12px 36px rgba(42, 31, 31, 0.2);
+  display: flex;
+  flex-direction: column;
+  transform: translate3d(0, 100%, 0);
+  transition: transform 0.35s var(--ease-smooth);
+}
+
+.bola-sheet.is-open .bola-sheet-panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.bola-sheet-handle {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(169, 95, 106, 0.25);
+}
+
+.bola-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.bola-sheet-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-ink);
+}
+
+.bola-sheet-close {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(169, 95, 106, 0.22);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.bola-sheet-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bola-sheet-item {
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 169, 110, 0.26);
+  background: #FFFFFF;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.bola-sheet-item--locked {
+  background: rgba(246, 236, 234, 0.55);
+  border-color: rgba(169, 95, 106, 0.14);
+  color: var(--text-soft);
+}
+
+.bola-sheet-num {
+  font-weight: 600;
+  color: var(--rose-deep);
+  flex-shrink: 0;
+}
+
+.bola-sheet-foot {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* =========================================================
    BREAKPOINTS TABLET & DESKTOP
    ========================================================= */
 @media (min-width: 640px) {
@@ -2471,6 +3081,8 @@ input {
   .floating-petals,
   .petal,
   .victory-heart,
+  .bola-mini,
+  .bola-drop-ball,
   .music-toggle.is-playing .music-bars span {
     animation: none !important;
   }
@@ -2509,7 +3121,16 @@ input {
   .kuis-option,
   .kuis-feedback,
   .kuis-progress-fill,
-  .kuis-coupon-inner {
+  .kuis-coupon-inner,
+  .bola-crank,
+  .bola-overlay,
+  .bola-focus-ball,
+  .bola-half,
+  .bola-glow,
+  .bola-msg-card,
+  .bola-overlay-actions,
+  .bola-sheet,
+  .bola-sheet-panel {
     transition-duration: 0.08s !important;
     animation: none !important;
   }

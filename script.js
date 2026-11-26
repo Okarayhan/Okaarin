@@ -258,11 +258,11 @@ const GAMES = [
     aktif: true,
   },
   {
-    id: "game3",
-    judul: "Tebak Lagu",
-    deskripsi: "Segera hadir",
-    ikon: "🔒",
-    aktif: false,
+    id: "bola",
+    judul: "Mesin Bola Pesan",
+    deskripsi: "Putar dan temukan pesan untukmu",
+    ikon: "🔮",
+    aktif: true,
   },
   {
     id: "game4",
@@ -418,6 +418,39 @@ const KUIS_REWARD = [
   },
 ];
 
+/**
+ * 9. DATA MESIN BOLA PESAN
+ *    Pesan dan warna bola pastel mudah diubah di sini.
+ */
+const BOLA_PESAN = [
+  "Jangan lupa makan",
+  "Kalau kamu lelah, aku selalu ada buat kamu sayang",
+  "Jangan pernah sungkan sama aku",
+  "Kiss aku",
+  "Kamu jangan pernah ragu buat cerita sama aku ya",
+  "Kamu adalah manusia favoritku selamanya sayang",
+  "Kalau kamu capek, peluk dan cium aku sayang",
+  "Cowokmu akan selalu sayang sama kamu",
+  "I love you so much sayang",
+  "Mwahh mwahh mwahh",
+];
+
+const BOLA_WARNA = [
+  "#E8AEB7",
+  "#F4C7B8",
+  "#D5C6E8",
+  "#BFE0C8",
+  "#F3DFC1",
+  "#C5DCE8",
+  "#E6C0C8",
+];
+
+const BOLA_BONUS = {
+  judul: "Semua pesan sudah kamu temukan 🤍",
+  pesan:
+    "Terima kasih sudah membuka semua pesan kecil ini. Kapan pun kamu butuh pelukan, tawa, atau tempat cerita, aku selalu di sini untukmu sayang.",
+};
+
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
    ========================================================================= */
@@ -452,6 +485,10 @@ const KUIS_REWARD = [
     kuis: {
       el: document.getElementById("screen-kuis"),
       onEnter: () => enterKuisScreen(),
+    },
+    bola: {
+      el: document.getElementById("screen-bola"),
+      onEnter: () => enterBolaScreen(),
     },
   };
 
@@ -2369,6 +2406,352 @@ const KUIS_REWARD = [
     }
 
     showKuisView("intro");
+  }
+
+  // --- Logika Layar 9: Mesin Bola Pesan ---
+  const bolaBackBtn = document.getElementById("bola-back-btn");
+  const bolaMachine = document.getElementById("bola-machine");
+  const bolaPile = document.getElementById("bola-pile");
+  const bolaSpinBtn = document.getElementById("bola-spin-btn");
+  const bolaDropBall = document.getElementById("bola-drop-ball");
+  const bolaProgress = document.getElementById("bola-progress");
+  const bolaCollectionBtn = document.getElementById("bola-collection-btn");
+
+  const bolaOverlay = document.getElementById("bola-overlay");
+  const bolaOverlayBackdrop = document.getElementById("bola-overlay-backdrop");
+  const bolaFocusBall = document.getElementById("bola-focus-ball");
+  const bolaMsgText = document.getElementById("bola-msg-text");
+  const bolaOverlayActions = document.getElementById("bola-overlay-actions");
+  const bolaAgainBtn = document.getElementById("bola-again-btn");
+  const bolaCloseBtn = document.getElementById("bola-close-btn");
+
+  const bolaSheet = document.getElementById("bola-sheet");
+  const bolaSheetBackdrop = document.getElementById("bola-sheet-backdrop");
+  const bolaSheetClose = document.getElementById("bola-sheet-close");
+  const bolaSheetList = document.getElementById("bola-sheet-list");
+  const bolaResetBtn = document.getElementById("bola-reset-btn");
+  const bolaResetConfirm = document.getElementById("bola-reset-confirm");
+  const bolaResetYes = document.getElementById("bola-reset-yes");
+  const bolaResetNo = document.getElementById("bola-reset-no");
+
+  const bolaBonus = document.getElementById("bola-bonus");
+  const bolaBonusBackdrop = document.getElementById("bola-bonus-backdrop");
+  const bolaBonusHearts = document.getElementById("bola-bonus-hearts");
+  const bolaBonusTitle = document.getElementById("bola-bonus-title");
+  const bolaBonusMessage = document.getElementById("bola-bonus-message");
+  const bolaBonusClose = document.getElementById("bola-bonus-close");
+
+  let bolaInitDone = false;
+  let isAnimating = false;
+  let bolaFound = new Set();
+  let pendingBolaBonus = false;
+  let bolaTimers = [];
+
+  function clearBolaTimers() {
+    bolaTimers.forEach((t) => window.clearTimeout(t));
+    bolaTimers = [];
+  }
+
+  function loadBolaFound() {
+    try {
+      const raw = window.localStorage.getItem("bolaFound");
+      const parsed = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(parsed)) {
+        bolaFound = new Set(
+          parsed.filter(
+            (i) => Number.isInteger(i) && i >= 0 && i < BOLA_PESAN.length,
+          ),
+        );
+      }
+    } catch {
+      bolaFound = new Set();
+    }
+  }
+
+  function saveBolaFound() {
+    try {
+      window.localStorage.setItem(
+        "bolaFound",
+        JSON.stringify(Array.from(bolaFound)),
+      );
+    } catch {
+      // Abaikan jika penyimpanan lokal dibatasi
+    }
+  }
+
+  function updateBolaProgressUI() {
+    bolaProgress.textContent = `Pesan terkumpul: ${bolaFound.size} / ${BOLA_PESAN.length}`;
+  }
+
+  function buildBolaPile() {
+    bolaPile.innerHTML = "";
+    const positions = [
+      { left: 16, bottom: 10 },
+      { left: 32, bottom: 8 },
+      { left: 48, bottom: 9 },
+      { left: 64, bottom: 11 },
+      { left: 22, bottom: 24 },
+      { left: 39, bottom: 22 },
+      { left: 55, bottom: 23 },
+      { left: 70, bottom: 25 },
+      { left: 14, bottom: 36 },
+      { left: 30, bottom: 38 },
+      { left: 46, bottom: 36 },
+      { left: 62, bottom: 38 },
+      { left: 26, bottom: 51 },
+      { left: 45, bottom: 50 },
+    ];
+
+    const frag = document.createDocumentFragment();
+    positions.forEach((pos, idx) => {
+      const ball = document.createElement("span");
+      ball.className = "bola-mini";
+      const color = BOLA_WARNA[idx % BOLA_WARNA.length];
+      ball.style.left = `${pos.left}%`;
+      ball.style.bottom = `${pos.bottom}%`;
+      ball.style.setProperty("--ball-color", color);
+      ball.style.setProperty("--ball-delay", `${-(idx * 0.35)}s`);
+      frag.appendChild(ball);
+    });
+    bolaPile.appendChild(frag);
+  }
+
+  function pickNextBolaMessageIndex() {
+    const unfound = [];
+    for (let i = 0; i < BOLA_PESAN.length; i++) {
+      if (!bolaFound.has(i)) unfound.push(i);
+    }
+    const pool =
+      unfound.length > 0
+        ? unfound
+        : BOLA_PESAN.map((_, idx) => idx);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function openBolaBonusModal() {
+    bolaBonusTitle.textContent = BOLA_BONUS.judul;
+    bolaBonusMessage.textContent = BOLA_BONUS.pesan;
+    bolaBonusHearts.innerHTML = "";
+
+    if (!prefersReducedMotion) {
+      const count = 14;
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement("span");
+        heart.className = "victory-heart";
+        heart.textContent = i % 2 === 0 ? "🤍" : "♥";
+        heart.style.left = `${6 + ((i * 7) % 88)}%`;
+        heart.style.setProperty("--vh-dur", `${2.8 + (i % 4) * 0.45}s`);
+        heart.style.setProperty("--vh-delay", `${(i % 5) * 0.22}s`);
+        heart.style.setProperty(
+          "--vh-drift",
+          `${(i % 2 === 0 ? 1 : -1) * (14 + (i % 3) * 10)}px`,
+        );
+        heart.style.setProperty(
+          "--vh-rot",
+          `${(i % 2 === 0 ? 1 : -1) * (20 + i * 6)}deg`,
+        );
+        bolaBonusHearts.appendChild(heart);
+      }
+    }
+
+    bolaBonus.hidden = false;
+    requestAnimationFrame(() => {
+      bolaBonus.classList.add("is-open");
+    });
+    bolaBonusClose.focus();
+  }
+
+  function closeBolaBonusModal() {
+    bolaBonus.classList.remove("is-open");
+    window.setTimeout(() => {
+      bolaBonus.hidden = true;
+      bolaBonusHearts.innerHTML = "";
+    }, prefersReducedMotion ? 40 : 300);
+  }
+
+  function closeBolaOverlay({ spinAgain = false } = {}) {
+    bolaOverlay.classList.remove("is-visible");
+    window.setTimeout(() => {
+      bolaOverlay.hidden = true;
+      bolaFocusBall.classList.remove("is-open");
+      bolaOverlayActions.classList.remove("is-shown");
+      bolaDropBall.classList.remove("is-dropping");
+
+      if (spinAgain) {
+        spinBolaMachine();
+      } else if (pendingBolaBonus) {
+        pendingBolaBonus = false;
+        openBolaBonusModal();
+      }
+    }, prefersReducedMotion ? 40 : 280);
+  }
+
+  function spinBolaMachine() {
+    if (isAnimating) return;
+    isAnimating = true;
+    bolaSpinBtn.disabled = true;
+    clearBolaTimers();
+
+    const msgIdx = pickNextBolaMessageIndex();
+    const color = BOLA_WARNA[Math.floor(Math.random() * BOLA_WARNA.length)];
+    const wasComplete = bolaFound.size === BOLA_PESAN.length;
+
+    bolaFound.add(msgIdx);
+    saveBolaFound();
+    updateBolaProgressUI();
+    if (!wasComplete && bolaFound.size === BOLA_PESAN.length) {
+      pendingBolaBonus = true;
+    }
+
+    bolaMsgText.textContent = BOLA_PESAN[msgIdx];
+    bolaDropBall.style.setProperty("--drop-color", color);
+    bolaFocusBall.style.setProperty("--focus-color", color);
+    bolaFocusBall.classList.remove("is-open");
+    bolaOverlayActions.classList.remove("is-shown");
+
+    if (prefersReducedMotion) {
+      bolaOverlay.hidden = false;
+      requestAnimationFrame(() => {
+        bolaOverlay.classList.add("is-visible");
+        bolaFocusBall.classList.add("is-open");
+        bolaOverlayActions.classList.add("is-shown");
+      });
+      isAnimating = false;
+      bolaSpinBtn.disabled = false;
+      return;
+    }
+
+    // a) Putar tuas & goyang bola di dalam kaca
+    bolaMachine.classList.add("is-spinning", "is-shaking");
+
+    // b) Bola jatuh keluar dari lubang
+    bolaTimers.push(
+      window.setTimeout(() => {
+        bolaMachine.classList.remove("is-shaking");
+        bolaDropBall.classList.remove("is-dropping");
+        void bolaDropBall.offsetWidth;
+        bolaDropBall.classList.add("is-dropping");
+      }, 850),
+    );
+
+    // c) Overlay gelap & bola membesar ke tengah layar
+    bolaTimers.push(
+      window.setTimeout(() => {
+        bolaMachine.classList.remove("is-spinning");
+        bolaOverlay.hidden = false;
+        requestAnimationFrame(() => {
+          bolaOverlay.classList.add("is-visible");
+        });
+      }, 1650),
+    );
+
+    // d) Bola terbelah dua & kartu pesan muncul
+    bolaTimers.push(
+      window.setTimeout(() => {
+        bolaFocusBall.classList.add("is-open");
+      }, 2400),
+    );
+
+    // e) Tombol Putar lagi & Tutup muncul, kunci dibuka
+    bolaTimers.push(
+      window.setTimeout(() => {
+        bolaOverlayActions.classList.add("is-shown");
+        isAnimating = false;
+        bolaSpinBtn.disabled = false;
+        bolaAgainBtn.focus();
+      }, 3050),
+    );
+  }
+
+  function renderBolaCollection() {
+    bolaSheetList.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    BOLA_PESAN.forEach((msg, idx) => {
+      const li = document.createElement("li");
+      const found = bolaFound.has(idx);
+      li.className = found
+        ? "bola-sheet-item"
+        : "bola-sheet-item bola-sheet-item--locked";
+
+      const numSpan = document.createElement("span");
+      numSpan.className = "bola-sheet-num";
+      numSpan.textContent = `${idx + 1}.`;
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = found ? msg : "🔒 Belum ditemukan";
+
+      li.appendChild(numSpan);
+      li.appendChild(textSpan);
+      frag.appendChild(li);
+    });
+    bolaSheetList.appendChild(frag);
+  }
+
+  function openBolaSheet() {
+    bolaResetConfirm.hidden = true;
+    renderBolaCollection();
+    bolaSheet.hidden = false;
+    requestAnimationFrame(() => {
+      bolaSheet.classList.add("is-open");
+    });
+    bolaSheetClose.focus();
+  }
+
+  function closeBolaSheet() {
+    bolaSheet.classList.remove("is-open");
+    window.setTimeout(() => {
+      bolaSheet.hidden = true;
+    }, prefersReducedMotion ? 40 : 280);
+  }
+
+  function enterBolaScreen() {
+    if (!bolaInitDone) {
+      bolaInitDone = true;
+      loadBolaFound();
+      buildBolaPile();
+      updateBolaProgressUI();
+
+      bolaBackBtn.addEventListener("click", () => {
+        if (history.state && history.state.screen === "bola") {
+          history.back();
+        } else {
+          showScreen("games");
+        }
+      });
+
+      bolaSpinBtn.addEventListener("click", spinBolaMachine);
+      bolaAgainBtn.addEventListener("click", () =>
+        closeBolaOverlay({ spinAgain: true }),
+      );
+      bolaCloseBtn.addEventListener("click", () => closeBolaOverlay());
+      bolaOverlayBackdrop.addEventListener("click", () => {
+        if (!isAnimating) closeBolaOverlay();
+      });
+
+      bolaCollectionBtn.addEventListener("click", openBolaSheet);
+      bolaSheetClose.addEventListener("click", closeBolaSheet);
+      bolaSheetBackdrop.addEventListener("click", closeBolaSheet);
+
+      bolaResetBtn.addEventListener("click", () => {
+        bolaResetConfirm.hidden = !bolaResetConfirm.hidden;
+      });
+      bolaResetNo.addEventListener("click", () => {
+        bolaResetConfirm.hidden = true;
+      });
+      bolaResetYes.addEventListener("click", () => {
+        bolaFound = new Set();
+        pendingBolaBonus = false;
+        saveBolaFound();
+        updateBolaProgressUI();
+        renderBolaCollection();
+        bolaResetConfirm.hidden = true;
+      });
+
+      bolaBonusClose.addEventListener("click", closeBolaBonusModal);
+      bolaBonusBackdrop.addEventListener("click", closeBolaBonusModal);
+    } else {
+      updateBolaProgressUI();
+    }
   }
 
   // --- Mode Development: lompat langsung ke layar tertentu ---
