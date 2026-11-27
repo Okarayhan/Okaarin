@@ -4075,6 +4075,341 @@ input {
 }
 
 /* =========================================================
+   KOTAK PESAN
+   ========================================================= */
+.screen-inner--pesan {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-top: 0;
+  padding-bottom: calc(44px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pesan-header {
+  text-align: center;
+}
+
+.pesan-title {
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  color: var(--rose-deep);
+  margin: 0 0 4px;
+}
+
+.pesan-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-soft);
+}
+
+.pesan-unconfigured {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 240, 242, 0.9);
+  border: 1px solid rgba(184, 74, 98, 0.25);
+  color: var(--rose-deep);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.pesan-composer {
+  position: relative;
+  background: var(--paper-warm);
+  border: 1px solid rgba(200, 125, 135, 0.26);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pesan-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pesan-textarea {
+  width: 100%;
+  min-height: 136px;
+  max-height: 320px;
+  resize: vertical;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-main);
+  background: rgba(255, 252, 248, 0.9);
+  border: 1px solid rgba(169, 95, 106, 0.24);
+  border-radius: 14px;
+  padding: 12px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pesan-textarea:focus {
+  border-color: var(--rose-deep);
+  box-shadow: 0 0 0 3px rgba(200, 125, 135, 0.16);
+}
+
+.pesan-meta-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pesan-counter {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.pesan-counter.is-over {
+  color: #b84452;
+  font-weight: 600;
+}
+
+.pesan-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pesan-chip {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 95, 106, 0.24);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.pesan-chip:active {
+  transform: scale(0.96);
+  background: var(--rose-soft);
+}
+
+.pesan-send-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.pesan-send-btn {
+  width: 100%;
+  min-height: 48px;
+  justify-content: center;
+  font-size: 1rem;
+  touch-action: manipulation;
+}
+
+.pesan-send-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.pesan-fly-anim {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 1.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0) scale(0.7);
+}
+
+.pesan-fly-anim.is-flying {
+  animation: pesan-fly-up 0.9s var(--ease-smooth) forwards;
+}
+
+@keyframes pesan-fly-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -40%, 0) scale(0.7);
+  }
+  25% {
+    opacity: 1;
+    transform: translate3d(-50%, -90%, 0) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -240%, 0) scale(0.95);
+  }
+}
+
+.pesan-status-msg {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  background: var(--success-soft);
+  border: 1px solid var(--success-border);
+  color: #3f5e48;
+}
+
+.pesan-status-msg.is-pending {
+  background: #fff7e6;
+  border-color: rgba(212, 151, 44, 0.38);
+  color: #7c5310;
+}
+
+.pesan-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.pesan-section[hidden] {
+  display: none;
+}
+
+.pesan-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--rose-deep);
+  margin: 0;
+}
+
+.pesan-replies-list,
+.pesan-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pesan-reply-card {
+  background: linear-gradient(180deg, #fffdf9 0%, #fbf3ed 100%);
+  border: 1px solid rgba(200, 125, 135, 0.3);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 16px rgba(169, 95, 106, 0.08);
+}
+
+.pesan-reply-date {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.pesan-reply-body {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  line-height: 1.45;
+  color: var(--text-main);
+  white-space: pre-wrap;
+}
+
+.pesan-history-empty {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+.pesan-history-card {
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(169, 95, 106, 0.2);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.pesan-history-card:active {
+  transform: scale(0.99);
+}
+
+.pesan-history-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.pesan-history-date {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.pesan-history-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.pesan-history-badge--sent {
+  background: var(--success-soft);
+  color: #3f5e48;
+  border: 1px solid var(--success-border);
+}
+
+.pesan-history-badge--pending {
+  background: #fff4dc;
+  color: #8a5b10;
+  border: 1px solid rgba(212, 151, 44, 0.35);
+}
+
+.pesan-history-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  line-height: 1.45;
+  color: var(--text-main);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pesan-history-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.pesan-retry-btn {
+  min-height: 44px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 95, 106, 0.3);
+  background: var(--rose-soft);
+  color: var(--rose-deep);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.pesan-clear-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+}
+
+/* =========================================================
    LAYAR KECIL (<= 365px) AGAR TETAP NYAMAN TANPA OVERFLOW
    ========================================================= */
 @media (max-width: 365px) {
@@ -4175,8 +4510,15 @@ input {
 
   .pb-flash,
   .pb-frame,
-  .pb-undo-toast {
+  .pb-undo-toast,
+  .pesan-textarea,
+  .pesan-chip,
+  .pesan-history-card {
     transition-duration: 0.08s !important;
+  }
+
+  .pesan-fly-anim.is-flying {
+    animation: none !important;
   }
 
   .envelope-hint {

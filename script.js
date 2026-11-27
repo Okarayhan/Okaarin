@@ -80,11 +80,11 @@ const PANEL_MENU = [
     active: true,
   },
   {
-    id: "playlist",
-    title: "Cerita Lagu",
-    desc: "Lagu-lagu yang selalu mengingatkanku padamu",
-    icon: "🎵",
-    active: false,
+    id: "pesan",
+    title: "Kotak Pesan",
+    desc: "Tulis apa saja untukku",
+    icon: "💌",
+    active: true,
   },
   {
     id: "photobooth",
@@ -509,6 +509,22 @@ const GAME_COIN_REWARD = {
   tangkapMinimal: 5,
 };
 
+/**
+ * 13. KOTAK PESAN (GOOGLE FORM) & BALASAN MANUAL
+ */
+const PESAN_CONFIG = {
+  formUrl:
+    "https://docs.google.com/forms/d/e/1FAIpQLSfRF7WK-PVVwkUW5JIO4rWHic6f4Cm9bpV6crmTZNhL5ZIZGg/formResponse",
+  entryPesan: "entry.561973235",
+  maksKarakter: 1000,
+  jedaDetik: 30,
+  namaPenerima: "Oka",
+};
+
+const PESAN_BALASAN = [
+  // { tanggal: "2026-11-28", isi: "Terima kasih ya sayang sudah nulis di sini 🤍" },
+];
+
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
    ========================================================================= */
@@ -555,6 +571,10 @@ const GAME_COIN_REWARD = {
     photobooth: {
       el: document.getElementById("screen-photobooth"),
       onEnter: () => enterPhotoboothScreen(),
+    },
+    pesan: {
+      el: document.getElementById("screen-pesan"),
+      onEnter: () => enterPesanScreen(),
     },
   };
 
@@ -4541,6 +4561,454 @@ const GAME_COIN_REWARD = {
         pbPermCard.hidden = false;
       }
     }
+  }
+
+  // =========================================================
+  // LOGIKA FITUR: KOTAK PESAN (GOOGLE FORM)
+  // =========================================================
+  const PESAN_STORAGE_KEY = "pesanRiwayat";
+  const PESAN_MAX_HISTORY = 50;
+  let pesanInitDone = false;
+  let pesanHistory = [];
+  let pesanIsSending = false;
+  let pesanCooldownLeft = 0;
+  let pesanCooldownTimer = null;
+  let pesanExpandedIds = new Set();
+
+  const pesanBackBtn = document.getElementById("pesan-back-btn");
+  const pesanSubtitle = document.getElementById("pesan-subtitle");
+  const pesanUnconfigured = document.getElementById("pesan-unconfigured");
+  const pesanHp = document.getElementById("pesan-hp");
+  const pesanTextarea = document.getElementById("pesan-textarea");
+  const pesanCounter = document.getElementById("pesan-counter");
+  const pesanSendBtn = document.getElementById("pesan-send-btn");
+  const pesanFlyAnim = document.getElementById("pesan-fly-anim");
+  const pesanStatusMsg = document.getElementById("pesan-status-msg");
+  const pesanRepliesSection = document.getElementById("pesan-replies-section");
+  const pesanRepliesTitle = document.getElementById("pesan-replies-title");
+  const pesanRepliesList = document.getElementById("pesan-replies-list");
+  const pesanHistoryEmpty = document.getElementById("pesan-history-empty");
+  const pesanHistoryList = document.getElementById("pesan-history-list");
+  const pesanClearWrap = document.getElementById("pesan-clear-wrap");
+  const pesanClearBtn = document.getElementById("pesan-clear-btn");
+  const pesanClearConfirm = document.getElementById("pesan-clear-confirm");
+  const pesanClearYes = document.getElementById("pesan-clear-yes");
+  const pesanClearNo = document.getElementById("pesan-clear-no");
+  const pesanInnerEl = document.querySelector(".screen-inner--pesan");
+
+  function isPesanConfigured() {
+    return Boolean(
+      PESAN_CONFIG &&
+      PESAN_CONFIG.formUrl &&
+      PESAN_CONFIG.formUrl.trim() &&
+      PESAN_CONFIG.entryPesan &&
+      PESAN_CONFIG.entryPesan.trim(),
+    );
+  }
+
+  function loadPesanHistory() {
+    try {
+      const raw = localStorage.getItem(PESAN_STORAGE_KEY);
+      if (!raw) {
+        pesanHistory = [];
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      pesanHistory = Array.isArray(parsed) ? parsed.slice(0, PESAN_MAX_HISTORY) : [];
+    } catch (_) {
+      pesanHistory = [];
+    }
+  }
+
+  function savePesanHistory() {
+    try {
+      localStorage.setItem(
+        PESAN_STORAGE_KEY,
+        JSON.stringify(pesanHistory.slice(0, PESAN_MAX_HISTORY)),
+      );
+    } catch (_) {}
+  }
+
+  function formatPesanDateTime(isoStr) {
+    try {
+      const d = new Date(isoStr);
+      return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(d);
+    } catch (_) {
+      return isoStr;
+    }
+  }
+
+  function updatePesanComposerState() {
+    const raw = pesanTextarea.value;
+    const len = raw.length;
+    const trimmed = raw.trim();
+    const max = PESAN_CONFIG.maksKarakter;
+
+    pesanCounter.textContent = `${len} / ${max}`;
+    pesanCounter.classList.toggle("is-over", len > max);
+
+    // Auto-resize tinggi textarea
+    pesanTextarea.style.height = "auto";
+    pesanTextarea.style.height = `${Math.min(320, Math.max(136, pesanTextarea.scrollHeight))}px`;
+
+    const configured = isPesanConfigured();
+    pesanUnconfigured.hidden = configured;
+
+    if (pesanIsSending) {
+      pesanSendBtn.disabled = true;
+      pesanSendBtn.textContent = "Mengirim...";
+      return;
+    }
+
+    if (pesanCooldownLeft > 0) {
+      pesanSendBtn.disabled = true;
+      pesanSendBtn.textContent = `Tunggu ${pesanCooldownLeft} detik...`;
+      return;
+    }
+
+    pesanSendBtn.textContent = "Kirim 💌";
+    pesanSendBtn.disabled = !configured || trimmed.length === 0 || len > max;
+  }
+
+  function startPesanCooldown() {
+    clearInterval(pesanCooldownTimer);
+    pesanCooldownLeft = PESAN_CONFIG.jedaDetik;
+    updatePesanComposerState();
+    pesanCooldownTimer = setInterval(() => {
+      pesanCooldownLeft--;
+      if (pesanCooldownLeft <= 0) {
+        pesanCooldownLeft = 0;
+        clearInterval(pesanCooldownTimer);
+        pesanCooldownTimer = null;
+      }
+      updatePesanComposerState();
+    }, 1000);
+  }
+
+  function showPesanStatus(text, isPending = false) {
+    pesanStatusMsg.textContent = text;
+    pesanStatusMsg.classList.toggle("is-pending", isPending);
+    pesanStatusMsg.hidden = false;
+  }
+
+  function triggerPesanFlyAnimation() {
+    if (prefersReducedMotion || !pesanFlyAnim) return;
+    pesanFlyAnim.classList.remove("is-flying");
+    void pesanFlyAnim.offsetWidth;
+    pesanFlyAnim.classList.add("is-flying");
+  }
+
+  async function sendToGoogleForm(teks) {
+    const body = new URLSearchParams();
+    body.append(PESAN_CONFIG.entryPesan, teks);
+
+    await fetch(PESAN_CONFIG.formUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+  }
+
+  function renderPesanReplies() {
+    if (!Array.isArray(PESAN_BALASAN) || PESAN_BALASAN.length === 0) {
+      pesanRepliesSection.hidden = true;
+      return;
+    }
+
+    pesanRepliesSection.hidden = false;
+    pesanRepliesTitle.textContent = `Balasan dari ${PESAN_CONFIG.namaPenerima}`;
+    pesanRepliesList.innerHTML = "";
+
+    const ordered = [...PESAN_BALASAN].reverse();
+    ordered.forEach((reply) => {
+      const card = document.createElement("article");
+      card.className = "pesan-reply-card";
+
+      const dateEl = document.createElement("p");
+      dateEl.className = "pesan-reply-date";
+      dateEl.textContent = reply.tanggal
+        ? formatIndonesianDate(new Date(reply.tanggal))
+        : "";
+
+      const bodyEl = document.createElement("p");
+      bodyEl.className = "pesan-reply-body";
+      bodyEl.textContent = reply.isi || "";
+
+      card.appendChild(dateEl);
+      card.appendChild(bodyEl);
+      pesanRepliesList.appendChild(card);
+    });
+  }
+
+  function renderPesanHistory() {
+    pesanHistoryList.innerHTML = "";
+    const hasItems = pesanHistory.length > 0;
+    pesanHistoryEmpty.hidden = hasItems;
+    pesanClearWrap.hidden = !hasItems;
+    if (!hasItems) {
+      pesanClearConfirm.hidden = true;
+      return;
+    }
+
+    pesanHistory.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "pesan-history-card";
+      card.setAttribute("role", "listitem");
+      card.setAttribute("tabindex", "0");
+
+      const top = document.createElement("div");
+      top.className = "pesan-history-top";
+
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "pesan-history-date";
+      dateSpan.textContent = formatPesanDateTime(item.createdAt);
+
+      const badge = document.createElement("span");
+      badge.className =
+        item.status === "sent"
+          ? "pesan-history-badge pesan-history-badge--sent"
+          : "pesan-history-badge pesan-history-badge--pending";
+      badge.textContent =
+        item.status === "sent" ? "Terkirim" : "Menunggu dikirim";
+
+      top.appendChild(dateSpan);
+      top.appendChild(badge);
+      card.appendChild(top);
+
+      const isExpanded = pesanExpandedIds.has(item.id);
+      const isLong = item.text.length > 90;
+      const textEl = document.createElement("p");
+      textEl.className = "pesan-history-text";
+      textEl.textContent =
+        isExpanded || !isLong ? item.text : `${item.text.slice(0, 90)}…`;
+      card.appendChild(textEl);
+
+      if (isLong) {
+        card.addEventListener("click", () => {
+          if (pesanExpandedIds.has(item.id)) {
+            pesanExpandedIds.delete(item.id);
+          } else {
+            pesanExpandedIds.add(item.id);
+          }
+          renderPesanHistory();
+        });
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            card.click();
+          }
+        });
+      }
+
+      if (item.status === "pending") {
+        const actions = document.createElement("div");
+        actions.className = "pesan-history-actions";
+
+        const retryBtn = document.createElement("button");
+        retryBtn.type = "button";
+        retryBtn.className = "pesan-retry-btn";
+        retryBtn.textContent = "Kirim ulang";
+        retryBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          if (!isPesanConfigured()) return;
+          retryBtn.disabled = true;
+          retryBtn.textContent = "Mengirim...";
+          try {
+            await sendToGoogleForm(item.text);
+            item.status = "sent";
+            savePesanHistory();
+            renderPesanHistory();
+            showPesanStatus(
+              `Terkirim 🤍 Macii yaa udaa ngirim pesan saayaang`,
+              false,
+            );
+          } catch (_) {
+            retryBtn.disabled = false;
+            retryBtn.textContent = "Kirim ulang";
+            showPesanStatus(
+              "Belum ada koneksi, pesanmu disimpan dan akan dikirim saat online",
+              true,
+            );
+          }
+        });
+
+        actions.appendChild(retryBtn);
+        card.appendChild(actions);
+      }
+
+      pesanHistoryList.appendChild(card);
+    });
+  }
+
+  async function retryPendingPesan() {
+    if (!isPesanConfigured() || !navigator.onLine) return;
+    const pendingItems = pesanHistory.filter((it) => it.status === "pending");
+    if (pendingItems.length === 0) return;
+
+    let anySent = false;
+    for (const item of pendingItems) {
+      try {
+        await sendToGoogleForm(item.text);
+        item.status = "sent";
+        anySent = true;
+      } catch (_) {
+        break;
+      }
+    }
+
+    if (anySent) {
+      savePesanHistory();
+      renderPesanHistory();
+      showPesanStatus(
+        `Pesan tertunda sudah terkirim ke ${PESAN_CONFIG.namaPenerima} 🤍`,
+        false,
+      );
+    }
+  }
+
+  async function handlePesanSend() {
+    if (!isPesanConfigured() || pesanIsSending || pesanCooldownLeft > 0) return;
+
+    // Perlindungan honeypot
+    if (pesanHp && pesanHp.value.trim() !== "") return;
+
+    const teks = pesanTextarea.value.trim();
+    if (!teks || teks.length > PESAN_CONFIG.maksKarakter) return;
+
+    pesanIsSending = true;
+    pesanStatusMsg.hidden = true;
+    updatePesanComposerState();
+
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      text: teks,
+      createdAt: new Date().toISOString(),
+      status: "sent",
+    };
+
+    try {
+      await sendToGoogleForm(teks);
+      pesanIsSending = false;
+      pesanTextarea.value = "";
+      triggerPesanFlyAnimation();
+      showPesanStatus(
+        `Terkirim 🤍 macii yaa sayaang pesanmuu uda sampee ke aku`,
+        false,
+      );
+      pesanHistory.unshift(entry);
+      if (pesanHistory.length > PESAN_MAX_HISTORY) {
+        pesanHistory.length = PESAN_MAX_HISTORY;
+      }
+      savePesanHistory();
+      renderPesanHistory();
+      startPesanCooldown();
+    } catch (_) {
+      pesanIsSending = false;
+      entry.status = "pending";
+      pesanTextarea.value = "";
+      showPesanStatus(
+        "Belum ada koneksi, pesanmu disimpan dan akan dikirim saat online",
+        true,
+      );
+      pesanHistory.unshift(entry);
+      if (pesanHistory.length > PESAN_MAX_HISTORY) {
+        pesanHistory.length = PESAN_MAX_HISTORY;
+      }
+      savePesanHistory();
+      renderPesanHistory();
+      updatePesanComposerState();
+    }
+  }
+
+  function enterPesanScreen() {
+    if (!pesanInitDone) {
+      pesanInitDone = true;
+
+      pesanSubtitle.textContent = `Tulis apa saja, pesannya langsung sampai ke ${PESAN_CONFIG.namaPenerima} 🤍`;
+      loadPesanHistory();
+      renderPesanReplies();
+      renderPesanHistory();
+      updatePesanComposerState();
+
+      pesanBackBtn.addEventListener("click", () => {
+        if (history.state && history.state.screen === "pesan") {
+          history.back();
+        } else {
+          showScreen("panel");
+        }
+      });
+
+      pesanTextarea.addEventListener("input", updatePesanComposerState);
+
+      // Pastikan tombol Kirim tetap terlihat saat keyboard iOS muncul
+      pesanTextarea.addEventListener("focus", () => {
+        window.setTimeout(() => {
+          pesanSendBtn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }, 280);
+      });
+
+      if (window.visualViewport && pesanInnerEl) {
+        window.visualViewport.addEventListener("resize", () => {
+          if (currentScreen !== "pesan") return;
+          const kbHeight = Math.max(
+            0,
+            window.innerHeight - window.visualViewport.height,
+          );
+          pesanInnerEl.style.paddingBottom =
+            kbHeight > 80
+              ? `${kbHeight + 24}px`
+              : "";
+        });
+      }
+
+      document.querySelectorAll("[data-pesan-chip]").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const phrase = chip.dataset.pesanChip || "";
+          const cur = pesanTextarea.value;
+          const sep = cur.length > 0 && !/\s$/.test(cur) ? " " : "";
+          const next = `${cur}${sep}${phrase}`;
+          if (next.length <= PESAN_CONFIG.maksKarakter) {
+            pesanTextarea.value = next;
+          }
+          updatePesanComposerState();
+          pesanTextarea.focus();
+        });
+      });
+
+      pesanSendBtn.addEventListener("click", handlePesanSend);
+
+      pesanClearBtn.addEventListener("click", () => {
+        pesanClearConfirm.hidden = !pesanClearConfirm.hidden;
+      });
+
+      pesanClearNo.addEventListener("click", () => {
+        pesanClearConfirm.hidden = true;
+      });
+
+      pesanClearYes.addEventListener("click", () => {
+        pesanHistory = [];
+        pesanExpandedIds.clear();
+        savePesanHistory();
+        renderPesanHistory();
+        pesanClearConfirm.hidden = true;
+      });
+
+      window.addEventListener("online", retryPendingPesan);
+    } else {
+      pesanClearConfirm.hidden = true;
+      updatePesanComposerState();
+    }
+
+    retryPendingPesan();
   }
 
   // --- Mode Development: lompat langsung ke layar tertentu ---

@@ -1179,6 +1179,127 @@
           </div>
         </div>
       </section>
+
+      <!-- =====================================================
+         LAYAR KOTAK PESAN
+         ===================================================== -->
+      <section
+        id="screen-pesan"
+        class="screen screen--scrollable"
+        aria-labelledby="pesan-title"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--pesan">
+          <div class="gallery-sticky-bar">
+            <button
+              type="button"
+              id="pesan-back-btn"
+              class="ghost-btn"
+              aria-label="Kembali ke Panel"
+            >
+              ← Kembali ke Panel
+            </button>
+          </div>
+
+          <header class="pesan-header">
+            <h2 id="pesan-title" class="pesan-title">Kotak Pesan</h2>
+            <p id="pesan-subtitle" class="pesan-subtitle">
+              Tulis apa saja, pesannya langsung sampai ke Oka 🤍
+            </p>
+          </header>
+
+          <p id="pesan-unconfigured" class="pesan-unconfigured" hidden>
+            Kotak pesan belum disambungkan
+          </p>
+
+          <!-- Komposer Pesan (tanpa tag <form>) -->
+          <div class="pesan-composer" id="pesan-composer">
+            <input
+              type="text"
+              id="pesan-hp"
+              class="pesan-honeypot"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+            />
+
+            <textarea
+              id="pesan-textarea"
+              class="pesan-textarea"
+              rows="5"
+              placeholder="Tulis pesanmu di sini..."
+              aria-label="Tulis pesanmu di sini"
+            ></textarea>
+
+            <div class="pesan-meta-row">
+              <span id="pesan-counter" class="pesan-counter">0 / 1000</span>
+            </div>
+
+            <div class="pesan-chips" role="group" aria-label="Pesan cepat">
+              <button type="button" class="pesan-chip" data-pesan-chip="Kangen kamu 🤍">Kangen kamu 🤍</button>
+              <button type="button" class="pesan-chip" data-pesan-chip="Makasih ya sayang">macii ya sayang</button>
+              <button type="button" class="pesan-chip" data-pesan-chip="Aku capek hari ini">Aku capee hari ini</button>
+              <button type="button" class="pesan-chip" data-pesan-chip="Lagi mikirin kamu">Lagi mikirin kamu</button>
+            </div>
+
+            <div class="pesan-send-wrap">
+              <span id="pesan-fly-anim" class="pesan-fly-anim" aria-hidden="true">💌</span>
+              <button
+                type="button"
+                id="pesan-send-btn"
+                class="primary-btn is-visible pesan-send-btn"
+                disabled
+              >
+                Kirim 💌
+              </button>
+            </div>
+
+            <p id="pesan-status-msg" class="pesan-status-msg" role="status" aria-live="polite" hidden></p>
+          </div>
+
+          <!-- Balasan dari Penerima (opsional) -->
+          <section id="pesan-replies-section" class="pesan-section" hidden>
+            <h3 id="pesan-replies-title" class="pesan-section-title">Balasan dari Oka</h3>
+            <div id="pesan-replies-list" class="pesan-replies-list"></div>
+          </section>
+
+          <!-- Riwayat Pesan di Perangkat -->
+          <section id="pesan-history-section" class="pesan-section">
+            <h3 class="pesan-section-title">Pesan yang pernah kamu kirim</h3>
+            <p id="pesan-history-empty" class="pesan-history-empty">
+              Belum ada pesan yang dikirim dari perangkat ini 🤍
+            </p>
+            <div id="pesan-history-list" class="pesan-history-list" role="list"></div>
+
+            <div id="pesan-clear-wrap" class="pesan-clear-wrap" hidden>
+              <button type="button" id="pesan-clear-btn" class="tts-reset-btn">
+                Hapus riwayat di perangkat ini
+              </button>
+              <div id="pesan-clear-confirm" class="tts-reset-confirm" hidden>
+                <p class="tts-reset-confirm-text">
+                  Hapus riwayat pesan di perangkat ini? (Pesan yang sudah terkirim tetap aman)
+                </p>
+                <div class="tts-reset-confirm-actions">
+                  <button
+                    type="button"
+                    id="pesan-clear-yes"
+                    class="tts-confirm-btn tts-confirm-btn--yes"
+                  >
+                    Ya, hapus
+                  </button>
+                  <button
+                    type="button"
+                    id="pesan-clear-no"
+                    class="tts-confirm-btn tts-confirm-btn--no"
+                  >
+                    Batal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </main>
 
     <!-- =====================================================
