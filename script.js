@@ -315,71 +315,71 @@ const KUIS_DATA = [
     q: "Aku lahir di mana?",
     opsi: ["Denpasar", "Gianyar", "Negara"],
     benar: 2,
-    pesanBenar: "Benar! Kamu memang tahu asal-usulku 🤍",
-    pesanSalah: "Hampir! Aku lahir di Negara.",
+    pesanBenar: "Ayoo ke Negare sayaang 🤍",
+    pesanSalah: "Kok gatauu sii :(.",
   },
   {
     q: "Makanan kesukaanku?",
     opsi: ["Mie goreng", "Nasi goreng", "Ayam geprek"],
     benar: 1,
-    pesanBenar: "Tepat! Nasi goreng nomor satu 🍳",
-    pesanSalah: "Belum tepat, jawabannya nasi goreng.",
+    pesanBenar: "yess benerr, tau banget sihh 🍳",
+    pesanSalah: "Tetot, jawabannya nasgor goreng.",
   },
   {
     q: "Di mana first date kita?",
     opsi: ["Tukad Kopi", "Pantai Sanur", "Sousbar"],
     benar: 0,
-    pesanBenar: "Benar! Hari yang tidak akan kulupa ☕",
-    pesanSalah: "Bukan itu, first date kita di Tukad Kopi.",
+    pesanBenar: "Aduhh date apa meet kakk?",
+    pesanSalah: "Tukad kopi dong sayaangg.",
   },
   {
     q: "Kapan kita jadian?",
     opsi: ["12 Oktober 2026", "22 Oktober 2026", "2 November 2026"],
     benar: 1,
-    pesanBenar: "Betul! 22 Oktober 2026 🤍",
-    pesanSalah: "Kita jadian tanggal 22 Oktober 2026.",
+    pesanBenar: "Inimah udah pasti benerr 🤍",
+    pesanSalah: "Masa kamuu lupaa sihhh :(.",
   },
   {
     q: "Negara yang ingin kita tuju?",
     opsi: ["Jepang", "Swiss", "Korea Selatan"],
     benar: 1,
-    pesanBenar: "Benar! Suatu hari kita ke sana 🏔️",
-    pesanSalah: "Yang kita impikan adalah Swiss.",
+    pesanBenar: "Yess, ayoo honemoon disanaa",
+    pesanSalah: "Swiss sayaangg.",
   },
   {
     q: "Tempat melali kesukaan kita?",
     opsi: ["Mall", "Pantai", "Alam-alam"],
     benar: 2,
-    pesanBenar: "Betul! Kita memang anak alam 🌿",
-    pesanSalah: "Tempat favorit kita alam-alam.",
+    pesanBenar: "Kita kann anak alamm bangett 🌿",
+    pesanSalah: "Katanyaa kamu suka ke alam-alamm jugaa.",
   },
   {
     q: "Love language utama kita?",
     opsi: ["Words of affirmation", "Quality time", "Physical touch"],
     benar: 1,
-    pesanBenar: "Tepat! Waktu bersamamu paling berharga ⏳",
+    pesanBenar: "Intinyaa bareng barengg terus ⏳",
     pesanSalah: "Love language kita quality time.",
   },
   {
     q: "Kapan ulang tahunku?",
     opsi: ["10 November", "10 Desember", "20 Desember"],
     benar: 1,
-    pesanBenar: "Benar! Jangan sampai lupa ya 🎂",
-    pesanSalah: "Ulang tahunku 10 Desember.",
+    pesanBenar: "Ini sih gamungkin lupaa kamu yaa 🎂",
+    pesanSalah: "Kok kamuu lupaa sayaang.",
   },
   {
     q: "Di mana kamu ketemu camermu?",
     opsi: ["Kampus", "Living World", "Rumahku"],
     benar: 1,
-    pesanBenar: "Betul! Awal dari banyak foto indah 📷",
-    pesanSalah: "Aku ketemu camerku di Living World.",
+    pesanBenar: "Yang kamu malu-maluu ituu ",
+    pesanSalah: "Ketemuu mamaku di living sayaang.",
   },
   {
     q: "Siapa manusia favoritku?",
     opsi: ["Ngurah", "Oka", "I Gusti Agung Ariningsih"],
     benar: 2,
-    pesanBenar: "Benar sekali, itu kamu 🤍",
-    pesanSalah: "Manusia favoritku adalah I Gusti Agung Ariningsih.",
+    pesanBenar: "jelass kamu dongg sayaangg 🤍",
+    pesanSalah: "Manusia favoritku tu kamuu tugekk.",
   },
 ];
 
@@ -1785,13 +1785,13 @@ const GAME_COIN_REWARD = {
   const TTS_GRID_ROWS = 11;
   const TTS_GRID_COLS = 12;
   const TTS_GRID_LAYOUT = {
-    1: { nomor: 1, arah: "mendatar", row: 0, col: 6 },
-    2: { nomor: 3, arah: "menurun", row: 4, col: 0 },
-    3: { nomor: 2, arah: "menurun", row: 0, col: 9 },
-    4: { nomor: 3, arah: "mendatar", row: 4, col: 0 },
-    5: { nomor: 4, arah: "menurun", row: 4, col: 3 },
-    6: { nomor: 6, arah: "mendatar", row: 10, col: 7 },
-    7: { nomor: 5, arah: "menurun", row: 4, col: 7 },
+    1: { nomor: 2, arah: "mendatar", row: 0, col: 6 },
+    2: { nomor: 1, arah: "menurun", row: 0, col: 2 },
+    3: { nomor: 3, arah: "menurun", row: 0, col: 9 },
+    4: { nomor: 4, arah: "mendatar", row: 4, col: 0 },
+    5: { nomor: 5, arah: "menurun", row: 4, col: 3 },
+    6: { nomor: 7, arah: "mendatar", row: 10, col: 7 },
+    7: { nomor: 6, arah: "menurun", row: 4, col: 7 },
   };
 
   const ttsBackBtn = document.getElementById("tts-back-btn");
@@ -1936,11 +1936,33 @@ const GAME_COIN_REWARD = {
     }
   }
 
+  const TTS_COIN_CLAIMED_KEY = "okarinTtsCoinClaimed";
+
+  function isTtsCoinClaimed() {
+    try {
+      return localStorage.getItem(TTS_COIN_CLAIMED_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function markTtsCoinClaimed() {
+    try {
+      localStorage.setItem(TTS_COIN_CLAIMED_KEY, "1");
+    } catch (_) {}
+  }
+
   function openTtsVictory() {
-    const earned = addCoins(GAME_COIN_REWARD.tts);
     const ttsCoinEl = document.getElementById("tts-coin-reward");
-    if (ttsCoinEl) {
-      ttsCoinEl.textContent = `+${earned} 🪙 Koin`;
+    if (!isTtsCoinClaimed()) {
+      const earned = addCoins(GAME_COIN_REWARD.tts);
+      markTtsCoinClaimed();
+      if (ttsCoinEl) {
+        ttsCoinEl.textContent = `+${earned} 🪙 Koin`;
+        ttsCoinEl.hidden = false;
+      }
+    } else if (ttsCoinEl) {
+      ttsCoinEl.textContent = "Koin TTS sudah diklaim 🤍";
       ttsCoinEl.hidden = false;
     }
 
