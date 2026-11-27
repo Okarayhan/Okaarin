@@ -3997,6 +3997,84 @@ input {
 }
 
 /* =========================================================
+   SISTEM KOIN & BUKA PHOTOBOOTH
+   ========================================================= */
+.coin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff9eb 0%, #fef0cd 100%);
+  border: 1px solid rgba(212, 151, 44, 0.35);
+  color: #8a5b10;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 3px 10px rgba(212, 151, 44, 0.12);
+}
+
+.coin-reward-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 4px auto 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff6db 0%, #fde6ad 100%);
+  border: 1px solid rgba(212, 151, 44, 0.45);
+  color: #7c4f0a;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 3px 12px rgba(212, 151, 44, 0.18);
+}
+
+.coin-reward-pill[hidden] {
+  display: none;
+}
+
+.coin-reward-pill--sm {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  margin: 8px auto 0;
+}
+
+.panel-card-badge--lock {
+  background: linear-gradient(135deg, #fff5dc 0%, #fce6b0 100%);
+  color: #87580d;
+  border-color: rgba(212, 151, 44, 0.35);
+}
+
+.pb-unlock-status {
+  margin: 2px 0 8px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #8a5b10;
+}
+
+.pb-unlock-progress {
+  width: 100%;
+  max-width: 240px;
+  height: 10px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(169, 95, 106, 0.14);
+  overflow: hidden;
+}
+
+.pb-unlock-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e7ad44 0%, #c96b7c 100%);
+  transition: width 0.4s var(--ease-smooth);
+}
+
+/* =========================================================
    LAYAR KECIL (<= 365px) AGAR TETAP NYAMAN TANPA OVERFLOW
    ========================================================= */
 @media (max-width: 365px) {

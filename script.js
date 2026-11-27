@@ -89,7 +89,7 @@ const PANEL_MENU = [
   {
     id: "photobooth",
     title: "Photobooth",
-    desc: "Foto berdua, jadi strip kenangan",
+    desc: "Photobooth Okaarin",
     icon: "📸",
     active: true,
   },
@@ -267,7 +267,7 @@ const GAMES = [
   {
     id: "tangkap",
     judul: "Tangkap Hati",
-    deskripsi: "Bantu dia menangkap semua hati",
+    deskripsi: "Bantu Arinn menangkap semua hati",
     ikon: "💗",
     aktif: true,
   },
@@ -463,21 +463,21 @@ const TANGKAP_FRAME = {
 const TANGKAP_PUJIAN = [
   {
     min: 40,
-    judul: "Kamu penangkap hati terhebat! 💖",
+    judul: "Jago banget pacal akuu! 💖",
     pesan:
-      "Seluruh hatiku sudah kamu tangkap! Refleksmu luar biasa dan aku selalu bahagia saat melihatmu tersenyum senang sayang.",
+      "Semua hatiku udah kamu tangkap sayangg, hebat bangett kamu.",
   },
   {
     min: 20,
-    judul: "Hebat sekali! 💗",
+    judul: "Hebat cekalii! 💗",
     pesan:
-      "Kamu cekatan banget, sama seperti caramu selalu menjaga dan menenangkan hatiku setiap hari sayang.",
+      "hebat cekalii pacall aku mainnya.",
   },
   {
     min: 0,
-    judul: "Tidak apa-apa 🤍",
+    judul: "Kerenn kamuu 🤍",
     pesan:
-      "Hatiku tetap milikmu seutuhnya sayang, berapa pun skor yang kamu dapat hari ini. Tetap semangat ya!",
+      "Hatiku tetap milikmu penenuhnya sayang, walau kamua agak cupu, ehh EHEHEHEHE",
   },
 ];
 
@@ -493,6 +493,21 @@ const PB_WARNA_STRIP = [
   { id: "mint", nama: "Mint", bg: "#edf6f1", text: "#2b473b", muted: "#628274", border: "#d2e6db", accent: "#3e8567", dot: "rgba(62, 133, 103, 0.1)" },
   { id: "hitam", nama: "Film", bg: "#161210", text: "#f2a65a", muted: "#b5895e", border: "#332822", accent: "#e89643", dot: "rgba(232, 150, 67, 0.08)" },
 ];
+
+/**
+ * 12. SISTEM KOIN & KUNCI PHOTOBOOTH
+ */
+const PHOTOBOOTH_UNLOCK_COST = 50;
+const GAME_COIN_REWARD = {
+  tts: 25,
+  kuisPerBenar: 3,
+  kuisBonusSempurna: 10,
+  kuisMinimal: 5,
+  bolaBaru: 4,
+  bolaUlang: 1,
+  bolaBonusSemua: 20,
+  tangkapMinimal: 5,
+};
 
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
@@ -753,6 +768,10 @@ const PB_WARNA_STRIP = [
 
   function showScreen(id, { fromPopstate = false } = {}) {
     if (currentScreen === id) return;
+    if (id === "photobooth" && !photoboothUnlocked) {
+      openPbUnlockModal();
+      return;
+    }
     const prevCfg = SCREENS[currentScreen];
     const nextCfg = SCREENS[id];
     if (!prevCfg || !nextCfg || !prevCfg.el || !nextCfg.el) return;
@@ -809,8 +828,14 @@ const PB_WARNA_STRIP = [
     if (ttsVictory && !ttsVictory.hidden) {
       closeTtsVictory();
     }
+    if (tangkapResult && !tangkapResult.hidden) {
+      closeTangkapResult();
+    }
     if (pbSaveOverlay && !pbSaveOverlay.hidden) {
       closePbSaveOverlay();
+    }
+    if (pbUnlockModal && !pbUnlockModal.hidden) {
+      closePbUnlockModal();
     }
     const target = event.state && event.state.screen;
     if (
@@ -1184,6 +1209,143 @@ const PB_WARNA_STRIP = [
     }, 2400);
   }
 
+  // --- Sistem Koin & Buka Photobooth ---
+  const COIN_STORAGE_KEY = "okarinCoins";
+  const PB_UNLOCK_STORAGE_KEY = "okarinPhotoboothUnlocked";
+  let userCoins = 0;
+  let photoboothUnlocked = false;
+  let photoboothPanelCard = null;
+
+  const pbUnlockModal = document.getElementById("pb-unlock-modal");
+  const pbUnlockBackdrop = document.getElementById("pb-unlock-backdrop");
+  const pbUnlockStatus = document.getElementById("pb-unlock-status");
+  const pbUnlockFill = document.getElementById("pb-unlock-fill");
+  const pbUnlockMsg = document.getElementById("pb-unlock-msg");
+  const pbUnlockActionBtn = document.getElementById("pb-unlock-action-btn");
+  const pbUnlockCancelBtn = document.getElementById("pb-unlock-cancel-btn");
+
+  function loadCoinState() {
+    try {
+      const savedCoins = parseInt(localStorage.getItem(COIN_STORAGE_KEY), 10);
+      userCoins = Number.isFinite(savedCoins) && savedCoins >= 0 ? savedCoins : 0;
+      photoboothUnlocked = localStorage.getItem(PB_UNLOCK_STORAGE_KEY) === "1";
+    } catch (_) {
+      userCoins = 0;
+      photoboothUnlocked = false;
+    }
+    updateCoinUI();
+  }
+
+  function saveCoinState() {
+    try {
+      localStorage.setItem(COIN_STORAGE_KEY, String(userCoins));
+      if (photoboothUnlocked) {
+        localStorage.setItem(PB_UNLOCK_STORAGE_KEY, "1");
+      }
+    } catch (_) {}
+  }
+
+  function updateCoinUI() {
+    document.querySelectorAll("[data-coin-balance]").forEach((el) => {
+      el.textContent = String(userCoins);
+    });
+  }
+
+  function addCoins(amount) {
+    if (!amount || amount <= 0) return 0;
+    userCoins += amount;
+    saveCoinState();
+    updateCoinUI();
+    return amount;
+  }
+
+  function spendCoins(amount) {
+    if (userCoins < amount) return false;
+    userCoins -= amount;
+    saveCoinState();
+    updateCoinUI();
+    return true;
+  }
+
+  function refreshPhotoboothPanelCard() {
+    if (!photoboothPanelCard) return;
+    const badgeWrap = photoboothPanelCard.querySelector(".panel-card-top");
+    const descEl = photoboothPanelCard.querySelector(".panel-card-desc");
+    let lockBadge = photoboothPanelCard.querySelector(".panel-card-badge--lock");
+
+    if (photoboothUnlocked) {
+      if (lockBadge) lockBadge.remove();
+      if (descEl) descEl.textContent = "Foto berdua, jadi strip kenangan";
+    } else {
+      if (!lockBadge && badgeWrap) {
+        lockBadge = document.createElement("span");
+        lockBadge.className = "panel-card-badge panel-card-badge--lock";
+        badgeWrap.appendChild(lockBadge);
+      }
+      if (lockBadge) lockBadge.textContent = `🔒 ${PHOTOBOOTH_UNLOCK_COST} Koin`;
+      if (descEl) {
+        descEl.textContent = `Kumpulkan ${PHOTOBOOTH_UNLOCK_COST} koin dari Games untuk membukanya`;
+      }
+    }
+  }
+
+  function openPbUnlockModal() {
+    if (!pbUnlockModal) return;
+    const enough = userCoins >= PHOTOBOOTH_UNLOCK_COST;
+    const pct = Math.min(100, Math.round((userCoins / PHOTOBOOTH_UNLOCK_COST) * 100));
+
+    pbUnlockStatus.textContent = `Koin kamu: ${userCoins} / ${PHOTOBOOTH_UNLOCK_COST} 🪙`;
+    pbUnlockFill.style.width = `${pct}%`;
+
+    if (enough) {
+      pbUnlockMsg.textContent =
+        "Koinmu sudah cukup! Tukar dengan fitur Photobooth untuk foto kenangan berdua 🤍";
+      pbUnlockActionBtn.textContent = `Buka Sekarang (${PHOTOBOOTH_UNLOCK_COST} 🪙)`;
+    } else {
+      const kurang = PHOTOBOOTH_UNLOCK_COST - userCoins;
+      pbUnlockMsg.textContent = `Kurang ${kurang} koin lagi. Main games dulu yaa sayangg 🤍`;
+      pbUnlockActionBtn.textContent = "Main Games Dulu 🎮";
+    }
+
+    pbUnlockModal.hidden = false;
+    requestAnimationFrame(() => {
+      pbUnlockModal.classList.add("is-open");
+    });
+  }
+
+  function closePbUnlockModal() {
+    if (!pbUnlockModal) return;
+    pbUnlockModal.classList.remove("is-open");
+    window.setTimeout(
+      () => {
+        pbUnlockModal.hidden = true;
+      },
+      prefersReducedMotion ? 40 : 280,
+    );
+  }
+
+  if (pbUnlockActionBtn) {
+    pbUnlockActionBtn.addEventListener("click", () => {
+      if (userCoins >= PHOTOBOOTH_UNLOCK_COST) {
+        if (spendCoins(PHOTOBOOTH_UNLOCK_COST)) {
+          photoboothUnlocked = true;
+          saveCoinState();
+          refreshPhotoboothPanelCard();
+          closePbUnlockModal();
+          showPanelToast("Photobooth terbuka! Selamat berfoto 🤍");
+          showScreen("photobooth");
+        }
+      } else {
+        closePbUnlockModal();
+        showScreen("games");
+      }
+    });
+  }
+  if (pbUnlockCancelBtn) pbUnlockCancelBtn.addEventListener("click", closePbUnlockModal);
+  if (pbUnlockBackdrop) pbUnlockBackdrop.addEventListener("click", closePbUnlockModal);
+
+  loadCoinState();
+
   function buildPanelOnce() {
     if (panelBuilt) return;
     panelBuilt = true;
@@ -1197,9 +1359,16 @@ const PB_WARNA_STRIP = [
         : "panel-card panel-card--soon";
       btn.setAttribute("role", "listitem");
 
-      const badge = item.active
-        ? ""
-        : `<span class="panel-card-badge">Segera hadir</span>`;
+      const isPbLocked = item.id === "photobooth" && !photoboothUnlocked;
+      const badge = !item.active
+        ? `<span class="panel-card-badge">Segera hadir</span>`
+        : isPbLocked
+          ? `<span class="panel-card-badge panel-card-badge--lock">🔒 ${PHOTOBOOTH_UNLOCK_COST} Koin</span>`
+          : "";
+      const descText = isPbLocked
+        ? `Kumpulkan ${PHOTOBOOTH_UNLOCK_COST} koin dari Games untuk membukanya`
+        : item.desc;
+
       btn.innerHTML = `
         <span class="panel-card-icon" aria-hidden="true">${item.icon}</span>
         <span class="panel-card-body">
@@ -1207,11 +1376,19 @@ const PB_WARNA_STRIP = [
             <span class="panel-card-title">${item.title}</span>
             ${badge}
           </span>
-          <span class="panel-card-desc">${item.desc}</span>
+          <span class="panel-card-desc">${descText}</span>
         </span>
       `;
 
+      if (item.id === "photobooth") {
+        photoboothPanelCard = btn;
+      }
+
       btn.addEventListener("click", () => {
+        if (item.id === "photobooth" && !photoboothUnlocked) {
+          openPbUnlockModal();
+          return;
+        }
         if (item.active && SCREENS[item.id]) {
           showScreen(item.id);
         } else {
@@ -1760,6 +1937,13 @@ const PB_WARNA_STRIP = [
   }
 
   function openTtsVictory() {
+    const earned = addCoins(GAME_COIN_REWARD.tts);
+    const ttsCoinEl = document.getElementById("tts-coin-reward");
+    if (ttsCoinEl) {
+      ttsCoinEl.textContent = `+${earned} 🪙 Koin`;
+      ttsCoinEl.hidden = false;
+    }
+
     ttsVictoryTitle.textContent = TTS_PUJIAN.judul;
     ttsVictoryMessage.textContent = TTS_PUJIAN.pesan;
     ttsVictoryGamesBtn.textContent = TTS_PUJIAN.tombol1;
@@ -2384,6 +2568,16 @@ const PB_WARNA_STRIP = [
     const best = saveKuisBestScore(kuisScore);
     kuisBestScore.textContent = `Skor terbaik: ${best} / ${KUIS_DATA.length}`;
 
+    const rawCoins =
+      kuisScore * GAME_COIN_REWARD.kuisPerBenar +
+      (kuisScore === KUIS_DATA.length ? GAME_COIN_REWARD.kuisBonusSempurna : 0);
+    const earned = addCoins(Math.max(GAME_COIN_REWARD.kuisMinimal, rawCoins));
+    const kuisCoinEl = document.getElementById("kuis-coin-reward");
+    if (kuisCoinEl) {
+      kuisCoinEl.textContent = `+${earned} 🪙 Koin`;
+      kuisCoinEl.hidden = false;
+    }
+
     const reward =
       KUIS_REWARD.find((r) => r.min <= kuisScore) ||
       KUIS_REWARD[KUIS_REWARD.length - 1];
@@ -2587,6 +2781,13 @@ const PB_WARNA_STRIP = [
   }
 
   function openBolaBonusModal() {
+    const earned = addCoins(GAME_COIN_REWARD.bolaBonusSemua);
+    const bolaBonusCoinEl = document.getElementById("bola-bonus-coin");
+    if (bolaBonusCoinEl) {
+      bolaBonusCoinEl.textContent = `Bonus +${earned} 🪙 Koin`;
+      bolaBonusCoinEl.hidden = false;
+    }
+
     bolaBonusTitle.textContent = BOLA_BONUS.judul;
     bolaBonusMessage.textContent = BOLA_BONUS.pesan;
     bolaBonusHearts.innerHTML = "";
@@ -2653,6 +2854,16 @@ const PB_WARNA_STRIP = [
     const msgIdx = pickNextBolaMessageIndex();
     const color = BOLA_WARNA[Math.floor(Math.random() * BOLA_WARNA.length)];
     const wasComplete = bolaFound.size === BOLA_PESAN.length;
+
+    const wasFoundBefore = bolaFound.has(msgIdx);
+    const spinCoins = addCoins(
+      wasFoundBefore ? GAME_COIN_REWARD.bolaUlang : GAME_COIN_REWARD.bolaBaru,
+    );
+    const bolaCoinEl = document.getElementById("bola-coin-reward");
+    if (bolaCoinEl) {
+      bolaCoinEl.textContent = `+${spinCoins} 🪙 Koin`;
+      bolaCoinEl.hidden = false;
+    }
 
     bolaFound.add(msgIdx);
     saveBolaFound();
@@ -3038,15 +3249,24 @@ const PB_WARNA_STRIP = [
       }
     }
 
+    const earned = addCoins(
+      Math.max(GAME_COIN_REWARD.tangkapMinimal, Math.floor(tangkapScore / 3)),
+    );
+    const tangkapCoinEl = document.getElementById("tangkap-coin-reward");
+    if (tangkapCoinEl) {
+      tangkapCoinEl.textContent = `+${earned} 🪙 Koin`;
+      tangkapCoinEl.hidden = false;
+    }
+
     tangkapResultTitle.textContent = feedback.judul;
     tangkapResultMeta.textContent = `Skor: ${tangkapScore} • Tertangkap: ${tangkapCaughtCount} hati • Terbaik: ${finalBest}`;
     tangkapResultRecordBadge.hidden = !isNew;
     tangkapResultMessage.textContent = feedback.pesan;
 
-    tangkapResult.classList.remove("is-visible");
+    tangkapResult.classList.remove("is-open");
     tangkapResult.hidden = false;
     requestAnimationFrame(() => {
-      tangkapResult.classList.add("is-visible");
+      tangkapResult.classList.add("is-open");
     });
 
     if (!prefersReducedMotion && tangkapScore >= 20) {
@@ -3073,7 +3293,7 @@ const PB_WARNA_STRIP = [
   }
 
   function closeTangkapResult() {
-    tangkapResult.classList.remove("is-visible");
+    tangkapResult.classList.remove("is-open");
     setTimeout(() => {
       tangkapResult.hidden = true;
       tangkapResultHearts.innerHTML = "";

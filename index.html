@@ -350,6 +350,10 @@
             <p id="panel-subtitle" class="panel-subtitle">
               Pilih satu ruang kecil yang sudah kusiapkan untuk kita berdua
             </p>
+            <div class="coin-pill" aria-live="polite">
+              <span aria-hidden="true">🪙</span>
+              <span data-coin-balance>0</span> Koin
+            </div>
           </header>
 
           <div id="panel-grid" class="panel-grid" role="list">
@@ -405,7 +409,7 @@
 
           <footer class="gallery-footer">
             <p class="gallery-footer-note">
-              Terima kasih sudah menjadi bagian terindah dalam hariku ♥
+              Terima kasih sudah menjadi bagian terindah dalam hidupku ♥
             </p>
           </footer>
         </div>
@@ -444,8 +448,12 @@
           <header class="games-header">
             <h2 id="games-title" class="games-title">Games</h2>
             <p class="games-subtitle">
-              Geser untuk memilih permainan tentang cerita kita
+              Mainkan Games untuk mendapatkan coin
             </p>
+            <div class="coin-pill" aria-live="polite">
+              <span aria-hidden="true">🪙</span>
+              <span data-coin-balance>0</span> Koin
+            </div>
           </header>
 
           <div class="games-carousel-stage">
@@ -752,6 +760,7 @@
                 <span id="kuis-score-num">0</span> / 10
               </p>
               <p id="kuis-best-score" class="kuis-best-score"></p>
+              <p id="kuis-coin-reward" class="coin-reward-pill" hidden></p>
 
               <h3 id="kuis-reward-title" class="kuis-reward-title"></h3>
               <p id="kuis-reward-msg" class="kuis-reward-msg"></p>
@@ -1009,7 +1018,7 @@
 
           <header class="pb-header">
             <h2 class="pb-title">Photobooth</h2>
-            <p class="pb-subtitle">Foto berdua, jadi strip kenangan 📸</p>
+            <p class="pb-subtitle">Photobooth Okarinn 📸</p>
           </header>
 
           <div class="pb-layout">
@@ -1279,6 +1288,7 @@
       <div class="tts-victory-card">
         <div class="tts-victory-badge" aria-hidden="true">🤍</div>
         <h3 id="tts-victory-title" class="tts-victory-title"></h3>
+        <p id="tts-coin-reward" class="coin-reward-pill" hidden></p>
         <p id="tts-victory-message" class="tts-victory-message"></p>
         <div class="tts-victory-actions">
           <button
@@ -1315,6 +1325,7 @@
 
           <div id="bola-msg-card" class="bola-msg-card">
             <p id="bola-msg-text" class="bola-msg-text"></p>
+            <p id="bola-coin-reward" class="coin-reward-pill coin-reward-pill--sm" hidden></p>
           </div>
         </div>
 
@@ -1417,6 +1428,7 @@
       <div class="tts-victory-card">
         <div class="tts-victory-badge" aria-hidden="true">🔮</div>
         <h3 id="bola-bonus-title" class="tts-victory-title"></h3>
+        <p id="bola-bonus-coin" class="coin-reward-pill" hidden></p>
         <p id="bola-bonus-message" class="tts-victory-message"></p>
         <div class="tts-victory-actions">
           <button
@@ -1452,6 +1464,7 @@
         <div class="tts-victory-badge" aria-hidden="true">💗</div>
         <h3 id="tangkap-result-title" class="tts-victory-title"></h3>
         <p id="tangkap-result-meta" class="tangkap-result-meta"></p>
+        <p id="tangkap-coin-reward" class="coin-reward-pill" hidden></p>
         <span
           id="tangkap-result-record-badge"
           class="puzzle-victory-record-badge"
@@ -1529,6 +1542,43 @@
       <span>Foto dihapus</span>
       <span aria-hidden="true">·</span>
       <button type="button" id="pb-undo-btn" class="pb-undo-btn">Urungkan</button>
+    </div>
+
+    <!-- =====================================================
+       MODAL BUKA PHOTOBOOTH DENGAN KOIN
+       ===================================================== -->
+    <div
+      id="pb-unlock-modal"
+      class="tts-victory"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pb-unlock-title"
+      hidden
+    >
+      <div id="pb-unlock-backdrop" class="tts-victory-backdrop"></div>
+      <div class="tts-victory-card">
+        <div class="tts-victory-badge" aria-hidden="true">📸</div>
+        <h3 id="pb-unlock-title" class="tts-victory-title">Buka Photobooth?</h3>
+        <p id="pb-unlock-status" class="pb-unlock-status"></p>
+        <div class="pb-unlock-progress" aria-hidden="true">
+          <div id="pb-unlock-fill" class="pb-unlock-fill"></div>
+        </div>
+        <p id="pb-unlock-msg" class="tts-victory-message"></p>
+        <div class="tts-victory-actions">
+          <button
+            type="button"
+            id="pb-unlock-action-btn"
+            class="primary-btn is-visible"
+          ></button>
+          <button
+            type="button"
+            id="pb-unlock-cancel-btn"
+            class="ghost-btn tts-victory-secondary"
+          >
+            Nanti dulu
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Toast lembut untuk menu yang belum aktif -->
