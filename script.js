@@ -487,11 +487,11 @@ const TANGKAP_PUJIAN = [
 const PB_JUMLAH = 4;
 const PB_KETERANGAN = "Wah Okaa & Tugek";
 const PB_WARNA_STRIP = [
-  { id: "krem", nama: "Krem", bg: "#fffdf9", text: "#4a383a", muted: "#8c7275", border: "#eadfd9" },
-  { id: "rose", nama: "Rose", bg: "#faecef", text: "#5c2e38", muted: "#996570", border: "#eccfd6" },
-  { id: "lavender", nama: "Lavender", bg: "#f2eef8", text: "#3d3352", muted: "#7c7094", border: "#ded5ec" },
-  { id: "mint", nama: "Mint", bg: "#edf6f1", text: "#2b473b", muted: "#628274", border: "#d2e6db" },
-  { id: "hitam", nama: "Hitam", bg: "#241e20", text: "#fdf8f5", muted: "#c9b8bc", border: "#3d3336" },
+  { id: "krem", nama: "Krem", bg: "#fffdf9", text: "#3f3133", muted: "#8c7275", border: "#eadfd9", accent: "#c96b7c", dot: "rgba(169, 95, 106, 0.1)" },
+  { id: "rose", nama: "Rose", bg: "#faecef", text: "#5c2e38", muted: "#996570", border: "#eccfd6", accent: "#b84a62", dot: "rgba(184, 74, 98, 0.1)" },
+  { id: "lavender", nama: "Lavender", bg: "#f2eef8", text: "#3d3352", muted: "#7c7094", border: "#ded5ec", accent: "#7d63ad", dot: "rgba(125, 99, 173, 0.1)" },
+  { id: "mint", nama: "Mint", bg: "#edf6f1", text: "#2b473b", muted: "#628274", border: "#d2e6db", accent: "#3e8567", dot: "rgba(62, 133, 103, 0.1)" },
+  { id: "hitam", nama: "Film", bg: "#161210", text: "#f2a65a", muted: "#b5895e", border: "#332822", accent: "#e89643", dot: "rgba(232, 150, 67, 0.08)" },
 ];
 
 /* =========================================================================
@@ -3881,6 +3881,16 @@ const PB_WARNA_STRIP = [
     for (let i = 0; i < PB_JUMLAH; i++) {
       const photo = pbPhotos[i];
       const isSelected = pbSelectedIndex === i;
+      const numLabel = String(i + 1).padStart(2, "0");
+
+      const row = document.createElement("div");
+      row.className = "pb-frame-row";
+
+      // Rel kiri: OursMemories
+      const railLeft = document.createElement("div");
+      railLeft.className = "pb-rail pb-rail--left";
+      railLeft.setAttribute("aria-hidden", "true");
+      railLeft.innerHTML = `<span class="pb-rail-text">OursMemories</span>`;
 
       const frame = document.createElement("div");
       frame.className = "pb-frame";
@@ -3913,6 +3923,11 @@ const PB_WARNA_STRIP = [
         img.alt = `Foto kenangan ${i + 1}`;
         img.className = "pb-frame-img";
         frame.appendChild(img);
+
+        const badge = document.createElement("span");
+        badge.className = "pb-frame-badge";
+        badge.textContent = numLabel;
+        frame.appendChild(badge);
 
         const actions = document.createElement("div");
         actions.className = "pb-frame-actions";
@@ -3953,11 +3968,20 @@ const PB_WARNA_STRIP = [
       } else {
         const num = document.createElement("span");
         num.className = "pb-frame-num";
-        num.textContent = String(i + 1);
+        num.textContent = numLabel;
         frame.appendChild(num);
       }
 
-      pbFramesEl.appendChild(frame);
+      // Rel kanan: nomor bingkai + segitiga film ◀
+      const railRight = document.createElement("div");
+      railRight.className = "pb-rail pb-rail--right";
+      railRight.setAttribute("aria-hidden", "true");
+      railRight.innerHTML = `<span class="pb-rail-tri">◀</span><span class="pb-rail-num">${i + 1}</span>`;
+
+      row.appendChild(railLeft);
+      row.appendChild(frame);
+      row.appendChild(railRight);
+      pbFramesEl.appendChild(row);
     }
 
     const selectedIsFilled =
@@ -3971,6 +3995,8 @@ const PB_WARNA_STRIP = [
     pbStripPaper.style.setProperty("--pb-paper-text", colorObj.text);
     pbStripPaper.style.setProperty("--pb-paper-muted", colorObj.muted);
     pbStripPaper.style.setProperty("--pb-paper-border", colorObj.border);
+    pbStripPaper.style.setProperty("--pb-paper-accent", colorObj.accent);
+    pbStripPaper.style.setProperty("--pb-paper-dot", colorObj.dot);
 
     pbColorsEl.querySelectorAll(".pb-color-chip").forEach((chip) => {
       const active = chip.dataset.colorId === colorObj.id;
@@ -4011,12 +4037,12 @@ const PB_WARNA_STRIP = [
     }
 
     const stripWidth = 800;
-    const padX = 56;
-    const padTop = 56;
-    const gap = 28;
-    const frameW = stripWidth - padX * 2;
+    const railW = 64;
+    const padTop = 96;
+    const gap = 24;
+    const frameW = stripWidth - railW * 2;
     const frameH = Math.round(frameW * (3 / 4));
-    const footerH = 148;
+    const footerH = 108;
     const stripHeight =
       padTop +
       filledPhotos.length * frameH +
@@ -4032,35 +4058,91 @@ const PB_WARNA_STRIP = [
     ctx.fillStyle = pbActiveColor.bg;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
+    // Tekstur titik-titik halus seperti kertas photobooth
+    ctx.fillStyle = pbActiveColor.dot;
+    for (let dy = 12; dy < stripHeight; dy += 20) {
+      for (let dx = 12; dx < stripWidth; dx += 20) {
+        ctx.fillRect(dx, dy, 2, 2);
+      }
+    }
+
     // Border tipis kertas
     ctx.strokeStyle = pbActiveColor.border;
     ctx.lineWidth = 4;
     ctx.strokeRect(2, 2, stripWidth - 4, stripHeight - 4);
 
-    // Gambar tiap foto terisi secara vertikal
+    // Header atas: "22 . 10" di kiri + titik aksen di kanan
+    ctx.fillStyle = pbActiveColor.accent;
+    ctx.font = '700 24px "Space Mono", monospace';
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText("22 . 10", railW, 50);
+
+    ctx.beginPath();
+    ctx.arc(stripWidth - railW - 8, 50, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Gambar tiap foto terisi secara vertikal + detail rel film kiri & kanan
     const loadedImgs = await Promise.all(filledPhotos.map(loadImageFromDataUrl));
     loadedImgs.forEach((img, idx) => {
       const y = padTop + idx * (frameH + gap);
-      ctx.drawImage(img, padX, y, frameW, frameH);
+      const centerY = y + frameH / 2;
+      const numLabel = String(idx + 1).padStart(2, "0");
+
+      // Foto
+      ctx.drawImage(img, railW, y, frameW, frameH);
+
+      // Lencana nomor kecil 01..04 di pojok kanan atas foto
+      ctx.save();
+      ctx.fillStyle = "rgba(24, 18, 20, 0.56)";
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") {
+        ctx.roundRect(railW + frameW - 64, y + 14, 50, 28, 6);
+      } else {
+        ctx.rect(railW + frameW - 64, y + 14, 50, 28);
+      }
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = '700 16px "Space Mono", monospace';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(numLabel, railW + frameW - 39, y + 29);
+      ctx.restore();
+
+      // Rel Kiri: teks vertikal "OursMemories"
+      ctx.save();
+      ctx.translate(railW / 2, centerY);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = pbActiveColor.accent;
+      ctx.font = '700 18px "Space Mono", monospace';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("OursMemories", 0, 0);
+      ctx.restore();
+
+      // Rel Kanan: segitiga film + nomor frame vertikal
+      ctx.save();
+      ctx.translate(stripWidth - railW / 2, centerY);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = pbActiveColor.accent;
+      ctx.font = '700 18px "Space Mono", monospace';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`◀  ${idx + 1}`, 0, 0);
+      ctx.restore();
     });
 
-    // Keterangan & tanggal di bagian bawah
-    const caption = (pbCaptionInput.value || PB_KETERANGAN).trim();
-    const dateStr = formatIndonesianDate(new Date());
-    const textCenterY =
+    // Footer: "Okarin Photobooth"
+    const footerTop =
       padTop +
       filledPhotos.length * frameH +
-      Math.max(0, filledPhotos.length - 1) * gap +
-      62;
+      Math.max(0, filledPhotos.length - 1) * gap;
 
     ctx.textAlign = "center";
-    ctx.fillStyle = pbActiveColor.text;
-    ctx.font = '600 42px "Caveat", cursive, serif';
-    ctx.fillText(caption, stripWidth / 2, textCenterY);
-
-    ctx.fillStyle = pbActiveColor.muted;
-    ctx.font = '500 22px "Inter", sans-serif';
-    ctx.fillText(dateStr, stripWidth / 2, textCenterY + 42);
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = pbActiveColor.accent;
+    ctx.font = '700 36px "Plus Jakarta Sans", "Inter", sans-serif';
+    ctx.fillText("Okarin Photobooth", stripWidth / 2, footerTop + footerH / 2);
 
     const fileName = `photobooth-${formatIsoDate(new Date())}.png`;
 
@@ -4102,8 +4184,6 @@ const PB_WARNA_STRIP = [
     if (!pbInitDone) {
       pbInitDone = true;
 
-      pbCaptionInput.value = PB_KETERANGAN;
-      pbStripDateEl.textContent = formatIndonesianDate(new Date());
       renderPbColorChips();
       renderPbFrames();
 
@@ -4213,7 +4293,6 @@ const PB_WARNA_STRIP = [
       window.addEventListener("pagehide", stopPhotoboothCamera);
       window.addEventListener("beforeunload", stopPhotoboothCamera);
     } else {
-      pbStripDateEl.textContent = formatIndonesianDate(new Date());
       pbClearConfirm.hidden = true;
       // Kamera tidak dinyalakan otomatis — user ketuk "Nyalakan Kamera"
       if (!pbStream) {
