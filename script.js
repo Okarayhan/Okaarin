@@ -87,11 +87,11 @@ const PANEL_MENU = [
     active: false,
   },
   {
-    id: "bucket",
-    title: "Daftar Harapan",
-    desc: "Hal-hal kecil yang ingin kita wujudkan bersama",
-    icon: "✨",
-    active: false,
+    id: "photobooth",
+    title: "Photobooth",
+    desc: "Foto berdua, jadi strip kenangan",
+    icon: "📸",
+    active: true,
   },
 ];
 
@@ -265,11 +265,11 @@ const GAMES = [
     aktif: true,
   },
   {
-    id: "game4",
-    judul: "Puzzle Foto",
-    deskripsi: "Segera hadir",
-    ikon: "🔒",
-    aktif: false,
+    id: "tangkap",
+    judul: "Tangkap Hati",
+    deskripsi: "Bantu dia menangkap semua hati",
+    ikon: "💗",
+    aktif: true,
   },
 ];
 
@@ -451,6 +451,49 @@ const BOLA_BONUS = {
     "Terima kasih sudah membuka semua pesan kecil ini. Kapan pun kamu butuh pelukan, tawa, atau tempat cerita, aku selalu di sini untukmu sayang.",
 };
 
+/**
+ * 10. TANGKAP HATI — Konfigurasi Sprite & Teks Kemenangan
+ */
+const TANGKAP_SPRITE = "assets/" + encodeURI("tugek pixel 1.png");
+const TANGKAP_FRAME = {
+  jumlah: 1,
+  lebar: 1086,
+  tinggi: 1448,
+};
+const TANGKAP_PUJIAN = [
+  {
+    min: 40,
+    judul: "Kamu penangkap hati terhebat! 💖",
+    pesan:
+      "Seluruh hatiku sudah kamu tangkap! Refleksmu luar biasa dan aku selalu bahagia saat melihatmu tersenyum senang sayang.",
+  },
+  {
+    min: 20,
+    judul: "Hebat sekali! 💗",
+    pesan:
+      "Kamu cekatan banget, sama seperti caramu selalu menjaga dan menenangkan hatiku setiap hari sayang.",
+  },
+  {
+    min: 0,
+    judul: "Tidak apa-apa 🤍",
+    pesan:
+      "Hatiku tetap milikmu seutuhnya sayang, berapa pun skor yang kamu dapat hari ini. Tetap semangat ya!",
+  },
+];
+
+/**
+ * 11. PHOTOBOOTH DIGITAL — Konfigurasi jumlah bingkai, keterangan, & warna strip
+ */
+const PB_JUMLAH = 4;
+const PB_KETERANGAN = "Wah Okaa & Tugek";
+const PB_WARNA_STRIP = [
+  { id: "krem", nama: "Krem", bg: "#fffdf9", text: "#4a383a", muted: "#8c7275", border: "#eadfd9" },
+  { id: "rose", nama: "Rose", bg: "#faecef", text: "#5c2e38", muted: "#996570", border: "#eccfd6" },
+  { id: "lavender", nama: "Lavender", bg: "#f2eef8", text: "#3d3352", muted: "#7c7094", border: "#ded5ec" },
+  { id: "mint", nama: "Mint", bg: "#edf6f1", text: "#2b473b", muted: "#628274", border: "#d2e6db" },
+  { id: "hitam", nama: "Hitam", bg: "#241e20", text: "#fdf8f5", muted: "#c9b8bc", border: "#3d3336" },
+];
+
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
    ========================================================================= */
@@ -489,6 +532,14 @@ const BOLA_BONUS = {
     bola: {
       el: document.getElementById("screen-bola"),
       onEnter: () => enterBolaScreen(),
+    },
+    tangkap: {
+      el: document.getElementById("screen-tangkap"),
+      onEnter: () => enterTangkapScreen(),
+    },
+    photobooth: {
+      el: document.getElementById("screen-photobooth"),
+      onEnter: () => enterPhotoboothScreen(),
     },
   };
 
@@ -719,6 +770,10 @@ const BOLA_BONUS = {
     const prev = prevCfg.el;
     const next = nextCfg.el;
 
+    if (currentScreen === "photobooth" && id !== "photobooth") {
+      stopPhotoboothCamera();
+    }
+
     syncHistoryOnEnter(id, fromPopstate);
 
     prev.classList.add("screen--leaving");
@@ -753,6 +808,9 @@ const BOLA_BONUS = {
     }
     if (ttsVictory && !ttsVictory.hidden) {
       closeTtsVictory();
+    }
+    if (pbSaveOverlay && !pbSaveOverlay.hidden) {
+      closePbSaveOverlay();
     }
     const target = event.state && event.state.screen;
     if (
@@ -2754,22 +2812,1443 @@ const BOLA_BONUS = {
     }
   }
 
+  // =========================================================
+  // LOGIKA GAME: TANGKAP HATI
+  // =========================================================
+  let tangkapInitDone = false;
+  let tangkapRunning = false;
+  let tangkapPaused = false;
+  let tangkapRafId = null;
+  let tangkapTimerInterval = null;
+
+  let tangkapScore = 0;
+  let tangkapCaughtCount = 0;
+  let tangkapTimeLeft = 45;
+  let tangkapLives = 3;
+  let tangkapElapsed = 0;
+
+  let tangkapSpriteImg = null;
+  let tangkapSpriteLoaded = false;
+  let tangkapSpriteFailed = false;
+
+  // Elemen DOM
+  const tangkapBackBtn = document.getElementById("tangkap-back-btn");
+  const tangkapCanvas = document.getElementById("tangkap-canvas");
+  const tangkapHud = document.getElementById("tangkap-hud");
+  const tangkapScoreText = document.getElementById("tangkap-score-text");
+  const tangkapTimerText = document.getElementById("tangkap-timer-text");
+  const tangkapLivesContainer = document.getElementById("tangkap-lives");
+  const tangkapPauseBtn = document.getElementById("tangkap-pause-btn");
+  const tangkapIntroOverlay = document.getElementById("tangkap-intro");
+  const tangkapStartBtn = document.getElementById("tangkap-start-btn");
+  const tangkapPauseOverlay = document.getElementById("tangkap-pause-overlay");
+  const tangkapResumeBtn = document.getElementById("tangkap-resume-btn");
+  const tangkapQuitBtn = document.getElementById("tangkap-quit-btn");
+  const tangkapFallbackNote = document.getElementById("tangkap-sprite-fallback-note");
+
+  const tangkapResult = document.getElementById("tangkap-result");
+  const tangkapResultBackdrop = document.getElementById("tangkap-result-backdrop");
+  const tangkapResultHearts = document.getElementById("tangkap-result-hearts");
+  const tangkapResultTitle = document.getElementById("tangkap-result-title");
+  const tangkapResultMeta = document.getElementById("tangkap-result-meta");
+  const tangkapResultRecordBadge = document.getElementById("tangkap-result-record-badge");
+  const tangkapResultMessage = document.getElementById("tangkap-result-message");
+  const tangkapReplayBtn = document.getElementById("tangkap-replay-btn");
+  const tangkapGamesBtn = document.getElementById("tangkap-games-btn");
+  const tangkapPanelBtn = document.getElementById("tangkap-panel-btn");
+
+  let tctx = null;
+  let cWidth = 360;
+  let cHeight = 600;
+  let dpr = 1;
+
+  // State Karakter
+  const player = {
+    x: 180,
+    targetX: 180,
+    y: 500,
+    w: 54,
+    h: 72,
+    facingLeft: false,
+    squash: 1, // untuk efek memantul saat menangkap
+  };
+
+  let fallingItems = [];
+  let floatingTexts = [];
+  let screenShakeTimer = 0;
+  let lastSpawnTime = 0;
+  let lastFrameTime = 0;
+  let keyState = { left: false, right: false };
+
+  function loadTangkapSprite() {
+    if (tangkapSpriteImg) return;
+    tangkapSpriteImg = new Image();
+    tangkapSpriteImg.onload = () => {
+      tangkapSpriteLoaded = true;
+      tangkapSpriteFailed = false;
+      if (tangkapFallbackNote) tangkapFallbackNote.hidden = true;
+    };
+    tangkapSpriteImg.onerror = () => {
+      tangkapSpriteLoaded = false;
+      tangkapSpriteFailed = true;
+      if (tangkapFallbackNote) tangkapFallbackNote.hidden = false;
+    };
+    tangkapSpriteImg.src = TANGKAP_SPRITE;
+  }
+
+  function resizeTangkapCanvas() {
+    if (!tangkapCanvas) return;
+    const rect = tangkapCanvas.parentElement.getBoundingClientRect();
+    cWidth = Math.max(280, Math.floor(rect.width));
+    cHeight = Math.max(360, Math.floor(rect.height));
+
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    tangkapCanvas.width = cWidth * dpr;
+    tangkapCanvas.height = cHeight * dpr;
+
+    tctx = tangkapCanvas.getContext("2d");
+    tctx.imageSmoothingEnabled = false;
+
+    // Skala ukuran pemain adaptif (14-16% lebar layar)
+    const baseW = Math.max(44, Math.floor(cWidth * 0.15));
+    const aspect = (TANGKAP_FRAME && TANGKAP_FRAME.tinggi && TANGKAP_FRAME.lebar)
+      ? TANGKAP_FRAME.tinggi / TANGKAP_FRAME.lebar
+      : 1.33;
+    player.w = baseW;
+    player.h = Math.floor(baseW * aspect);
+    player.y = cHeight - player.h - 18;
+    if (player.x > cWidth - player.w / 2) player.x = cWidth - player.w / 2;
+  }
+
+  function startTangkapGame() {
+    tangkapScore = 0;
+    tangkapCaughtCount = 0;
+    tangkapTimeLeft = 45;
+    tangkapLives = 3;
+    tangkapElapsed = 0;
+    fallingItems = [];
+    floatingTexts = [];
+    screenShakeTimer = 0;
+    lastSpawnTime = 0;
+
+    player.x = cWidth / 2;
+    player.targetX = cWidth / 2;
+    player.squash = 1;
+
+    tangkapScoreText.textContent = "Skor: 0";
+    tangkapTimerText.textContent = "Waktu: 45";
+    renderTangkapLives();
+
+    tangkapIntroOverlay.setAttribute("hidden", "");
+    tangkapPauseOverlay.setAttribute("hidden", "");
+    tangkapHud.removeAttribute("hidden");
+    tangkapIntroOverlay.hidden = true;
+    tangkapPauseOverlay.hidden = true;
+    tangkapHud.hidden = false;
+
+    tangkapRunning = true;
+    tangkapPaused = false;
+
+    clearInterval(tangkapTimerInterval);
+    tangkapTimerInterval = setInterval(() => {
+      if (!tangkapRunning || tangkapPaused) return;
+      tangkapTimeLeft--;
+      tangkapTimerText.textContent = "Waktu: " + tangkapTimeLeft;
+      if (tangkapTimeLeft <= 0) {
+        endTangkapGame();
+      }
+    }, 1000);
+
+    lastFrameTime = performance.now();
+    cancelAnimationFrame(tangkapRafId);
+    tangkapRafId = requestAnimationFrame(tangkapGameLoop);
+  }
+
+  function renderTangkapLives() {
+    const heartSpans = tangkapLivesContainer.querySelectorAll(".tangkap-heart-icon");
+    heartSpans.forEach((span, idx) => {
+      if (idx < tangkapLives) {
+        span.classList.remove("is-empty");
+      } else {
+        span.classList.add("is-empty");
+      }
+    });
+  }
+
+  function pauseTangkapGame() {
+    if (!tangkapRunning || tangkapPaused) return;
+    tangkapPaused = true;
+    tangkapPauseOverlay.removeAttribute("hidden");
+    tangkapPauseOverlay.hidden = false;
+  }
+
+  function resumeTangkapGame() {
+    if (!tangkapRunning || !tangkapPaused) return;
+    tangkapPaused = false;
+    tangkapPauseOverlay.setAttribute("hidden", "");
+    tangkapPauseOverlay.hidden = true;
+    lastFrameTime = performance.now();
+    cancelAnimationFrame(tangkapRafId);
+    tangkapRafId = requestAnimationFrame(tangkapGameLoop);
+  }
+
+  function stopTangkapGame() {
+    tangkapRunning = false;
+    tangkapPaused = false;
+    clearInterval(tangkapTimerInterval);
+    cancelAnimationFrame(tangkapRafId);
+    keyState.left = false;
+    keyState.right = false;
+  }
+
+  function endTangkapGame() {
+    stopTangkapGame();
+    showTangkapResult();
+  }
+
+  function getTangkapBestScore() {
+    try {
+      const s = localStorage.getItem("tangkapBest");
+      return s ? parseInt(s, 10) : 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  function saveTangkapBestScore(score) {
+    try {
+      localStorage.setItem("tangkapBest", String(score));
+    } catch (_) {}
+  }
+
+  function showTangkapResult() {
+    const best = getTangkapBestScore();
+    const isNew = tangkapScore > best;
+    if (isNew) {
+      saveTangkapBestScore(tangkapScore);
+    }
+    const finalBest = Math.max(best, tangkapScore);
+
+    // Cari pujian bertingkat
+    let feedback = TANGKAP_PUJIAN[TANGKAP_PUJIAN.length - 1];
+    for (const item of TANGKAP_PUJIAN) {
+      if (tangkapScore >= item.min) {
+        feedback = item;
+        break;
+      }
+    }
+
+    tangkapResultTitle.textContent = feedback.judul;
+    tangkapResultMeta.textContent = `Skor: ${tangkapScore} • Tertangkap: ${tangkapCaughtCount} hati • Terbaik: ${finalBest}`;
+    tangkapResultRecordBadge.hidden = !isNew;
+    tangkapResultMessage.textContent = feedback.pesan;
+
+    tangkapResult.classList.remove("is-visible");
+    tangkapResult.hidden = false;
+    requestAnimationFrame(() => {
+      tangkapResult.classList.add("is-visible");
+    });
+
+    if (!prefersReducedMotion && tangkapScore >= 20) {
+      spawnTangkapResultHearts();
+    }
+  }
+
+  function spawnTangkapResultHearts() {
+    tangkapResultHearts.innerHTML = "";
+    const symbols = ["💗", "💖", "🌸", "🤍", "✨"];
+    for (let i = 0; i < 20; i++) {
+      const span = document.createElement("span");
+      span.className = "victory-heart";
+      span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      span.style.left = Math.random() * 100 + "%";
+      span.style.animationDelay = (Math.random() * 2) + "s";
+      span.style.fontSize = (0.9 + Math.random() * 0.8) + "rem";
+      tangkapResultHearts.appendChild(span);
+    }
+    // Hapus otomatis setelah beberapa detik
+    setTimeout(() => {
+      tangkapResultHearts.innerHTML = "";
+    }, 5500);
+  }
+
+  function closeTangkapResult() {
+    tangkapResult.classList.remove("is-visible");
+    setTimeout(() => {
+      tangkapResult.hidden = true;
+      tangkapResultHearts.innerHTML = "";
+    }, 280);
+  }
+
+  // --- Game Loop: Update & Draw ---
+  function tangkapGameLoop(timestamp) {
+    if (!tangkapRunning || tangkapPaused) return;
+
+    const dt = Math.min((timestamp - lastFrameTime) / 1000, 0.1);
+    lastFrameTime = timestamp;
+    tangkapElapsed += dt;
+
+    // Keyboard controls
+    const keySpeed = cWidth * 1.1;
+    if (keyState.left) {
+      player.targetX -= keySpeed * dt;
+    }
+    if (keyState.right) {
+      player.targetX += keySpeed * dt;
+    }
+
+    // Batas targetX
+    const halfW = player.w / 2;
+    if (player.targetX < halfW) player.targetX = halfW;
+    if (player.targetX > cWidth - halfW) player.targetX = cWidth - halfW;
+
+    // Gerak halus lerp
+    const prevX = player.x;
+    player.x += (player.targetX - player.x) * Math.min(1, 14 * dt);
+    if (Math.abs(player.x - prevX) > 0.4) {
+      player.facingLeft = player.x < prevX;
+    }
+
+    // Pemulihan efek squash
+    if (player.squash < 1) {
+      player.squash = Math.min(1, player.squash + dt * 4);
+    }
+
+    // Spawn falling items
+    // Frekuensi spawn bertambah cepat seiring waktu
+    const spawnInterval = Math.max(0.42, 0.95 - (tangkapElapsed / 45) * 0.45);
+    if (timestamp - lastSpawnTime > spawnInterval * 1000) {
+      lastSpawnTime = timestamp;
+
+      // Tipe: pink (biasa), gold (langka, 1 dari 12), broken (langka, setelah 10 detik)
+      let type = "pink";
+      const rand = Math.random();
+      if (tangkapElapsed > 10 && rand < 0.15) {
+        type = "broken";
+      } else if (rand > 0.9) {
+        type = "gold";
+      }
+
+      const fallSpeed = (160 + (tangkapElapsed / 45) * 110) * (0.88 + Math.random() * 0.25);
+      const size = type === "gold" ? 36 : 32;
+
+      fallingItems.push({
+        x: Math.random() * (cWidth - size * 2) + size,
+        y: -size,
+        size: size,
+        speed: fallSpeed,
+        type: type,
+        rotation: (Math.random() - 0.5) * 0.3,
+      });
+    }
+
+    // Update items & deteksi tabrakan
+    const pTop = player.y;
+    const pBottom = player.y + player.h;
+    const pLeft = player.x - halfW;
+    const pRight = player.x + halfW;
+
+    for (let i = fallingItems.length - 1; i >= 0; i--) {
+      const it = fallingItems[i];
+      it.y += it.speed * dt;
+
+      // Tabrakan dengan bagian atas karakter (hitbox ramah)
+      const hitMargin = 8;
+      const itRadius = it.size * 0.65;
+      const isOverlapX = it.x + itRadius >= pLeft - hitMargin && it.x - itRadius <= pRight + hitMargin;
+      const isOverlapY = it.y + itRadius >= pTop && it.y - itRadius <= pTop + player.h * 0.45;
+
+      if (isOverlapX && isOverlapY) {
+        // Tertangkap!
+        player.squash = 0.82; // efek memantul
+        if (it.type === "pink") {
+          tangkapScore += 1;
+          tangkapCaughtCount++;
+          floatingTexts.push({ x: it.x, y: it.y, text: "+1", color: "#c85d79", opacity: 1 });
+        } else if (it.type === "gold") {
+          tangkapScore += 5;
+          tangkapCaughtCount++;
+          floatingTexts.push({ x: it.x, y: it.y, text: "+5 ✨", color: "#d4972c", opacity: 1 });
+        } else if (it.type === "broken") {
+          tangkapLives = Math.max(0, tangkapLives - 1);
+          renderTangkapLives();
+          screenShakeTimer = 0.25;
+          floatingTexts.push({ x: it.x, y: it.y, text: "-1 💔", color: "#6b4f4f", opacity: 1 });
+          if (tangkapLives <= 0) {
+            endTangkapGame();
+            return;
+          }
+        }
+        tangkapScoreText.textContent = "Skor: " + tangkapScore;
+        fallingItems.splice(i, 1);
+        continue;
+      }
+
+      // Lolos ke bawah tanah
+      if (it.y > cHeight + it.size) {
+        fallingItems.splice(i, 1);
+      }
+    }
+
+    // Update floating texts
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y -= dt * 45;
+      ft.opacity -= dt * 1.5;
+      if (ft.opacity <= 0) {
+        floatingTexts.splice(i, 1);
+      }
+    }
+
+    // Screen shake timer
+    if (screenShakeTimer > 0) {
+      screenShakeTimer -= dt;
+    }
+
+    // RENDER CANVAS
+    renderTangkapCanvas();
+
+    tangkapRafId = requestAnimationFrame(tangkapGameLoop);
+  }
+
+  function renderTangkapCanvas() {
+    if (!tctx) return;
+
+    tctx.save();
+    tctx.scale(dpr, dpr);
+
+    // Efek getar layar jika ada
+    if (screenShakeTimer > 0) {
+      const shakeAmt = 6 * (screenShakeTimer / 0.25);
+      const sx = (Math.random() - 0.5) * shakeAmt;
+      const sy = (Math.random() - 0.5) * shakeAmt;
+      tctx.translate(sx, sy);
+    }
+
+    // Background halus
+    const bgGrad = tctx.createLinearGradient(0, 0, 0, cHeight);
+    bgGrad.addColorStop(0, "#fffaf7");
+    bgGrad.addColorStop(0.75, "#faedf0");
+    bgGrad.addColorStop(1, "#f4dfe4");
+    tctx.fillStyle = bgGrad;
+    tctx.fillRect(0, 0, cWidth, cHeight);
+
+    // Lantai pixel sederhana di bawah
+    const floorY = cHeight - 14;
+    tctx.fillStyle = "rgba(169, 95, 106, 0.12)";
+    tctx.fillRect(0, floorY, cWidth, 14);
+    tctx.fillStyle = "rgba(169, 95, 106, 0.22)";
+    for (let x = 0; x < cWidth; x += 16) {
+      tctx.fillRect(x, floorY, 8, 2);
+    }
+
+    // Bayangan pemain di lantai
+    tctx.fillStyle = "rgba(169, 95, 106, 0.18)";
+    tctx.beginPath();
+    tctx.ellipse(player.x, player.y + player.h - 2, player.w * 0.42, 5, 0, 0, Math.PI * 2);
+    tctx.fill();
+
+    // Gambar Pemain (Sprite atau Fallback Kotak Pixel)
+    tctx.save();
+    tctx.translate(player.x, player.y + player.h);
+    tctx.scale(player.facingLeft ? -1 : 1, player.squash);
+
+    if (tangkapSpriteLoaded && tangkapSpriteImg) {
+      tctx.drawImage(
+        tangkapSpriteImg,
+        -player.w / 2,
+        -player.h,
+        player.w,
+        player.h
+      );
+    } else {
+      // Fallback karakter kotak pixel sederhana romantis
+      const pw = player.w;
+      const ph = player.h;
+      tctx.fillStyle = "#e5989b";
+      tctx.fillRect(-pw / 2, -ph, pw, ph);
+      tctx.fillStyle = "#6b705c";
+      tctx.fillRect(-pw / 2 + 6, -ph + 12, 6, 8);
+      tctx.fillRect(pw / 2 - 12, -ph + 12, 6, 8);
+      tctx.fillStyle = "#b5838d";
+      tctx.fillRect(-pw / 2 + 10, -ph + 26, pw - 20, 4);
+    }
+    tctx.restore();
+
+    // Gambar Falling Items (Hati Pixel Mencolok dengan Outline & Kilau)
+    fallingItems.forEach((it) => {
+      tctx.save();
+      tctx.translate(it.x, it.y);
+      tctx.rotate(it.rotation);
+      drawTangkapPixelHeart(tctx, it.type, it.size, tangkapElapsed);
+      tctx.restore();
+    });
+
+    // Gambar Floating Texts
+    floatingTexts.forEach((ft) => {
+      tctx.save();
+      tctx.globalAlpha = Math.max(0, ft.opacity);
+      tctx.fillStyle = ft.color;
+      tctx.font = "bold 16px sans-serif";
+      tctx.textAlign = "center";
+      tctx.fillText(ft.text, ft.x, ft.y);
+      tctx.restore();
+    });
+
+    tctx.restore();
+  }
+
+  const TANGKAP_HEART_GRID = [
+    "..OOO...OOO..",
+    ".OFFFO.OFFFO.",
+    "OFHFFFOFFFFSO",
+    "OFHFFFFFFFFSO",
+    "OFFFFFFFFFFSO",
+    ".OFFFFFFFFSO.",
+    "..OFFFFFFSO..",
+    "...OFFFFSO...",
+    "....OFFSO....",
+    ".....OSO.....",
+    "......O......",
+  ];
+
+  const TANGKAP_BROKEN_GRID = [
+    "..OOO...OOO..",
+    ".OFFFO.OFFFO.",
+    "OFHFFO.OFFFSO",
+    "OFFFCO.CFFSSO",
+    "OFFCC...CFSSO",
+    ".OFC..C..FSO.",
+    "..OC.CC.FSO..",
+    "...O.C.FSO...",
+    "....O.CSO....",
+    ".....O.O.....",
+    "......O......",
+  ];
+
+  function drawTangkapPixelHeart(ctx, type, size, elapsed) {
+    const palette =
+      type === "gold"
+        ? {
+            O: "#7a4300",
+            F: "#ffcb1f",
+            S: "#e08e00",
+            H: "#fff9cc",
+            glow: "rgba(255, 204, 31, 0.42)",
+          }
+        : type === "broken"
+          ? {
+              O: "#231419",
+              F: "#5e434d",
+              S: "#3d2930",
+              H: "#a38791",
+              C: "#fff4f7",
+              glow: "rgba(45, 22, 30, 0.22)",
+            }
+          : {
+              O: "#6e1431",
+              F: "#ff3370",
+              S: "#cf154d",
+              H: "#ffd9e6",
+              glow: "rgba(255, 51, 112, 0.25)",
+            };
+
+    // Aura lembut agar kontras dengan latar pastel
+    const pulse = type === "gold" ? 1 + Math.sin(elapsed * 7) * 0.12 : 1;
+    ctx.fillStyle = palette.glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, size * 0.62 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+
+    const grid = type === "broken" ? TANGKAP_BROKEN_GRID : TANGKAP_HEART_GRID;
+    const cols = grid[0].length;
+    const rows = grid.length;
+    const px = size / cols;
+    const startX = -size / 2;
+    const startY = -(rows * px) / 2;
+
+    for (let r = 0; r < rows; r++) {
+      const line = grid[r];
+      for (let c = 0; c < cols; c++) {
+        const ch = line[c];
+        if (ch === ".") continue;
+        ctx.fillStyle = palette[ch] || palette.F;
+        ctx.fillRect(
+          Math.round(startX + c * px),
+          Math.round(startY + r * px),
+          Math.ceil(px),
+          Math.ceil(px),
+        );
+      }
+    }
+
+    // Kilau pixel berkedip untuk hati emas
+    if (type === "gold") {
+      const sparkleAlpha = 0.55 + Math.sin(elapsed * 9) * 0.45;
+      ctx.fillStyle = `rgba(255, 255, 240, ${sparkleAlpha.toFixed(2)})`;
+      const sx = size * 0.36;
+      const sy = -size * 0.36;
+      ctx.fillRect(sx - 1, sy - 5, 2, 10);
+      ctx.fillRect(sx - 5, sy - 1, 10, 2);
+    }
+  }
+
+  // --- Setup Kontrol Sentuh & Keyboard ---
+  function initTangkapControls() {
+    function setTargetFromClientX(clientX) {
+      if (!tangkapCanvas) return;
+      const rect = tangkapCanvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      player.targetX = Math.max(player.w / 2, Math.min(cWidth - player.w / 2, x));
+    }
+
+    // Touch events (non-passive agar preventDefault bekerja cegah scroll & zoom Safari)
+    tangkapCanvas.addEventListener(
+      "touchstart",
+      (e) => {
+        if (!tangkapRunning || tangkapPaused) return;
+        e.preventDefault();
+        if (e.touches && e.touches[0]) {
+          setTargetFromClientX(e.touches[0].clientX);
+        }
+      },
+      { passive: false }
+    );
+
+    tangkapCanvas.addEventListener(
+      "touchmove",
+      (e) => {
+        if (!tangkapRunning || tangkapPaused) return;
+        e.preventDefault();
+        if (e.touches && e.touches[0]) {
+          setTargetFromClientX(e.touches[0].clientX);
+        }
+      },
+      { passive: false }
+    );
+
+    // Mouse drag support untuk testing di browser PC
+    let isMouseDown = false;
+    tangkapCanvas.addEventListener("mousedown", (e) => {
+      if (!tangkapRunning || tangkapPaused) return;
+      isMouseDown = true;
+      setTargetFromClientX(e.clientX);
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isMouseDown || !tangkapRunning || tangkapPaused) return;
+      setTargetFromClientX(e.clientX);
+    });
+
+    window.addEventListener("mouseup", () => {
+      isMouseDown = false;
+    });
+
+    // Keyboard support (ArrowLeft, ArrowRight, A, D)
+    window.addEventListener("keydown", (e) => {
+      if (currentScreen !== "tangkap" || !tangkapRunning || tangkapPaused) return;
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        keyState.left = true;
+      }
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        keyState.right = true;
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        keyState.left = false;
+      }
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        keyState.right = false;
+      }
+    });
+
+    // Jeda otomatis jika tab/aplikasi tidak aktif (hanya saat game aktif berjalan)
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && tangkapRunning && !tangkapPaused && currentScreen === "tangkap") {
+        pauseTangkapGame();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (currentScreen === "tangkap") {
+        resizeTangkapCanvas();
+        if (!tangkapRunning) {
+          player.x = cWidth / 2;
+          player.targetX = cWidth / 2;
+          renderTangkapCanvas();
+        }
+      }
+    });
+  }
+
+  function enterTangkapScreen() {
+    loadTangkapSprite();
+
+    if (!tangkapInitDone) {
+      tangkapInitDone = true;
+      initTangkapControls();
+
+      tangkapBackBtn.addEventListener("click", () => {
+        stopTangkapGame();
+        if (history.state && history.state.screen === "tangkap") {
+          history.back();
+        } else {
+          showScreen("games");
+        }
+      });
+
+      tangkapStartBtn.addEventListener("click", () => {
+        startTangkapGame();
+      });
+
+      tangkapPauseBtn.addEventListener("click", () => {
+        pauseTangkapGame();
+      });
+
+      tangkapResumeBtn.addEventListener("click", () => {
+        resumeTangkapGame();
+      });
+
+      tangkapQuitBtn.addEventListener("click", () => {
+        stopTangkapGame();
+        tangkapPauseOverlay.setAttribute("hidden", "");
+        tangkapHud.setAttribute("hidden", "");
+        tangkapIntroOverlay.removeAttribute("hidden");
+        tangkapPauseOverlay.hidden = true;
+        tangkapHud.hidden = true;
+        tangkapIntroOverlay.hidden = false;
+      });
+
+      tangkapReplayBtn.addEventListener("click", () => {
+        closeTangkapResult();
+        startTangkapGame();
+      });
+
+      tangkapGamesBtn.addEventListener("click", () => {
+        closeTangkapResult();
+        showScreen("games");
+      });
+
+      tangkapPanelBtn.addEventListener("click", () => {
+        closeTangkapResult();
+        showScreen("panel");
+      });
+
+      tangkapResultBackdrop.addEventListener("click", () => {
+        // Jangan tutup saat klik backdrop agar pilihan tombol jelas
+      });
+    }
+
+    // Reset ke layar intro awal setiap kali masuk
+    stopTangkapGame();
+    tangkapHud.setAttribute("hidden", "");
+    tangkapPauseOverlay.setAttribute("hidden", "");
+    tangkapIntroOverlay.removeAttribute("hidden");
+    tangkapHud.hidden = true;
+    tangkapPauseOverlay.hidden = true;
+    tangkapIntroOverlay.hidden = false;
+
+    requestAnimationFrame(() => {
+      resizeTangkapCanvas();
+      player.x = cWidth / 2;
+      player.targetX = cWidth / 2;
+      renderTangkapCanvas();
+    });
+  }
+
+  // =========================================================
+  // LOGIKA FITUR: PHOTOBOOTH DIGITAL
+  // =========================================================
+  let pbInitDone = false;
+  let pbStream = null;
+  let pbFacingMode = "user";
+  let pbTimerSec = 3;
+  let pbFilter = "normal";
+  let pbSelectedIndex = 0;
+  let pbPhotos = Array(PB_JUMLAH).fill(null);
+  let pbActiveColor = PB_WARNA_STRIP[0];
+  let pbIsCapturing = false;
+  let pbCountdownTimer = null;
+  let pbUndoSnapshot = null;
+  let pbUndoTimer = null;
+
+  const pbBackBtn = document.getElementById("pb-back-btn");
+  const pbVideo = document.getElementById("pb-video");
+  const pbFlash = document.getElementById("pb-flash");
+  const pbCountdown = document.getElementById("pb-countdown");
+  const pbCountdownNum = document.getElementById("pb-countdown-num");
+  const pbSwitchCamBtn = document.getElementById("pb-switch-cam-btn");
+  const pbPermCard = document.getElementById("pb-perm-card");
+  const pbPermText = document.getElementById("pb-perm-text");
+  const pbEnableCamBtn = document.getElementById("pb-enable-cam-btn");
+  const pbFileInput = document.getElementById("pb-file-input");
+  const pbRetakeHint = document.getElementById("pb-retake-hint");
+  const pbShutterBtn = document.getElementById("pb-shutter-btn");
+  const pbStripPaper = document.getElementById("pb-strip-paper");
+  const pbFramesEl = document.getElementById("pb-frames");
+  const pbCaptionInput = document.getElementById("pb-caption-input");
+  const pbStripDateEl = document.getElementById("pb-strip-date");
+  const pbColorsEl = document.getElementById("pb-colors");
+  const pbSaveBtn = document.getElementById("pb-save-btn");
+  const pbClearAllBtn = document.getElementById("pb-clear-all-btn");
+  const pbClearConfirm = document.getElementById("pb-clear-confirm");
+  const pbClearYes = document.getElementById("pb-clear-yes");
+  const pbClearNo = document.getElementById("pb-clear-no");
+  const pbSaveOverlay = document.getElementById("pb-save-overlay");
+  const pbSaveBackdrop = document.getElementById("pb-save-backdrop");
+  const pbSaveClose = document.getElementById("pb-save-close");
+  const pbSaveImg = document.getElementById("pb-save-img");
+  const pbDownloadLink = document.getElementById("pb-download-link");
+  const pbUndoToast = document.getElementById("pb-undo-toast");
+  const pbUndoBtn = document.getElementById("pb-undo-btn");
+
+  function formatIndonesianDate(date) {
+    try {
+      return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(date);
+    } catch (_) {
+      const bulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+      ];
+      return `${date.getDate()} ${bulan[date.getMonth()]} ${date.getFullYear()}`;
+    }
+  }
+
+  function formatIsoDate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function stopPhotoboothCamera() {
+    if (pbCountdownTimer) {
+      clearInterval(pbCountdownTimer);
+      pbCountdownTimer = null;
+    }
+    pbIsCapturing = false;
+    if (pbCountdown) pbCountdown.hidden = true;
+
+    if (pbStream) {
+      pbStream.getTracks().forEach((track) => {
+        try {
+          track.stop();
+        } catch (_) {}
+      });
+      pbStream = null;
+    }
+    if (pbVideo) {
+      pbVideo.srcObject = null;
+    }
+    if (pbSwitchCamBtn) pbSwitchCamBtn.hidden = true;
+    if (pbPermCard) pbPermCard.hidden = false;
+  }
+
+  async function startPhotoboothCamera(facing = pbFacingMode) {
+    if (!window.isSecureContext && !["localhost", "127.0.0.1"].includes(location.hostname)) {
+      pbPermText.textContent =
+        "Kamera membutuhkan koneksi aman (HTTPS). Kamu tetap bisa pakai tombol 'Pilih / ambil foto' di bawah ya 🤍";
+      pbEnableCamBtn.hidden = true;
+      return;
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      pbPermText.textContent =
+        "Browser ini belum mendukung kamera langsung. Kamu bisa pakai tombol 'Pilih / ambil foto' di bawah ya 🤍";
+      pbEnableCamBtn.hidden = true;
+      return;
+    }
+
+    // Hentikan stream lama sebelum menyalakan yang baru
+    if (pbStream) {
+      pbStream.getTracks().forEach((t) => {
+        try { t.stop(); } catch (_) {}
+      });
+      pbStream = null;
+    }
+
+    try {
+      pbStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: facing,
+          width: { ideal: 1280 },
+          height: { ideal: 960 },
+        },
+        audio: false,
+      });
+
+      pbFacingMode = facing;
+      pbVideo.srcObject = pbStream;
+      pbVideo.classList.toggle("is-mirrored", pbFacingMode === "user");
+      await pbVideo.play().catch(() => {});
+
+      pbPermCard.hidden = true;
+      pbEnableCamBtn.hidden = false;
+
+      // Tampilkan tombol ganti kamera jika perangkat punya >1 input video
+      if (navigator.mediaDevices.enumerateDevices) {
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const cams = devices.filter((d) => d.kind === "videoinput");
+          pbSwitchCamBtn.hidden = cams.length < 2;
+        } catch (_) {
+          pbSwitchCamBtn.hidden = false;
+        }
+      } else {
+        pbSwitchCamBtn.hidden = false;
+      }
+    } catch (err) {
+      let msg =
+        "Kamera tidak bisa dibuka saat ini. Kamu tetap bisa memilih foto lewat tombol di bawah 🤍";
+      if (err && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
+        msg =
+          "Izin kamera ditolak. Aktifkan lewat Pengaturan > Safari > Kamera, lalu muat ulang halaman ini.";
+      } else if (err && (err.name === "NotFoundError" || err.name === "DevicesNotFoundError")) {
+        msg = "Kamera tidak ditemukan di perangkat ini. Gunakan 'Pilih / ambil foto' di bawah ya 🤍";
+      } else if (err && (err.name === "NotReadableError" || err.name === "TrackStartError")) {
+        msg = "Kamera sedang dipakai oleh aplikasi lain. Tutup aplikasi tersebut lalu coba lagi ya.";
+      }
+      pbPermText.textContent = msg;
+      pbPermCard.hidden = false;
+    }
+  }
+
+  function applyPixelFilter(ctx, width, height, filterName) {
+    if (filterName === "normal") return;
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+
+    if (filterName === "bw") {
+      for (let i = 0; i < data.length; i += 4) {
+        const lum = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+        data[i] = lum;
+        data[i + 1] = lum;
+        data[i + 2] = lum;
+      }
+    } else if (filterName === "sepia") {
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        data[i] = Math.min(255, Math.round(r * 0.393 + g * 0.769 + b * 0.189));
+        data[i + 1] = Math.min(255, Math.round(r * 0.349 + g * 0.686 + b * 0.168));
+        data[i + 2] = Math.min(255, Math.round(r * 0.272 + g * 0.534 + b * 0.131));
+      }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+  }
+
+  function captureSourceToDataUrl(source, srcW, srcH, shouldMirror) {
+    const targetRatio = 4 / 3;
+    const srcRatio = srcW / srcH;
+    let sx = 0, sy = 0, sw = srcW, sh = srcH;
+
+    if (srcRatio > targetRatio) {
+      sw = srcH * targetRatio;
+      sx = (srcW - sw) / 2;
+    } else if (srcRatio < targetRatio) {
+      sh = srcW / targetRatio;
+      sy = (srcH - sh) / 2;
+    }
+
+    const outW = Math.min(960, Math.round(sw));
+    const outH = Math.round(outW / targetRatio);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = outW;
+    canvas.height = outH;
+    const ctx = canvas.getContext("2d");
+
+    ctx.save();
+    if (shouldMirror) {
+      ctx.translate(outW, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(source, sx, sy, sw, sh, 0, 0, outW, outH);
+    ctx.restore();
+
+    applyPixelFilter(ctx, outW, outH, pbFilter);
+    return canvas.toDataURL("image/jpeg", 0.85);
+  }
+
+  function triggerPbFlash() {
+    if (prefersReducedMotion || !pbFlash) return;
+    pbFlash.classList.add("is-flashing");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        pbFlash.classList.remove("is-flashing");
+      });
+    });
+  }
+
+  function insertCapturedPhoto(dataUrl) {
+    let targetIdx = pbSelectedIndex;
+    if (targetIdx === null || targetIdx < 0 || targetIdx >= PB_JUMLAH) {
+      const firstEmpty = pbPhotos.findIndex((p) => !p);
+      targetIdx = firstEmpty !== -1 ? firstEmpty : 0;
+    }
+
+    pbPhotos[targetIdx] = dataUrl;
+    pbShutterBtn.classList.remove("is-highlighted");
+
+    // Pilih bingkai kosong berikutnya; jika semua penuh, null
+    const nextEmpty = pbPhotos.findIndex((p, idx) => !p && idx > targetIdx);
+    const anyEmpty = nextEmpty !== -1 ? nextEmpty : pbPhotos.findIndex((p) => !p);
+    pbSelectedIndex = anyEmpty !== -1 ? anyEmpty : null;
+
+    renderPbFrames();
+  }
+
+  function takePhotoboothPhoto() {
+    if (!pbStream || !pbVideo.videoWidth) {
+      showPanelToast("Nyalakan kamera atau pilih foto dulu ya 🤍");
+      return;
+    }
+    if (pbIsCapturing) return;
+
+    const doCapture = () => {
+      triggerPbFlash();
+      const dataUrl = captureSourceToDataUrl(
+        pbVideo,
+        pbVideo.videoWidth,
+        pbVideo.videoHeight,
+        pbFacingMode === "user",
+      );
+      insertCapturedPhoto(dataUrl);
+      pbIsCapturing = false;
+    };
+
+    if (pbTimerSec === 0) {
+      pbIsCapturing = true;
+      doCapture();
+      return;
+    }
+
+    pbIsCapturing = true;
+    let remaining = pbTimerSec;
+    pbCountdownNum.textContent = String(remaining);
+    pbCountdown.hidden = false;
+
+    pbCountdownTimer = setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        // Restart pop animation
+        pbCountdownNum.style.animation = "none";
+        void pbCountdownNum.offsetWidth;
+        pbCountdownNum.style.animation = "";
+        pbCountdownNum.textContent = String(remaining);
+      } else {
+        clearInterval(pbCountdownTimer);
+        pbCountdownTimer = null;
+        pbCountdown.hidden = true;
+        doCapture();
+      }
+    }, 1000);
+  }
+
+  function showPbUndoToast(index, dataUrl) {
+    clearTimeout(pbUndoTimer);
+    pbUndoSnapshot = { index, dataUrl };
+    pbUndoToast.hidden = false;
+    requestAnimationFrame(() => {
+      pbUndoToast.classList.add("is-visible");
+    });
+
+    pbUndoTimer = setTimeout(() => {
+      hidePbUndoToast();
+    }, 4000);
+  }
+
+  function hidePbUndoToast() {
+    clearTimeout(pbUndoTimer);
+    pbUndoToast.classList.remove("is-visible");
+    setTimeout(() => {
+      pbUndoToast.hidden = true;
+      pbUndoSnapshot = null;
+    }, 260);
+  }
+
+  function renderPbFrames() {
+    pbFramesEl.innerHTML = "";
+
+    for (let i = 0; i < PB_JUMLAH; i++) {
+      const photo = pbPhotos[i];
+      const isSelected = pbSelectedIndex === i;
+
+      const frame = document.createElement("div");
+      frame.className = "pb-frame";
+      if (photo) frame.classList.add("is-filled");
+      if (isSelected) frame.classList.add("is-selected");
+      frame.setAttribute("role", "listitem");
+      frame.setAttribute("tabindex", "0");
+      frame.setAttribute(
+        "aria-label",
+        photo ? `Bingkai ${i + 1} terisi` : `Bingkai ${i + 1} kosong`,
+      );
+
+      frame.addEventListener("click", () => {
+        pbSelectedIndex = i;
+        pbShutterBtn.classList.remove("is-highlighted");
+        renderPbFrames();
+      });
+
+      frame.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          pbSelectedIndex = i;
+          renderPbFrames();
+        }
+      });
+
+      if (photo) {
+        const img = document.createElement("img");
+        img.src = photo;
+        img.alt = `Foto kenangan ${i + 1}`;
+        img.className = "pb-frame-img";
+        frame.appendChild(img);
+
+        const actions = document.createElement("div");
+        actions.className = "pb-frame-actions";
+
+        const retakeBtn = document.createElement("button");
+        retakeBtn.type = "button";
+        retakeBtn.className = "pb-frame-btn";
+        retakeBtn.textContent = "↻";
+        retakeBtn.setAttribute("aria-label", `Foto ulang bingkai ${i + 1}`);
+        retakeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          pbSelectedIndex = i;
+          pbShutterBtn.classList.add("is-highlighted");
+          renderPbFrames();
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "pb-frame-btn";
+        delBtn.textContent = "🗑";
+        delBtn.setAttribute("aria-label", `Hapus foto bingkai ${i + 1}`);
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const oldUrl = pbPhotos[i];
+          frame.classList.add("is-clearing");
+          setTimeout(() => {
+            pbPhotos[i] = null;
+            pbSelectedIndex = i;
+            pbShutterBtn.classList.remove("is-highlighted");
+            renderPbFrames();
+            showPbUndoToast(i, oldUrl);
+          }, prefersReducedMotion ? 50 : 200);
+        });
+
+        actions.appendChild(retakeBtn);
+        actions.appendChild(delBtn);
+        frame.appendChild(actions);
+      } else {
+        const num = document.createElement("span");
+        num.className = "pb-frame-num";
+        num.textContent = String(i + 1);
+        frame.appendChild(num);
+      }
+
+      pbFramesEl.appendChild(frame);
+    }
+
+    const selectedIsFilled =
+      pbSelectedIndex !== null && Boolean(pbPhotos[pbSelectedIndex]);
+    pbRetakeHint.hidden = !selectedIsFilled;
+  }
+
+  function applyPbStripColor(colorObj) {
+    pbActiveColor = colorObj;
+    pbStripPaper.style.setProperty("--pb-paper-bg", colorObj.bg);
+    pbStripPaper.style.setProperty("--pb-paper-text", colorObj.text);
+    pbStripPaper.style.setProperty("--pb-paper-muted", colorObj.muted);
+    pbStripPaper.style.setProperty("--pb-paper-border", colorObj.border);
+
+    pbColorsEl.querySelectorAll(".pb-color-chip").forEach((chip) => {
+      const active = chip.dataset.colorId === colorObj.id;
+      chip.classList.toggle("is-active", active);
+      chip.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  function renderPbColorChips() {
+    pbColorsEl.innerHTML = "";
+    PB_WARNA_STRIP.forEach((c) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pb-color-chip";
+      btn.dataset.colorId = c.id;
+      btn.style.backgroundColor = c.bg;
+      btn.setAttribute("aria-label", `Warna strip ${c.nama}`);
+      btn.addEventListener("click", () => applyPbStripColor(c));
+      pbColorsEl.appendChild(btn);
+    });
+    applyPbStripColor(pbActiveColor);
+  }
+
+  function loadImageFromDataUrl(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  async function savePhotoboothStrip() {
+    const filledPhotos = pbPhotos.filter(Boolean);
+    if (filledPhotos.length === 0) {
+      showPanelToast("Ambil minimal satu foto dulu ya 🤍");
+      return;
+    }
+
+    const stripWidth = 800;
+    const padX = 56;
+    const padTop = 56;
+    const gap = 28;
+    const frameW = stripWidth - padX * 2;
+    const frameH = Math.round(frameW * (3 / 4));
+    const footerH = 148;
+    const stripHeight =
+      padTop +
+      filledPhotos.length * frameH +
+      Math.max(0, filledPhotos.length - 1) * gap +
+      footerH;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = stripWidth;
+    canvas.height = stripHeight;
+    const ctx = canvas.getContext("2d");
+
+    // Kertas strip
+    ctx.fillStyle = pbActiveColor.bg;
+    ctx.fillRect(0, 0, stripWidth, stripHeight);
+
+    // Border tipis kertas
+    ctx.strokeStyle = pbActiveColor.border;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(2, 2, stripWidth - 4, stripHeight - 4);
+
+    // Gambar tiap foto terisi secara vertikal
+    const loadedImgs = await Promise.all(filledPhotos.map(loadImageFromDataUrl));
+    loadedImgs.forEach((img, idx) => {
+      const y = padTop + idx * (frameH + gap);
+      ctx.drawImage(img, padX, y, frameW, frameH);
+    });
+
+    // Keterangan & tanggal di bagian bawah
+    const caption = (pbCaptionInput.value || PB_KETERANGAN).trim();
+    const dateStr = formatIndonesianDate(new Date());
+    const textCenterY =
+      padTop +
+      filledPhotos.length * frameH +
+      Math.max(0, filledPhotos.length - 1) * gap +
+      62;
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = pbActiveColor.text;
+    ctx.font = '600 42px "Caveat", cursive, serif';
+    ctx.fillText(caption, stripWidth / 2, textCenterY);
+
+    ctx.fillStyle = pbActiveColor.muted;
+    ctx.font = '500 22px "Inter", sans-serif';
+    ctx.fillText(dateStr, stripWidth / 2, textCenterY + 42);
+
+    const fileName = `photobooth-${formatIsoDate(new Date())}.png`;
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+
+      // 1. Coba Web Share API dengan File (ideal untuk iOS Safari)
+      if (typeof navigator.canShare === "function" && typeof navigator.share === "function") {
+        try {
+          const file = new File([blob], fileName, { type: "image/png" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: "Photobooth Strip",
+            });
+            return;
+          }
+        } catch (err) {
+          if (err && err.name === "AbortError") return;
+        }
+      }
+
+      // 2. Fallback: tampilkan overlay <img> + tautan unduh
+      const dataUrl = canvas.toDataURL("image/png");
+      pbSaveImg.src = dataUrl;
+      pbDownloadLink.href = dataUrl;
+      pbDownloadLink.download = fileName;
+      pbSaveOverlay.hidden = false;
+      pbSaveOverlay.classList.add("is-open");
+    }, "image/png");
+  }
+
+  function closePbSaveOverlay() {
+    pbSaveOverlay.classList.remove("is-open");
+    pbSaveOverlay.hidden = true;
+  }
+
+  function enterPhotoboothScreen() {
+    if (!pbInitDone) {
+      pbInitDone = true;
+
+      pbCaptionInput.value = PB_KETERANGAN;
+      pbStripDateEl.textContent = formatIndonesianDate(new Date());
+      renderPbColorChips();
+      renderPbFrames();
+
+      pbBackBtn.addEventListener("click", () => {
+        stopPhotoboothCamera();
+        if (history.state && history.state.screen === "photobooth") {
+          history.back();
+        } else {
+          showScreen("panel");
+        }
+      });
+
+      pbEnableCamBtn.addEventListener("click", () => {
+        startPhotoboothCamera(pbFacingMode);
+      });
+
+      pbSwitchCamBtn.addEventListener("click", () => {
+        const nextMode = pbFacingMode === "user" ? "environment" : "user";
+        startPhotoboothCamera(nextMode);
+      });
+
+      pbFileInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+          try {
+            const img = await loadImageFromDataUrl(ev.target.result);
+            const dataUrl = captureSourceToDataUrl(
+              img,
+              img.naturalWidth,
+              img.naturalHeight,
+              false,
+            );
+            insertCapturedPhoto(dataUrl);
+          } catch (_) {
+            showPanelToast("Gagal membaca foto, coba lagi ya 🤍");
+          } finally {
+            pbFileInput.value = "";
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Timer chips
+      document.querySelectorAll("[data-pb-timer]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          pbTimerSec = parseInt(btn.dataset.pbTimer, 10);
+          document.querySelectorAll("[data-pb-timer]").forEach((b) => {
+            b.classList.toggle("is-active", b === btn);
+          });
+        });
+      });
+
+      // Filter chips
+      document.querySelectorAll("[data-pb-filter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          pbFilter = btn.dataset.pbFilter;
+          document.querySelectorAll("[data-pb-filter]").forEach((b) => {
+            b.classList.toggle("is-active", b === btn);
+          });
+        });
+      });
+
+      pbShutterBtn.addEventListener("click", takePhotoboothPhoto);
+      pbSaveBtn.addEventListener("click", savePhotoboothStrip);
+
+      pbClearAllBtn.addEventListener("click", () => {
+        if (pbPhotos.every((p) => !p)) {
+          showPanelToast("Strip sudah kosong 🤍");
+          return;
+        }
+        pbClearConfirm.hidden = !pbClearConfirm.hidden;
+      });
+
+      pbClearNo.addEventListener("click", () => {
+        pbClearConfirm.hidden = true;
+      });
+
+      pbClearYes.addEventListener("click", () => {
+        pbPhotos = Array(PB_JUMLAH).fill(null);
+        pbSelectedIndex = 0;
+        pbClearConfirm.hidden = true;
+        pbShutterBtn.classList.remove("is-highlighted");
+        hidePbUndoToast();
+        renderPbFrames();
+      });
+
+      pbUndoBtn.addEventListener("click", () => {
+        if (!pbUndoSnapshot) return;
+        pbPhotos[pbUndoSnapshot.index] = pbUndoSnapshot.dataUrl;
+        const nextEmpty = pbPhotos.findIndex((p) => !p);
+        pbSelectedIndex = nextEmpty !== -1 ? nextEmpty : null;
+        hidePbUndoToast();
+        renderPbFrames();
+      });
+
+      pbSaveClose.addEventListener("click", closePbSaveOverlay);
+      pbSaveBackdrop.addEventListener("click", closePbSaveOverlay);
+
+      // Hentikan kamera saat tab tersembunyi atau halaman ditutup
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && currentScreen === "photobooth") {
+          stopPhotoboothCamera();
+        }
+      });
+      window.addEventListener("pagehide", stopPhotoboothCamera);
+      window.addEventListener("beforeunload", stopPhotoboothCamera);
+    } else {
+      pbStripDateEl.textContent = formatIndonesianDate(new Date());
+      pbClearConfirm.hidden = true;
+      // Kamera tidak dinyalakan otomatis — user ketuk "Nyalakan Kamera"
+      if (!pbStream) {
+        pbPermCard.hidden = false;
+      }
+    }
+  }
+
   // --- Mode Development: lompat langsung ke layar tertentu ---
   // Pakai: http://127.0.0.1:5500/?step=gallery  (pin | envelope | letter | gallery)
   function devJumpTo(name) {
-    if (!screens[name]) return;
+  if (!SCREENS[name]) return;
 
-    Object.entries(screens).forEach(([key, el]) => {
-      const isTarget = key === name;
-      el.classList.toggle("screen--active", isTarget);
-      el.classList.remove("screen--leaving");
-      el.setAttribute("aria-hidden", String(!isTarget));
-    });
-    currentScreen = name;
+  // Matikan semua layar, aktifkan layar target
+  Object.entries(SCREENS).forEach(([key, cfg]) => {
+    if (!cfg.el) return;
+    const isTarget = key === name;
+    cfg.el.classList.toggle("screen--active", isTarget);
+    cfg.el.classList.remove("screen--leaving");
+    cfg.el.setAttribute("aria-hidden", String(!isTarget));
+  });
+  currentScreen = name;
 
-    if (name === "letter") startLetterReveal();
-    if (name === "gallery") buildGalleryOnce();
+  // Layar setelah surat dianggap sudah "terbuka"
+  if (!["pin", "envelope", "letter"].includes(name)) {
+    panelUnlocked = true;
+    history.replaceState({ screen: name }, "", `#${name}`);
+    history.pushState({ screen: name, guard: true }, "", `#${name}`);
   }
+
+  // Jalankan inisialisasi layar (membangun galeri, game, dll.)
+  if (typeof SCREENS[name].onEnter === "function") {
+    SCREENS[name].onEnter();
+  }
+}
 
   // --- Inisialisasi ---
   applyConfigTexts();

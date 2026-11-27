@@ -885,6 +885,294 @@
           </div>
         </div>
       </section>
+
+      <!-- =====================================================
+         LAYAR TANGKAP HATI
+         ===================================================== -->
+      <section
+        id="screen-tangkap"
+        class="screen"
+        aria-label="Tangkap Hati"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--tangkap">
+          <!-- Sticky bar atas -->
+          <div class="gallery-sticky-bar">
+            <button
+              type="button"
+              id="tangkap-back-btn"
+              class="ghost-btn"
+              aria-label="Kembali ke Panel Games"
+            >
+              ← Kembali ke Panel Games
+            </button>
+          </div>
+
+          <!-- Wadah permainan -->
+          <div class="tangkap-container">
+            <!-- HUD Game -->
+            <div id="tangkap-hud" class="tangkap-hud" hidden>
+              <div class="tangkap-hud-left">
+                <span id="tangkap-score-text" class="tangkap-hud-badge">Skor: 0</span>
+                <span id="tangkap-timer-text" class="tangkap-hud-badge">Waktu: 45</span>
+              </div>
+              <div class="tangkap-hud-right">
+                <div id="tangkap-lives" class="tangkap-lives" aria-label="Sisa nyawa">
+                  <span class="tangkap-heart-icon">💗</span>
+                  <span class="tangkap-heart-icon">💗</span>
+                  <span class="tangkap-heart-icon">💗</span>
+                </div>
+                <button
+                  type="button"
+                  id="tangkap-pause-btn"
+                  class="tangkap-pause-btn"
+                  aria-label="Jeda permainan"
+                >
+                  ⏸
+                </button>
+              </div>
+            </div>
+
+            <!-- Canvas Game -->
+            <canvas
+              id="tangkap-canvas"
+              class="tangkap-canvas"
+              tabindex="0"
+              aria-label="Area permainan tangkap hati"
+            ></canvas>
+
+            <!-- Pesan jika karakter tidak ditemukan -->
+            <p id="tangkap-sprite-fallback-note" class="tangkap-fallback-note" hidden>
+              Karakter belum ditemukan, periksa nama file di assets/
+            </p>
+
+            <!-- Layar Mulai / Intro Overlay -->
+            <div id="tangkap-intro" class="tangkap-overlay-card">
+              <h2 class="tangkap-title">Tangkap Hati</h2>
+              <p class="tangkap-subtitle">
+                Geser jarimu ke kiri dan kanan untuk menggerakkan karakter. Tangkap sebanyak mungkin hati dalam 45 detik 🤍
+              </p>
+              <button
+                type="button"
+                id="tangkap-start-btn"
+                class="primary-btn is-visible tangkap-main-btn"
+              >
+                Mulai 💗
+              </button>
+            </div>
+
+            <!-- Overlay Jeda -->
+            <div id="tangkap-pause-overlay" class="tangkap-overlay-card" hidden>
+              <h3 class="tangkap-title">Permainan Dijeda</h3>
+              <p class="tangkap-subtitle">Tarik napas sebentar ya sayang 🤍</p>
+              <div class="tangkap-modal-actions">
+                <button
+                  type="button"
+                  id="tangkap-resume-btn"
+                  class="primary-btn is-visible"
+                >
+                  Lanjut
+                </button>
+                <button
+                  type="button"
+                  id="tangkap-quit-btn"
+                  class="ghost-btn"
+                >
+                  Keluar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         LAYAR PHOTOBOOTH DIGITAL
+         ===================================================== -->
+      <section
+        id="screen-photobooth"
+        class="screen screen--scrollable"
+        aria-label="Photobooth Digital"
+        aria-hidden="true"
+      >
+        <div class="screen-inner screen-inner--pb">
+          <div class="gallery-sticky-bar">
+            <button
+              type="button"
+              id="pb-back-btn"
+              class="ghost-btn"
+              aria-label="Kembali ke Panel"
+            >
+              ← Kembali ke Panel
+            </button>
+          </div>
+
+          <header class="pb-header">
+            <h2 class="pb-title">Photobooth</h2>
+            <p class="pb-subtitle">Foto berdua, jadi strip kenangan 📸</p>
+          </header>
+
+          <div class="pb-layout">
+            <!-- AREA KAMERA (ATAS / KIRI) -->
+            <div class="pb-camera-col">
+              <div class="pb-camera-box" id="pb-camera-box">
+                <video
+                  id="pb-video"
+                  class="pb-video is-mirrored"
+                  playsinline
+                  webkit-playsinline
+                  muted
+                  autoplay
+                ></video>
+
+                <!-- Kilat putih lembut saat potret -->
+                <div id="pb-flash" class="pb-flash" aria-hidden="true"></div>
+
+                <!-- Hitung mundur timer -->
+                <div id="pb-countdown" class="pb-countdown" aria-live="polite" hidden>
+                  <span id="pb-countdown-num" class="pb-countdown-num">3</span>
+                </div>
+
+                <!-- Tombol ganti kamera depan/belakang -->
+                <button
+                  type="button"
+                  id="pb-switch-cam-btn"
+                  class="pb-switch-cam-btn"
+                  aria-label="Ganti kamera depan atau belakang"
+                  hidden
+                >
+                  🔄
+                </button>
+
+                <!-- Kartu izin kamera (tampil sebelum kamera dinyalakan) -->
+                <div id="pb-perm-card" class="pb-perm-card">
+                  <div class="pb-perm-icon" aria-hidden="true">📸</div>
+                  <p id="pb-perm-text" class="pb-perm-text">
+                    Photobooth butuh izin kamera. Foto hanya tersimpan di perangkatmu dan tidak diunggah ke mana pun 🤍
+                  </p>
+                  <div class="pb-perm-actions">
+                    <button
+                      type="button"
+                      id="pb-enable-cam-btn"
+                      class="primary-btn is-visible"
+                    >
+                      Nyalakan Kamera
+                    </button>
+                    <label
+                      id="pb-fallback-label"
+                      for="pb-file-input"
+                      class="ghost-btn pb-file-label"
+                    >
+                      Pilih / ambil foto
+                    </label>
+                    <input
+                      type="file"
+                      id="pb-file-input"
+                      class="pb-file-input"
+                      accept="image/*"
+                      capture="user"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Petunjuk saat mode foto ulang -->
+              <p id="pb-retake-hint" class="pb-retake-hint" hidden>
+                Ketuk Potret untuk menggantinya
+              </p>
+
+              <!-- Kontrol Timer & Filter -->
+              <div class="pb-options-row" aria-label="Pengaturan timer dan filter">
+                <div class="pb-chip-group" role="group" aria-label="Timer potret">
+                  <button type="button" class="pb-chip is-active" data-pb-timer="3">3 dtk</button>
+                  <button type="button" class="pb-chip" data-pb-timer="5">5 dtk</button>
+                  <button type="button" class="pb-chip" data-pb-timer="0">Langsung</button>
+                </div>
+                <div class="pb-chip-group" role="group" aria-label="Filter foto">
+                  <button type="button" class="pb-chip is-active" data-pb-filter="normal">Normal</button>
+                  <button type="button" class="pb-chip" data-pb-filter="bw">Hitam Putih</button>
+                  <button type="button" class="pb-chip" data-pb-filter="sepia">Sepia</button>
+                </div>
+              </div>
+
+              <!-- Tombol Potret Utama -->
+              <div class="pb-shutter-wrap">
+                <button
+                  type="button"
+                  id="pb-shutter-btn"
+                  class="pb-shutter-btn"
+                  aria-label="Potret foto"
+                >
+                  <span class="pb-shutter-inner">Potret</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- AREA STRIP (BAWAH / KANAN) -->
+            <div class="pb-strip-col">
+              <div class="pb-strip-scroll">
+                <div id="pb-strip-paper" class="pb-strip-paper">
+                  <div id="pb-frames" class="pb-frames" role="list" aria-label="Bingkai foto strip"></div>
+                  <div class="pb-strip-footer">
+                    <input
+                      type="text"
+                      id="pb-caption-input"
+                      class="pb-caption-input"
+                      maxlength="24"
+                      aria-label="Keterangan strip foto"
+                    />
+                    <p id="pb-strip-date" class="pb-strip-date"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Warna Strip -->
+              <div class="pb-colors-row" role="group" aria-label="Pilih warna kertas strip" id="pb-colors"></div>
+
+              <!-- Tombol Simpan & Hapus Semua -->
+              <div class="pb-strip-actions">
+                <button
+                  type="button"
+                  id="pb-save-btn"
+                  class="primary-btn is-visible pb-save-btn"
+                >
+                  Simpan Strip
+                </button>
+                <button
+                  type="button"
+                  id="pb-clear-all-btn"
+                  class="ghost-btn pb-clear-all-btn"
+                >
+                  Hapus Semua
+                </button>
+              </div>
+
+              <!-- Konfirmasi Hapus Semua -->
+              <div id="pb-clear-confirm" class="tts-reset-confirm" hidden>
+                <p class="tts-reset-confirm-text">
+                  Kosongkan seluruh foto di strip ini?
+                </p>
+                <div class="tts-reset-confirm-actions">
+                  <button
+                    type="button"
+                    id="pb-clear-yes"
+                    class="tts-confirm-btn tts-confirm-btn--yes"
+                  >
+                    Ya, hapus
+                  </button>
+                  <button
+                    type="button"
+                    id="pb-clear-no"
+                    class="tts-confirm-btn tts-confirm-btn--no"
+                  >
+                    Batal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- =====================================================
@@ -1143,6 +1431,107 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- =====================================================
+       OVERLAY HASIL TANGKAP HATI
+       ===================================================== -->
+    <div
+      id="tangkap-result"
+      class="tts-victory"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tangkap-result-title"
+      hidden
+    >
+      <div id="tangkap-result-backdrop" class="tts-victory-backdrop"></div>
+      <div
+        id="tangkap-result-hearts"
+        class="tts-victory-hearts"
+        aria-hidden="true"
+      ></div>
+
+      <div class="tts-victory-card">
+        <div class="tts-victory-badge" aria-hidden="true">💗</div>
+        <h3 id="tangkap-result-title" class="tts-victory-title"></h3>
+        <p id="tangkap-result-meta" class="tangkap-result-meta"></p>
+        <span
+          id="tangkap-result-record-badge"
+          class="puzzle-victory-record-badge"
+          hidden
+        >Rekor baru ✨</span>
+        <p id="tangkap-result-message" class="tts-victory-message"></p>
+        <div class="tts-victory-actions">
+          <button
+            type="button"
+            id="tangkap-replay-btn"
+            class="primary-btn is-visible"
+          >
+            Main lagi
+          </button>
+          <button
+            type="button"
+            id="tangkap-games-btn"
+            class="ghost-btn"
+          >
+            Main game lain
+          </button>
+          <button
+            type="button"
+            id="tangkap-panel-btn"
+            class="ghost-btn"
+          >
+            Kembali ke Panel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       OVERLAY HASIL SIMPAN STRIP PHOTOBOOTH (FALLBACK iOS)
+       ===================================================== -->
+    <div
+      id="pb-save-overlay"
+      class="pb-save-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pb-save-title"
+      hidden
+    >
+      <div id="pb-save-backdrop" class="tts-victory-backdrop"></div>
+      <div class="pb-save-card">
+        <div class="pb-save-head">
+          <h3 id="pb-save-title" class="pb-save-title">Strip Kenanganmu 📸</h3>
+          <button
+            type="button"
+            id="pb-save-close"
+            class="bola-sheet-close"
+            aria-label="Tutup pratinjau strip"
+          >
+            ✕
+          </button>
+        </div>
+        <p class="pb-save-hint">Tekan dan tahan gambar, lalu pilih Simpan ke Foto</p>
+        <div class="pb-save-img-wrap">
+          <img id="pb-save-img" class="pb-save-img" alt="Hasil strip photobooth" />
+        </div>
+        <div class="pb-save-actions">
+          <a
+            id="pb-download-link"
+            class="primary-btn is-visible pb-download-link"
+            download="photobooth.png"
+          >
+            Unduh Strip PNG
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Urungkan Hapus Foto Photobooth -->
+    <div id="pb-undo-toast" class="pb-undo-toast" role="status" aria-live="polite" hidden>
+      <span>Foto dihapus</span>
+      <span aria-hidden="true">·</span>
+      <button type="button" id="pb-undo-btn" class="pb-undo-btn">Urungkan</button>
     </div>
 
     <!-- Toast lembut untuk menu yang belum aktif -->
