@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <!-- GANTI: Warna status bar Safari iOS agar serasi dengan latar belakang -->
-    <meta name="theme-color" content="#FBF7F2" />
+    <meta name="theme-color" content="#F7FAFC" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
@@ -225,21 +225,21 @@
                   aria-hidden="true"
                 >
                   <!-- Sisi kiri & kanan -->
-                  <polygon points="0,0 155,108 0,200" fill="#F5EAE0" />
-                  <polygon points="300,0 145,108 300,200" fill="#EFE1D4" />
+                  <polygon points="0,0 155,108 0,200" fill="#DCEBF5" />
+                  <polygon points="300,0 145,108 300,200" fill="#D1E4F2" />
                   <!-- Sisi bawah -->
-                  <polygon points="0,200 150,94 300,200" fill="#FBF3EC" />
+                  <polygon points="0,200 150,94 300,200" fill="#EDF5FB" />
                   <!-- Garis lipatan halus -->
                   <polyline
                     points="0,0 150,105 300,0"
                     fill="none"
-                    stroke="rgba(169, 95, 106, 0.14)"
+                    stroke="rgba(75, 110, 138, 0.16)"
                     stroke-width="1"
                   />
                   <polyline
                     points="0,200 150,94 300,200"
                     fill="none"
-                    stroke="rgba(169, 95, 106, 0.16)"
+                    stroke="rgba(75, 110, 138, 0.2)"
                     stroke-width="1"
                   />
                 </svg>
@@ -255,11 +255,11 @@
                     viewBox="0 0 300 118"
                     preserveAspectRatio="none"
                   >
-                    <polygon points="0,0 300,0 150,115" fill="#F2E4D8" />
+                    <polygon points="0,0 300,0 150,115" fill="#D6E7F4" />
                     <polyline
                       points="0,0 150,115 300,0"
                       fill="none"
-                      stroke="rgba(169, 95, 106, 0.18)"
+                      stroke="rgba(75, 110, 138, 0.22)"
                       stroke-width="1"
                     />
                   </svg>
@@ -322,6 +322,9 @@
           </article>
 
           <div class="letter-actions">
+            <p id="letter-skip-hint" class="letter-skip-hint" hidden>
+              Ketuk di mana saja untuk melewati animasi ✨
+            </p>
             <button
               type="button"
               id="to-panel-btn"
@@ -355,6 +358,25 @@
               <span data-coin-balance>0</span> Koin
             </div>
           </header>
+
+          <!-- Kartu Penghitung Hari Bersama -->
+          <button
+            type="button"
+            id="hari-card"
+            class="hari-card"
+            aria-label="Lihat milestone hari bersama"
+            hidden
+          >
+            <div id="hari-milestone-hearts" class="hari-milestone-hearts" aria-hidden="true"></div>
+            <span id="hari-milestone-badge" class="hari-milestone-badge" hidden>Hari spesial! ✨</span>
+            <p id="hari-top-text" class="hari-top-text">Perjalanan kita</p>
+            <div class="hari-main-row">
+              <span id="hari-main-text" class="hari-main-text">Hari ke-<span id="hari-number">0</span></span>
+              <span class="hari-heart" aria-hidden="true">🤍</span>
+            </div>
+            <p id="hari-detail" class="hari-detail"></p>
+            <p id="hari-bottom-text" class="hari-bottom-text"></p>
+          </button>
 
           <div id="panel-grid" class="panel-grid" role="list">
             <!-- Kartu menu dimuat dari script.js -->
@@ -1697,6 +1719,40 @@
             class="ghost-btn tts-victory-secondary"
           >
             Nanti dulu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       BOTTOM SHEET MILESTONE HARI BERSAMA
+       ===================================================== -->
+    <div
+      id="hari-sheet"
+      class="bola-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="hari-sheet-title"
+      hidden
+    >
+      <div id="hari-sheet-backdrop" class="bola-sheet-backdrop"></div>
+      <div class="bola-sheet-panel">
+        <div class="bola-sheet-handle" aria-hidden="true"></div>
+        <div class="bola-sheet-head">
+          <h3 id="hari-sheet-title" class="bola-sheet-title">Milestone Berikutnya ✨</h3>
+          <button
+            type="button"
+            id="hari-sheet-close"
+            class="bola-sheet-close"
+            aria-label="Tutup daftar milestone"
+          >
+            ✕
+          </button>
+        </div>
+        <ul id="hari-sheet-list" class="hari-sheet-list"></ul>
+        <div class="hari-sheet-foot">
+          <button type="button" id="hari-sheet-done" class="primary-btn is-visible hari-sheet-done">
+            Tutup
           </button>
         </div>
       </div>

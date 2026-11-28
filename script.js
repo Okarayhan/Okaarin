@@ -487,11 +487,11 @@ const TANGKAP_PUJIAN = [
 const PB_JUMLAH = 4;
 const PB_KETERANGAN = "Wah Okaa & Tugek";
 const PB_WARNA_STRIP = [
-  { id: "krem", nama: "Krem", bg: "#fffdf9", text: "#3f3133", muted: "#8c7275", border: "#eadfd9", accent: "#c96b7c", dot: "rgba(169, 95, 106, 0.1)" },
-  { id: "rose", nama: "Rose", bg: "#faecef", text: "#5c2e38", muted: "#996570", border: "#eccfd6", accent: "#b84a62", dot: "rgba(184, 74, 98, 0.1)" },
+  { id: "krem", nama: "Putih", bg: "#F7FAFC", text: "#1E2C3A", muted: "#687D90", border: "#D6E4F0", accent: "#4B6E8A", dot: "rgba(75, 110, 138, 0.1)" },
+  { id: "biru", nama: "Soft Blue", bg: "#E3EFF7", text: "#1E2C3A", muted: "#526577", border: "#B9D5E8", accent: "#4B6E8A", dot: "rgba(75, 110, 138, 0.12)" },
   { id: "lavender", nama: "Lavender", bg: "#f2eef8", text: "#3d3352", muted: "#7c7094", border: "#ded5ec", accent: "#7d63ad", dot: "rgba(125, 99, 173, 0.1)" },
   { id: "mint", nama: "Mint", bg: "#edf6f1", text: "#2b473b", muted: "#628274", border: "#d2e6db", accent: "#3e8567", dot: "rgba(62, 133, 103, 0.1)" },
-  { id: "hitam", nama: "Film", bg: "#161210", text: "#f2a65a", muted: "#b5895e", border: "#332822", accent: "#e89643", dot: "rgba(232, 150, 67, 0.08)" },
+  { id: "hitam", nama: "Film", bg: "#161210", text: "#ffffff", muted: "#ffffff", border: "#332822", accent: "#ffffff", dot: "rgba(232, 150, 67, 0.08)" },
 ];
 
 /**
@@ -525,6 +525,17 @@ const PESAN_BALASAN = [
   // { tanggal: "2026-11-28", isi: "Terima kasih ya sayang sudah nulis di sini 🤍" },
 ];
 
+/**
+ * 14. PENGHITUNG HARI BERSAMA & MILESTONE
+ */
+const HARI_CONFIG = {
+  tanggalMulai: "2026-10-22",
+  mulaiDariSatu: true,
+  teksAtas: "Perjalanan kita",
+  teksBawah: "Menua bersamamu sayaang 🤍",
+};
+const HARI_MILESTONE = [30, 50, 100, 150, 200, 300, 365, 500, 730, 1000];
+
 /* =========================================================================
    LOGIKA APLIKASI (UMUMNYA TIDAK PERLU DIUBAH)
    ========================================================================= */
@@ -542,7 +553,10 @@ const PESAN_BALASAN = [
     },
     panel: {
       el: document.getElementById("screen-panel"),
-      onEnter: () => buildPanelOnce(),
+      onEnter: () => {
+        buildPanelOnce();
+        updateHariCard();
+      },
     },
     gallery: {
       el: document.getElementById("screen-gallery"),
@@ -857,6 +871,9 @@ const PESAN_BALASAN = [
     if (pbUnlockModal && !pbUnlockModal.hidden) {
       closePbUnlockModal();
     }
+    if (hariSheet && !hariSheet.hidden) {
+      closeHariSheet();
+    }
     const target = event.state && event.state.screen;
     if (
       target &&
@@ -1162,13 +1179,52 @@ const PESAN_BALASAN = [
   });
 
   // --- Logika Layar 3: Isi Surat Paragraf demi Paragraf ---
+  const letterScreenEl = document.getElementById("screen-letter");
   const letterBody = document.getElementById("letter-body");
   const letterFooter = document.querySelector(".letter-footer");
   const toPanelBtn = document.getElementById("to-panel-btn");
+  const letterSkipHint = document.getElementById("letter-skip-hint");
+
+  const LETTER_VISITED_KEY = "okarinHasVisited";
+  let letterRevealTimers = [];
+  let letterRevealDone = false;
+
+  function hasVisitedWebsiteBefore() {
+    try {
+      return localStorage.getItem(LETTER_VISITED_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function markWebsiteVisited() {
+    try {
+      localStorage.setItem(LETTER_VISITED_KEY, "1");
+    } catch (_) {}
+  }
+
+  function finishLetterReveal(paragraphEls) {
+    if (letterRevealDone) return;
+    letterRevealDone = true;
+
+    letterRevealTimers.forEach((id) => window.clearTimeout(id));
+    letterRevealTimers = [];
+
+    paragraphEls.forEach((p) => p.classList.add("is-shown"));
+    letterFooter.classList.add("is-shown");
+    toPanelBtn.disabled = false;
+    toPanelBtn.classList.add("is-visible");
+    if (letterSkipHint) letterSkipHint.hidden = true;
+    markWebsiteVisited();
+  }
 
   function startLetterReveal() {
     if (letterAnimated) return;
     letterAnimated = true;
+    letterRevealDone = false;
+    letterRevealTimers = [];
+
+    const canSkip = hasVisitedWebsiteBefore();
 
     letterBody.innerHTML = "";
     const paragraphEls = CONFIG.letter.paragraphs.map((text) => {
@@ -1180,35 +1236,46 @@ const PESAN_BALASAN = [
     });
 
     if (prefersReducedMotion) {
-      paragraphEls.forEach((p) => p.classList.add("is-shown"));
-      letterFooter.classList.add("is-shown");
-      toPanelBtn.disabled = false;
-      toPanelBtn.classList.add("is-visible");
+      finishLetterReveal(paragraphEls);
       return;
+    }
+
+    if (canSkip && letterSkipHint && letterScreenEl) {
+      letterSkipHint.hidden = false;
+      const onSkipTap = () => {
+        if (letterRevealDone) return;
+        finishLetterReveal(paragraphEls);
+      };
+      letterScreenEl.addEventListener("click", onSkipTap, { once: true });
     }
 
     const baseDelay = 220;
     const stepDelay = 680;
 
     paragraphEls.forEach((p, idx) => {
-      window.setTimeout(
-        () => {
-          p.classList.add("is-shown");
-        },
-        baseDelay + idx * stepDelay,
+      letterRevealTimers.push(
+        window.setTimeout(
+          () => {
+            p.classList.add("is-shown");
+          },
+          baseDelay + idx * stepDelay,
+        ),
       );
     });
 
     const footerDelay = baseDelay + paragraphEls.length * stepDelay + 180;
-    window.setTimeout(() => {
-      letterFooter.classList.add("is-shown");
-    }, footerDelay);
+    letterRevealTimers.push(
+      window.setTimeout(() => {
+        letterFooter.classList.add("is-shown");
+      }, footerDelay),
+    );
 
     // Tombol baru muncul setelah seluruh isi surat selesai tampil
-    window.setTimeout(() => {
-      toPanelBtn.disabled = false;
-      toPanelBtn.classList.add("is-visible");
-    }, footerDelay + 520);
+    letterRevealTimers.push(
+      window.setTimeout(() => {
+        finishLetterReveal(paragraphEls);
+      }, footerDelay + 520),
+    );
   }
 
   toPanelBtn.addEventListener("click", () => {
@@ -3489,9 +3556,9 @@ const PESAN_BALASAN = [
 
     // Background halus
     const bgGrad = tctx.createLinearGradient(0, 0, 0, cHeight);
-    bgGrad.addColorStop(0, "#fffaf7");
-    bgGrad.addColorStop(0.75, "#faedf0");
-    bgGrad.addColorStop(1, "#f4dfe4");
+    bgGrad.addColorStop(0, "#F7FAFC");
+    bgGrad.addColorStop(0.75, "#E7F1F8");
+    bgGrad.addColorStop(1, "#D5E6F3");
     tctx.fillStyle = bgGrad;
     tctx.fillRect(0, 0, cWidth, cHeight);
 
@@ -5010,6 +5077,275 @@ const PESAN_BALASAN = [
 
     retryPendingPesan();
   }
+
+  // =========================================================
+  // LOGIKA FITUR: PENGHITUNG HARI BERSAMA & MILESTONE
+  // =========================================================
+  const MILESTONE_SEEN_KEY = "milestoneDilihat";
+  let hariAnimatedOnce = false;
+  let hariMidnightTimer = null;
+  let hariCurrentN = null;
+
+  const hariCard = document.getElementById("hari-card");
+  const hariMilestoneHearts = document.getElementById("hari-milestone-hearts");
+  const hariMilestoneBadge = document.getElementById("hari-milestone-badge");
+  const hariTopText = document.getElementById("hari-top-text");
+  const hariMainText = document.getElementById("hari-main-text");
+  const hariDetailEl = document.getElementById("hari-detail");
+  const hariBottomText = document.getElementById("hari-bottom-text");
+
+  const hariSheet = document.getElementById("hari-sheet");
+  const hariSheetBackdrop = document.getElementById("hari-sheet-backdrop");
+  const hariSheetClose = document.getElementById("hari-sheet-close");
+  const hariSheetDone = document.getElementById("hari-sheet-done");
+  const hariSheetList = document.getElementById("hari-sheet-list");
+
+  function parseStartDate(isoStr) {
+    const parts = String(isoStr).split("-").map(Number);
+    if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) {
+      throw new Error("Invalid tanggalMulai");
+    }
+    return { y: parts[0], m: parts[1], d: parts[2] };
+  }
+
+  function daysInMonth(year, month1Based) {
+    return new Date(Date.UTC(year, month1Based, 0)).getUTCDate();
+  }
+
+  function getMonthsAndDays(start, cur) {
+    let months = (cur.y - start.y) * 12 + (cur.m - start.m);
+    if (cur.d < start.d) {
+      months -= 1;
+    }
+    if (months < 0) months = 0;
+
+    const totalAnchorMonths = start.y * 12 + (start.m - 1) + months;
+    const anchorY = Math.floor(totalAnchorMonths / 12);
+    const anchorM = (totalAnchorMonths % 12) + 1;
+    const anchorD = Math.min(start.d, daysInMonth(anchorY, anchorM));
+
+    const anchorUtc = Date.UTC(anchorY, anchorM - 1, anchorD);
+    const curUtc = Date.UTC(cur.y, cur.m - 1, cur.d);
+    const days = Math.max(0, Math.round((curUtc - anchorUtc) / 86400000));
+    return { months, days };
+  }
+
+  function getCountdownTo22(cur) {
+    if (cur.d === 22) return 0;
+    let targetY = cur.y;
+    let targetM = cur.m;
+    if (cur.d > 22) {
+      targetM += 1;
+      if (targetM > 12) {
+        targetM = 1;
+        targetY += 1;
+      }
+    }
+    const todayUtc = Date.UTC(cur.y, cur.m - 1, cur.d);
+    const next22Utc = Date.UTC(targetY, targetM - 1, 22);
+    return Math.max(0, Math.round((next22Utc - todayUtc) / 86400000));
+  }
+
+  function formatUtcIndonesianDate(utcMs) {
+    const dt = new Date(utcMs);
+    const bulan = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    ];
+    return `${dt.getUTCDate()} ${bulan[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`;
+  }
+
+  function spawnHariMilestoneHearts(todayIso) {
+    if (prefersReducedMotion || !hariMilestoneHearts) return;
+    try {
+      if (localStorage.getItem(MILESTONE_SEEN_KEY) === todayIso) return;
+      localStorage.setItem(MILESTONE_SEEN_KEY, todayIso);
+    } catch (_) {}
+
+    hariMilestoneHearts.innerHTML = "";
+    const icons = ["🤍", "✨", "💙"];
+    for (let i = 0; i < 12; i++) {
+      const span = document.createElement("span");
+      span.className = "victory-heart";
+      span.textContent = icons[i % icons.length];
+      span.style.left = `${8 + ((i * 8) % 84)}%`;
+      span.style.setProperty("--vh-dur", `${2.4 + (i % 3) * 0.45}s`);
+      span.style.setProperty("--vh-delay", `${(i % 4) * 0.2}s`);
+      hariMilestoneHearts.appendChild(span);
+    }
+    window.setTimeout(() => {
+      if (hariMilestoneHearts) hariMilestoneHearts.innerHTML = "";
+    }, 4500);
+  }
+
+  function animateHariCount(targetN, numEl) {
+    if (!numEl) return;
+    if (prefersReducedMotion || hariAnimatedOnce || targetN <= 0) {
+      numEl.textContent = String(targetN);
+      hariAnimatedOnce = true;
+      return;
+    }
+    hariAnimatedOnce = true;
+    const duration = 950;
+    const startTime = performance.now();
+
+    function step(now) {
+      const p = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      numEl.textContent = String(Math.round(eased * targetN));
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        numEl.textContent = String(targetN);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function scheduleNextMidnightUpdate() {
+    window.clearTimeout(hariMidnightTimer);
+    const now = new Date();
+    const nextMidnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0,
+      0,
+      2,
+    );
+    const ms = Math.max(1000, nextMidnight.getTime() - now.getTime());
+    hariMidnightTimer = window.setTimeout(updateHariCard, ms);
+  }
+
+  function updateHariCard() {
+    if (!hariCard) return;
+    try {
+      const start = parseStartDate(HARI_CONFIG.tanggalMulai);
+      const now = new Date();
+      const cur = {
+        y: now.getFullYear(),
+        m: now.getMonth() + 1,
+        d: now.getDate(),
+      };
+      const todayIso = `${cur.y}-${String(cur.m).padStart(2, "0")}-${String(cur.d).padStart(2, "0")}`;
+
+      const startUtc = Date.UTC(start.y, start.m - 1, start.d);
+      const todayUtc = Date.UTC(cur.y, cur.m - 1, cur.d);
+      const diffDays = Math.round((todayUtc - startUtc) / 86400000);
+
+      hariTopText.textContent = HARI_CONFIG.teksAtas;
+      hariBottomText.textContent = HARI_CONFIG.teksBawah;
+
+      if (diffDays < 0) {
+        const m = Math.abs(diffDays);
+        hariCurrentN = 0;
+        hariMilestoneBadge.hidden = true;
+        hariMainText.innerHTML = `<span id="hari-number">${m}</span> hari lagi`;
+        hariDetailEl.textContent = `Hitung mundur: ${m} hari lagi menuju awal cerita kita`;
+        hariCard.hidden = false;
+        scheduleNextMidnightUpdate();
+        return;
+      }
+
+      const n = diffDays + (HARI_CONFIG.mulaiDariSatu ? 1 : 0);
+      hariCurrentN = n;
+
+      const isMilestone = HARI_MILESTONE.includes(n);
+      hariMilestoneBadge.hidden = !isMilestone;
+
+      if (isMilestone) {
+        hariMainText.innerHTML = `<span id="hari-number">0</span> hari bersamamu`;
+        spawnHariMilestoneHearts(todayIso);
+      } else {
+        hariMainText.innerHTML = `Hari ke-<span id="hari-number">0</span>`;
+      }
+
+      const numEl = document.getElementById("hari-number");
+      animateHariCount(n, numEl);
+
+      const { months, days } = getMonthsAndDays(start, cur);
+      const countdown22 = getCountdownTo22(cur);
+      const parts = [];
+      if (months > 0) {
+        parts.push(`${months} bulan ${days} hari`);
+      }
+      if (countdown22 === 0) {
+        parts.push("Hari ini hari spesial kita 🤍");
+      } else {
+        parts.push(`Menuju tanggal 22 berikutnya: ${countdown22} hari lagi`);
+      }
+      hariDetailEl.textContent = parts.join(" • ");
+
+      hariCard.hidden = false;
+      scheduleNextMidnightUpdate();
+    } catch (_) {
+      hariCard.hidden = true;
+    }
+  }
+
+  function openHariSheet() {
+    if (!hariSheet) return;
+    try {
+      const start = parseStartDate(HARI_CONFIG.tanggalMulai);
+      const startUtc = Date.UTC(start.y, start.m - 1, start.d);
+      const baseN = typeof hariCurrentN === "number" ? hariCurrentN : 0;
+      const offset = HARI_CONFIG.mulaiDariSatu ? 1 : 0;
+
+      const upcoming = HARI_MILESTONE.filter((m) => m > baseN).slice(0, 3);
+      hariSheetList.innerHTML = "";
+
+      if (upcoming.length === 0) {
+        const li = document.createElement("li");
+        li.className = "hari-sheet-item";
+        li.innerHTML = `<span class="hari-sheet-date">Semua milestone awal sudah kita lewati bersama 🤍</span>`;
+        hariSheetList.appendChild(li);
+      } else {
+        upcoming.forEach((m) => {
+          const targetUtc = startUtc + (m - offset) * 86400000;
+          const rem = m - baseN;
+          const li = document.createElement("li");
+          li.className = "hari-sheet-item";
+          li.innerHTML = `
+            <div class="hari-sheet-left">
+              <span class="hari-sheet-milestone">${m} hari</span>
+              <span class="hari-sheet-date">${formatUtcIndonesianDate(targetUtc)}</span>
+            </div>
+            <span class="hari-sheet-rem">${rem} hari lagi</span>
+          `;
+          hariSheetList.appendChild(li);
+        });
+      }
+
+      hariSheet.hidden = false;
+      requestAnimationFrame(() => {
+        hariSheet.classList.add("is-open");
+      });
+    } catch (_) {}
+  }
+
+  function closeHariSheet() {
+    if (!hariSheet) return;
+    hariSheet.classList.remove("is-open");
+    window.setTimeout(
+      () => {
+        hariSheet.hidden = true;
+      },
+      prefersReducedMotion ? 40 : 280,
+    );
+  }
+
+  if (hariCard) {
+    hariCard.addEventListener("click", openHariSheet);
+  }
+  if (hariSheetBackdrop) hariSheetBackdrop.addEventListener("click", closeHariSheet);
+  if (hariSheetClose) hariSheetClose.addEventListener("click", closeHariSheet);
+  if (hariSheetDone) hariSheetDone.addEventListener("click", closeHariSheet);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      updateHariCard();
+    }
+  });
 
   // --- Mode Development: lompat langsung ke layar tertentu ---
   // Pakai: http://127.0.0.1:5500/?step=gallery  (pin | envelope | letter | gallery)
